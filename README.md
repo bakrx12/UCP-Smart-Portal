@@ -3,11 +3,11 @@
 Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and easier on the eyes. This extension injects custom styles and UI tweaks (dockbar, hidden legacy title bar, refined modals) to make everyday student workflows smoother.
 
 ## ✨ Features
-- Glassmorphic UI theme (blur, translucency, subtle shadows)
+- Glassmorphic UI Theme
 - Dockbar support for quicker navigation
 - Hidden old title bar for cleaner layout
 - Improved course info, outline, and assessment views
-- Polished course material modal
+- Polished course material, timetable, gradebook style
 - Lightweight: pure HTML/CSS/JS, no frameworks
 
 ## 📁 Project Structure
@@ -78,4 +78,9 @@ PRs welcome! Please:
 Private repository. If you want to use or adapt this, contact the maintainer for permission.
 
 ## 🙌 Credits
-Designed and developed by Raz (raz0229) with love for UCP students.
+Design - Abdurrehman
+Web Scraping - Talha Abid
+Code - Abdullah Zafar, AbuBakr Aslam
+Retouched original, optimized to be lightweight.
+
+By UCP Students with love for UCP students.
