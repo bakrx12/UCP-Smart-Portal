@@ -78,9 +78,8 @@ PRs welcome! Please:
 Private repository. If you want to use or adapt this, contact the maintainer for permission.
 
 ## 🙌 Credits
-Design - Abdurrehman
-Web Scraping - Talha Abid
-Code - Abdullah Zafar, AbuBakr Aslam
+### Design - Abdurrehman
+### Web Scraping - Talha Abid
+### Code - Abdullah Zafar, AbuBakr Aslam
 Retouched original, optimized to be lightweight.
-
 By UCP Students with love for UCP students.
