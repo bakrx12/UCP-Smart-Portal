@@ -1,0 +1,348 @@
+h3.heading_b.uk-margin-bottom {
+  display: none;
+}
+
+/* Better cross-browser scrollbar hints */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(30, 144, 255, 0.9) rgba(255, 255, 255, 0.06);
+}
+
+/* Custom WebKit scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 144, 255, 1),
+    rgba(220, 53, 69, 1)
+  );
+  box-shadow: 0 6px 18px rgba(30, 144, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.glassmorphic-timetable-card {
+  width: calc(80vw - 48px);
+  /* height: calc(100vh - 48px); */
+  max-width: 1600px;
+  /* max-height: 1100px; */
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 10px 30px rgba(16, 24, 40, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: auto;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  animation: glassmorphic-card-intro 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.glassmorphic-timetable-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.22);
+}
+@keyframes glassmorphic-card-intro {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+table.glassmorphic-timetable-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: max-content;
+  min-width: 90%;
+}
+
+th,
+td {
+  padding: 20px;
+  text-align: left;
+  width: 90px;
+  height: 100px;
+  color: #ebebeb;
+  font-size: 0.9rem;
+  vertical-align: middle;
+  position: relative;
+}
+
+th.glassmorphic-timetable-day-col {
+  position: sticky;
+  left: 10;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
+  font-size: 1.3rem;
+  color: #0b1724;
+  font-weight: 300;
+  box-shadow: 2px 0 8px rgba(11, 23, 36, 0.04);
+  padding-left: 0px;
+  text-align: left  ;
+  min-width: 40px;
+}
+
+th.glassmorphic-timetable-time-col {
+  position: sticky;
+  top: 0;
+  padding: 18px;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
+  color: #0b1724;
+  font-weight: 600;
+  height: 92px;
+  min-width: 90px;
+}
+
+th.glassmorphic-timetable-day-col {
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  color: #fff;
+  z-index: 89;
+}
+tbody:nth-of-type(1) tr th:nth-of-type(1) {
+  border-top-right-radius: 1.5rem;
+  border-top-left-radius: 1.5rem;
+}
+tbody:nth-of-type(8) tr th {
+  border-bottom-right-radius: 1.5rem;
+  border-bottom-left-radius: 1.5rem;
+}
+
+/* SLOT */
+.glassmorphic-timetable-slot {
+  width: calc(95% - 0px);
+  height: calc(80% - 12px);
+  margin: 15px;
+  border-radius: 16px;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.98);
+  font-weight: 400;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  box-sizing: border-box;
+  position: relative;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.2s ease;
+  overflow: visible; /* allow tooltip to escape */
+  z-index: 1;
+}
+.glassmorphic-timetable-slot:hover {
+  transform: translateY(-6px);
+}
+
+.glassmorphic-timetable-past-slot {
+  border-color: rgba(128, 128, 128, 0.76);
+  box-shadow: 0 8px 25px rgb(128, 128, 128) !important;
+}
+.glassmorphic-timetable-current-slot {
+  border: solid 2px rgb(30, 144, 255);
+  border-color: rgb(30, 144, 255);
+  box-shadow: 0 8px 25px rgb(30, 144, 255) !important;
+}
+.glassmorphic-timetable-future-slot {
+  border: solid 2px rgba(0, 255, 81, 0.716);
+  border-color: rgba(0, 255, 166, 0.506);
+  box-shadow: 0 8px 25px rgb(156, 156, 156) !important;
+}
+.glassmorphic-timetable-empty-slot {
+  box-shadow: none !important;
+  background: transparent !important;
+  opacity: 0.24;
+}
+
+/* TOOLTIP */
+.glassmorphic-timetable-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(6, 10, 20, 0.92);
+  color: #ffffff !important;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-align: left;
+  z-index: 99999;
+  transition:
+    opacity 0.26s cubic-bezier(0.2, 0.9, 0.3, 1),
+    transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1),
+    visibility 0.2s;
+  width: max-content;
+  max-width: 300px;
+  pointer-events: auto; /* allow hovering tooltip itself */
+}
+.glassmorphic-timetable-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 7px;
+  border-style: solid;
+  border-color: rgba(6, 10, 20, 0.92) transparent transparent transparent;
+}
+
+/* show on hover OR keyboard focus */
+.glassmorphic-timetable-slot:hover .glassmorphic-timetable-tooltip,
+.glassmorphic-timetable-slot:focus .glassmorphic-timetable-tooltip,
+.glassmorphic-timetable-slot:focus-visible .glassmorphic-timetable-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* focus style so keyboard users see it */
+.glassmorphic-timetable-slot:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(30, 144, 255, 0.12) inset;
+}
+
+/* Gradients (glassmorphic – darker, more nuanced, highly differentiated) */
+
+
+.glassmorphic-timetable-g-7 {
+  /* Burnt sunset: ember orange → oxblood */
+  background: linear-gradient(
+    135deg,
+   rgba(49, 49, 49, 0.55),
+    rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-6 {
+  /* Midnight indigo: navy blue → royal violet */
+  background: linear-gradient(
+    135deg,
+    rgba(49, 49, 49, 0.55),
+    rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-2 {
+  /* Deep forest: pine green → earthy olive */
+  background: linear-gradient(
+    135deg,
+    rgba(49, 49, 49, 0.55),
+   rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-3 {
+  /* Muted berry dusk: wine rose → storm blue */
+  background: linear-gradient(
+    135deg,
+   rgba(49, 49, 49, 0.55),
+    rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-4 {
+  /* Abyssal teal: dark turquoise → cold steel cyan */
+  background: linear-gradient(
+    135deg,
+   rgba(49, 49, 49, 0.55),
+   rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-5 {
+  /* Regal antique: aged brass → dark plum */
+  background: linear-gradient(
+    135deg,
+   rgba(49, 49, 49, 0.55),
+   rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-1 {
+  /* Cosmic aurora: deep amethyst → jade shadow */
+  background: linear-gradient(
+    135deg,
+    rgba(49, 49, 49, 0.55),
+  rgba(49, 49, 49, 0.55)
+  );
+}
+
+.glassmorphic-timetable-g-0 {
+  /* Volcanic earth: rust brown → smoked clay */
+  background: linear-gradient(
+    135deg,
+    rgba(49, 49, 49, 0.55),
+    rgba(49, 49, 49, 0.55)
+  );
+}*/
+
+.glassmorphic-timetable-slot .glassmorphic-timetable-title {
+  z-index: 2;
+  font-weight: 500;
+  font-size: 0.81rem;
+  text-align: left;
+  padding: 0 3px;
+}
+.glassmorphic-timetable-slot .glassmorphic-timetable-meta {
+  z-index: 2;
+  font-size: 0.72rem;
+  opacity: 0.85;
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  th,
+  td {
+    width: 110px;
+    height: 78px;
+  }
+}
+@media (max-width: 640px) {
+  .glassmorphic-timetable-card {
+    width: calc(100vw - 18px);
+    height: calc(100vh - 18px);
+    padding: 12px;
+  }
+}
+
+.md-card {
+  display: none !important;
+}

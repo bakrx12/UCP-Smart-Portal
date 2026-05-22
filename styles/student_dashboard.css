@@ -1,0 +1,954 @@
+@import url("https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=UnifrakturMaguntia&display=swap");
+
+/* ===== GLASSMORPHIC BASE STYLING ===== */
+:root {
+  --primary-glass: rgba(255, 255, 255, 0.2);
+  --secondary-glass: rgba(27, 67, 153, 0.233);
+  --light-glass: rgba(0, 0, 0, 0.466);
+  --dark-glass: rgba(0, 0, 0, 0.2);
+  --border-glass: 0px solid rgba(255, 255, 255, 0.024);
+  --shadow-glass: 0 8px 0px 0 rgba(0, 0, 0, 0.37);
+  --transition-slow: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-fast: all 0.3s ease;
+
+  --ucp-blue: #234a99; /* banner blue */
+  --ucp-blue-dark: #1d3f83; /* accents */
+  --ucp-text: #0f2e6d; /* deep blue for headings */
+  --card-w: 284px; /* final card size (tweak if needed) */
+  --card-h: 450px;
+}
+
+/* ===== DASHBOARD CARDS ===== */
+.md-card {
+  background: var(--light-glass) !important;
+  border-radius: 20px !important;
+  border: var(--border-glass);
+  box-shadow: var(--shadow-glass);
+  overflow: hidden;
+  transition: var(--transition-slow);
+  transform: translateY(12);
+  margin: 1rem;
+}
+
+.md-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.5);
+}
+
+.md-card-content {
+  padding: 25px !important;
+  color: #fff;
+}
+
+.heading_a {
+  color: #fff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 15px;
+  margin-bottom: 25px !important;
+  font-weight: 600;
+  position: relative;
+}
+
+.heading_a:after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #0077ff, #0077ff);
+  border-radius: 3px;
+}
+
+/* ===== USER PROFILE SECTION ===== */
+.user_heading_dash {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px;
+  border: var(--border-glass);
+  box-shadow: var(--shadow-glass);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  transition: var(--transition-slow);
+}
+
+.user_heading_dash:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+}
+
+div.user_heading_avatar div.thumbnail {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition-slow);
+}
+
+.user_heading_dash:hover .user_heading_avatar .thumbnail {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: rotate(5deg);
+}
+
+.user_heading_content h2 {
+  color: #ffffff85 !important;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.user_heading_content .sub-heading {
+  color: rgba(255, 255, 255, 0.8) !important;
+  display: block;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+/* ===== ACADEMIC INFO CARDS ===== */
+.uk-grid > div {
+  padding: 10px;
+}
+
+.user_heading_content {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition-fast);
+  height: 100%;
+}
+
+.user_heading_content:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+/* ===== BUTTONS ===== */
+.md-btn {
+  border-radius: 12px !important;
+  transition: var(--transition-fast) !important;
+  border: none !important;
+  font-weight: 500 !important;
+}
+
+.md-btn-primary {
+  background: var(--primary-glass) !important;
+}
+
+.md-btn-primary:hover {
+  background: rgba(17, 43, 79, 0.9) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.6);
+}
+
+.md-btn-danger {
+  background: var(--secondary-glass) !important;
+}
+
+.md-btn-danger:hover {
+  background: rgba(153, 27, 30, 0.9) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== NOTIFICATIONS & ALERTS ===== */
+.uk-badge {
+  border-radius: 50% !important;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(153, 27, 30, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(153, 27, 30, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(153, 27, 30, 0);
+  }
+}
+
+/* ===== TABLES ===== */
+thead th {
+  background: var(--primary-glass) !important;
+  color: #fff !important;
+  border: var(--border-glass) !important;
+}
+
+.uk-tab > li.uk-active > a {
+  border-bottom-color: #fff !important;
+  color: #fff !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hierarchical_show > div {
+  animation: fadeIn 0.6s forwards;
+  opacity: 0;
+}
+
+.hierarchical_show > div:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.hierarchical_show > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.hierarchical_show > div:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.hierarchical_show > div:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.hierarchical_show > div:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 960px) {
+  .user_heading_dash {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .user_heading_avatar {
+    margin-bottom: 15px;
+  }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-glass);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 43, 79, 0.9);
+}
+
+/* ===== SLIDER/CAROUSEL ===== */
+.uk-slider-container {
+  padding: 20px 0;
+}
+
+.uk-slider-items > li {
+  padding: 10px;
+  transition: var(--transition-fast);
+}
+
+.uk-slider-items > li:hover {
+  transform: scale(1.05);
+}
+
+/* ===== FLOATING ELEMENTS ===== */
+
+/* ===== TEXT SELECTION ===== */
+::selection {
+  background: rgba(17, 43, 79, 0.5);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: rgba(17, 43, 79, 0.5);
+  color: #fff;
+}
+
+#academics-module {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* UCP Student Card */
+
+#card {
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.card-front,
+.card-back {
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* hover animation: flip to back and back to front */
+#card:hover .card-inner {
+  animation: flipTwice 1.6s ease-in-out forwards;
+}
+
+@keyframes flipTwice {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* ----- Card ----- */
+.card {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  background: #fff;
+  border-radius: 16px !important;
+  overflow: hidden;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  margin: 2rem;
+  margin-right: 4rem;
+}
+
+.card-back {
+  position: fixed !important;
+  top: 0;
+}
+
+.back-card {
+  font-size: small;
+  font-weight: 800;
+}
+.back-card .validity {
+  padding: 1rem;
+}
+.back-card .instructions {
+  padding-left: 1rem;
+  padding-bottom: 1rem;
+}
+.back-card .center {
+  text-align: center;
+}
+.back-card .center.university-title {
+  font-family: "UnifrakturMaguntia", cursive !important;
+  font-size: 1.5rem !important;
+}
+.back-card .address-line {
+  line-height: 1rem;
+}
+.back-card .barcode {
+  margin-top: 1rem;
+}
+.back-card .barcode img {
+  height: 4rem;
+}
+
+/* Top banner */
+.banner {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100px;
+  background: var(--ucp-blue);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px 12px 0 12px;
+}
+.banner .title {
+  color: #fff;
+  font-weight: 700;
+  font-size: large;
+  letter-spacing: normal;
+  line-height: 1.15;
+  text-transform: none; /* exactly as on card */
+}
+.banner .subtitle {
+  margin-top: 10px;
+  color: #d6e2ff;
+  font-weight: 500;
+  font-size: small;
+  letter-spacing: normal;
+}
+
+/* UCP circular logo (seal) */
+.seal {
+  position: absolute;
+  left: 20px;
+  top: 130px;
+  width: 110px;
+  height: auto;
+  object-fit: contain;
+  filter: none; /* keep original colors */
+}
+
+/* Student photo with blue stroke */
+.photo-frame {
+  position: absolute;
+  right: 20px;
+  top: 120px;
+  width: 110px;
+  height: auto;
+  background: #fff;
+  border: 6px solid #2f60b8;
+  outline: 2px solid #ffffff; /* subtle crisp edge */
+}
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Name & ID text – positioned to match visual */
+.name {
+  position: absolute;
+  left: 15px;
+  top: 260px;
+  color: var(--ucp-text);
+  font-weight: 600;
+  letter-spacing: normal;
+  font-size: medium;
+  text-transform: uppercase;
+}
+.roll {
+  position: absolute;
+  left: 15px;
+  top: 280px;
+  color: var(--ucp-text);
+  font-weight: 600;
+  letter-spacing: normal;
+  font-size: x-large;
+  text-transform: uppercase;
+}
+
+/* Building across bottom */
+.building {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+/* Very light repeating security pattern to emulate the card texture (pure CSS) */
+.card::before {
+  content: "University of Central Punjab";
+  position: absolute;
+  inset: 0;
+  opacity: 0.065;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    135deg,
+    #001a66 0 2px,
+    transparent 5px 10px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Optional: print-friendly fit */
+@media print {
+  body {
+    background: #fff;
+    padding: 0;
+  }
+  .card {
+    box-shadow: none;
+    margin: 0 auto;
+  }
+}
+
+/*
+  My academics
+*/
+
+#academic-flexbox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#academic-flexbox #stats {
+  text-align: end;
+  margin: 2rem 0;
+  align-content: center;
+  border-left: 1px solid rgb(244, 239, 239);
+  padding-left: 3rem;
+}
+
+#academic-flexbox #stats .entry {
+  margin-top: 1.5rem;
+}
+
+#my-academics {
+  margin: 1rem;
+  color: rgb(220, 220, 220) !important;
+}
+#my-courses {
+  color: rgb(220, 220, 220) !important;
+}
+
+.cgpa .value {
+  color: rgb(35 74 153);
+  font-size: xxx-large;
+}
+.credits .value {
+  color: crimson;
+  font-size: xx-large;
+}
+.total-credits .value {
+  color: rgb(20, 220, 57);
+  font-size: xx-large;
+}
+.inprogress-credits .value {
+  color: rgb(20, 160, 220);
+  font-size: xx-large;
+}
+
+.entry .value {
+  font-weight: 600;
+  line-height: 3rem;
+}
+.entry .ph {
+  color: rgb(216, 216, 216);
+  font-size: small;
+}
+.entry.cgpa .ph {
+  font-size: medium;
+}
+
+/* Attendance Card */
+/* Glassmorphic Card */
+.attendance-card {
+  width: 500px;
+  height: 38rem;
+  overflow-y: scroll;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.attendance-card-title {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.899) !important;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Chart Layout */
+.attendance-bar-container {
+  margin: 15px 0;
+}
+
+.attendance-label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+}
+
+.attendance-bar {
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.attendance-fill {
+  height: 100%;
+  text-align: right;
+  padding-right: 8px;
+  font-size: 12px;
+  line-height: 20px;
+  color: white;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+/* Safe attendance */
+.attendance-fill-safe {
+  background: linear-gradient(90deg, #00b09b, #50c93d);
+}
+
+/* Low attendance (<85%) */
+.attendance-fill-low {
+  background: linear-gradient(90deg, #ffef41, #ffb12b);
+}
+
+/* Low attendance (<75%) */
+.attendance-fill-critical {
+  background: linear-gradient(90deg, #ff416c, #ff2b44);
+}
+
+/* COURSES CARDS CONTAINER */
+.gmc-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.gmc-card {
+  cursor: pointer;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.gmc-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+
+  min-width: 55px;
+  padding: 8px 12px;
+
+  border-radius: 50%;
+  text-align: center;
+
+  background: rgba(243, 45, 78, 0.85);
+  color: #ffffff;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.gmc-badge .count {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.gmc-badge .label {
+  font-size: 8px;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.gmc-badge.loading {
+  background: rgba(243, 45, 78, 0.45);
+}
+
+.gmc-badge:hover {
+  cursor: pointer;
+  background: rgba(215, 40, 69, 0.85);
+}
+
+.gmc-card {
+  position: relative;
+}
+
+.gmc-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+}
+
+.gmc-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fffffff2;
+  margin-bottom: 8px;
+}
+
+.gmc-instructor {
+  font-size: 0.95rem;
+  color: #dbdbdbd8;
+  margin-bottom: 6px;
+}
+
+.gmc-details {
+  font-size: 0.85rem;
+  color: #ffffff8f;
+  margin-bottom: 10px;
+}
+
+.gmc-status {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #4393e9, #5f94fd);
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.gmc-status:hover {
+  background: linear-gradient(135deg, #4040fb, #435fe9);
+}
+ /* Today's Classes */
+        .classes-card {
+      height: 90%;
+      max-width:max-content;
+      min-width: 500px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.41);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #classesCard {
+      flex: 1 1 0;
+      justify-items: center;
+    }
+    #classes-card-content {
+      padding: 0 24px 24px 24px;
+    }
+
+    .classes-card-title {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      font-weight: 900 !important;
+      text-align: center;
+      color: white;
+      border-top-right-radius: 16px;
+      padding: 1rem;
+      border-top-left-radius: 16px;
+      background: rgba(42, 142, 249, 0.799)
+    }
+
+
+    .classes-card-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .classes-card-table thead {
+      font-weight: 600;
+      opacity: 0.9;
+      text-align: left;
+    }
+
+    .classes-card-table th,
+    .classes-card-table td {
+      padding: 12px 8px;
+    }
+
+    .classes-card-table td {
+      color: #001a66;
+    }
+    .classes-card-table th {
+      color: #001a66 !important;
+      background: none !important;
+    }
+
+    .classes-card-table tr {
+      transition: background 0.2s ease;
+    }
+
+    .classes-card-table tr:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .classes-card-icon {
+      vertical-align: middle;
+      margin-right: 6px;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .classes-card-empty {
+      text-align: center;
+      font-size: 1.2rem;
+      padding: 20px;
+      opacity: 0.95;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .classes-card-empty .material-icons {
+      font-size: 36px;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 500px) {
+      .classes-card-table thead {
+        display: none;
+      }
+      .classes-card-table tr {
+        display: block;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .classes-card-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+      }
+      .classes-card-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 8px;
+      }
+    }
+
+
+
+/* Remove older elements */
+.heading_a.uk-tab,
+.uk-grid,
+.uk-slidenav-position {
+  display: none !important;
+}
+
+.gmc-tooltip {
+  position: absolute;
+  z-index: 99999;
+  min-width: 350px;
+  max-width: 420px;
+  background: linear-gradient(180deg, #b9b9b9, #535353);
+  color: #e7f5f5;
+  border-radius: 12px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "Afacad Flux", system-ui;
+}
+
+.gmc-tooltip h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gmc-tooltip .tt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  opacity: 0.95;
+}
+
+.gmc-tooltip .submission-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 8px;
+}
+
+.gmc-tooltip .submission-row + .submission-row {
+  border-top: 1px dashed rgba(255, 255, 255, 0.06);
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+.gmc-tooltip .submission-name {
+  flex: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gmc-tooltip .download-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(180deg, #4da6ff, #1a75ff);
+  color: #062d2d;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.gmc-tooltip .download-btn[disabled] {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+.gmc-tooltip .no-submissions {
+  text-align: center;
+  font-size: 13px;
+  color: #9fbcbc;
+  padding: 10px 6px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.7),
+    rgba(245, 248, 250, 0.6)
+  );
+  color: #dedede;
+  box-shadow: 0 6px 18px rgba(12, 40, 40, 0.06);
+  text-align: center;
+  margin: 12px 0;
+}
+.empty-state .empty-icon {
+  font-size: 48px;
+  line-height: 1;
+  color: #dedede;
+}
+.empty-state .empty-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+.empty-state .empty-sub {
+  font-size: 13px;
+  color: #dedede;
+  opacity: 0.95;
+}
+/* small adjustments for table-free appearance */
+.classes-card-empty,
+.courses-card-empty,
+.attendance-card-empty {
+  margin: 8px 0;
+}

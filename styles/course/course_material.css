@@ -1,0 +1,160 @@
+    :root {
+      --glass-bg: rgba(255,255,255,0.3);
+      --glass-border: rgba(255,255,255,0.5);
+      --radius: 16px;
+      --accent: rgba(0, 0, 0, 0.972);
+      --muted: #64748b;
+      --shadow: rgba(0,0,0,0.1);
+    }
+
+    .course-card {
+      width: 160%;
+      max-width: 1500px;
+      justify-self: center;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      box-shadow: 0 10px 40px var(--shadow);
+      padding: 32px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .course-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .course-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .course-code {
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255,255,255,0.25);
+    }
+
+    thead tr {
+      background: linear-gradient(90deg, #60a5fa, #222222);
+      color: white;
+    }
+
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    tbody tr {
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.35);
+      transform: scale(1.01);
+    }
+
+    a.download-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 50% !important;
+      width: 42px;
+      height: 42px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      color: #25eb49 !important;
+    }
+
+    a.download-btn .material-icons {
+        color: #25eb49;
+    }
+
+    a.download-btn:hover {
+      background: linear-gradient(135deg, #4eee6c, #25eb49) !important;
+      color: white !important;
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 0 10px rgba(59, 246, 59, 0.4);
+    }
+
+    a.download-btn:hover .material-icons {
+        color: #fff;
+    }
+
+    .material-icons {
+      font-size: 22px !important;
+    }
+
+
+    .md-card {
+      display: none !important;
+    }
+
+
+
+    /* ===== Scoped Styles for Course Material Downloader ===== */
+/* === Green Gradient Download Button === */
+
+.cm-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3ddc84 0%, #00bfa6 100%);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  justify-self: right;
+  margin-bottom: 1rem;
+}
+
+.cm-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cm-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.cm-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Icon styling */
+.cm-icon {
+  font-size: 22px;
+  color: #0b2956; /* dark blue icon, matches screenshot */
+}
+
+/* Optional: hover animation on icon */
+.cm-button:hover:not(:disabled) .cm-icon {
+  transform: scale(1.1);
+  transition: transform 0.25s ease;
+}

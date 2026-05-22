@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UCP Student Portal Redesign — Popup</title>
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --ucp-width: 420px;
+        --shadow: rgba(0, 0, 0, 0.1);
+        --ucp-height: 560px;
+        --ucp-radius: 18px;
+        /* lighter blues for better contrast */
+        --ucp-accent: #7fbfff;
+        --ucp-accent-2: #cfeeff;
+        --text-strong: 15px;
+        --text-regular: 13px;
+        --muted-white: rgba(255, 255, 255, 0.9);
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Arial;
+        box-sizing: border-box;
+      }
+
+      /* fixed popup dimensions — prevents Chrome collapsing to a tiny box */
+      html,
+      body {
+        width: var(--ucp-width);
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      .ucp-root {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* subtle moving dark background (local ./bg.jpg) */
+      .ucp-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image: url("./bg.jpg");
+        background-repeat: no-repeat;
+        /* CHANGED: This makes the image cover the full height, with width overflowing */
+        background-size: auto 100%;
+        /* CHANGED: Set initial horizontal position */
+        background-position: 0% 50%;
+        filter: saturate(0.95) contrast(0.95);
+        will-change: background-position;
+        animation: ucp-bg-drift 50s ease-in-out infinite;
+      }
+
+      /* CHANGED: Animation now moves horizontally from left-to-right and back */
+      @keyframes ucp-bg-drift {
+        0% {
+          background-position: 0% 25%;
+        } /* Left */
+        50% {
+          background-position: 100% 50%;
+        } /* Right */
+        100% {
+          background-position: 0% 50%;
+        } /* Back to Left */
+      }
+
+      /* glass container */
+      .ucp-panel {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(0px) saturate(120%);
+        color: #fff;
+        box-sizing: border-box;
+      }
+
+      /* POWER BUTTON */
+      .ucp-power-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .ucp-power {
+        width: 96px;
+        height: 96px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(
+          circle at 30% 20%,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.36);
+        cursor: pointer;
+        transition: all 0.22s;
+      }
+      .ucp-power .material-icons {
+        font-size: 38px;
+        color: #fff;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+      }
+
+      /* ON state is now green */
+      .ucp-power.ucp-on {
+        transform: scale(1.02);
+        box-shadow: 0 14px 36px rgba(16, 185, 129, 0.18);
+        background: linear-gradient(
+          135deg,
+          #34d399,
+          #10b981
+        ); /* green gradient */
+      }
+      .ucp-power.ucp-on::after {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 999px;
+        background: radial-gradient(
+          circle,
+          rgba(16, 185, 129, 0.14),
+          transparent 30%
+        );
+      }
+
+      .ucp-power-label {
+        font-weight: 600;
+        font-size: var(--text-strong);
+        color: var(--muted-white);
+      }
+      .ucp-power-state {
+        font-size: 13px;
+        color: var(--muted-white);
+        opacity: 0.95;
+      }
+
+      /* STAY ACTIVE ROW */
+      /* STAY ACTIVE ROW */
+      .ucp-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 10px;
+        /* CHANGED: Simplified to a single, slightly more opaque transparent background */
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 08px 30px var(--shadow);
+        border: 1px solid rgba(255, 255, 255, 0.06); /* Changed border opacity to match the panel */
+
+        /* ADDED: The key property for the glassy/blur effect */
+        backdrop-filter: blur(20px);
+      }
+
+      /* Added Flex container for icon and text */
+      .ucp-switch-info {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Space between icon and text */
+      }
+
+      .ucp-switch-label {
+        font-weight: 700;
+        font-size: var(--text-strong);
+        color: var(--muted-white);
+      }
+      .ucp-switch-desc {
+        font-size: var(--text-regular);
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 3px;
+      }
+
+      .ucp-toggle {
+        width: 56px;
+        height: 30px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        position: relative;
+        cursor: pointer;
+      }
+      .ucp-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #fff;
+        transition: left 0.16s;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.28);
+      }
+      .ucp-toggle.ucp-checked {
+        background: linear-gradient(90deg, #34d399, #10b981);
+      }
+      .ucp-toggle.ucp-checked .ucp-thumb {
+        left: 29px;
+      }
+
+      /* CAROUSEL (preview only) */
+      .ucp-slider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 6px;
+      }
+      .ucp-nav {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.35);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        border: none;
+        backdrop-filter: blur(8px);
+      }
+      .ucp-carousel {
+        width: 100%;
+        max-width: 300px;
+        height: 110px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(0, 0, 0, 0.06);
+        position: relative;
+      }
+      .ucp-carousel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.02);
+        transition: transform 12s linear;
+      }
+      /* caption is scoped to .ucp-carousel and given higher z-index so it stays on top */
+      .ucp-carousel .ucp-caption {
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        z-index: 3;
+        background: rgba(0, 0, 0, 0.45);
+        color: white;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 11px;
+      }
+
+      /* CREDITS & FOOTER */
+      .ucp-credits {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.02);
+        color: rgba(255, 255, 255, 0.7);
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 30px var(--shadow);
+        transition: all 0.3s ease-out;
+      }
+
+      .ucp-credits:not([open]) {
+        height: 38px;
+        padding-bottom: 8px;
+      }
+
+      .ucp-credits summary {
+        font-weight: 800;
+        cursor: pointer;
+        color: var(--muted-white);
+        display: flex; /* ADDED: For icon alignment */
+        align-items: center; /* ADDED: For icon alignment */
+        gap: 8px; /* ADDED: Space between icon and "Credits" text */
+      }
+
+      .ucp-credits-list {
+        padding: 1rem;
+        padding-top: 0.5rem;
+      }
+
+      /* Styling for the icon/text rows in the Credits list */
+      .ucp-credits-list-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .ucp-credits a {
+        color: var(--ucp-accent-2);
+        text-decoration: none;
+      }
+
+      .ucp-footer {
+        margin-top: auto;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.88);
+        text-align: center;
+        font-style: italic;
+      }
+
+      /* responsive tweak */
+      @media (max-width: 420px) {
+        :root {
+          --ucp-width: 360px;
+          --ucp-height: 600px;
+        }
+        html,
+        body {
+          width: var(--ucp-width);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ucp-root" id="ucp-root">
+      <div class="ucp-bg" id="ucp-bg" aria-hidden="true"></div>
+
+      <div
+        class="ucp-panel"
+        role="dialog"
+        aria-label="UCP Student Portal Redesign popup"
+      >
+        <div class="ucp-power-wrap ucp-center">
+          <div
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+            class="ucp-power"
+            id="ucp-power"
+            title="Turn extension On / Off"
+          >
+            <span class="material-icons" id="ucp-power-icon"
+              >power_settings_new</span
+            >
+          </div>
+          <div class="ucp-power-state" id="ucp-power-state">Off</div>
+        </div>
+
+        <div class="ucp-row">
+          <div class="ucp-switch-info">
+            <span class="material-icons" style="color: #7fbfff"
+              >hourglass_empty</span
+            >
+            <div>
+              <div class="ucp-switch-label">Stay Active</div>
+              <div class="ucp-switch-desc">
+                If on, you won't be automatically logged out of your portal
+              </div>
+            </div>
+          </div>
+          <div class="ucp-switch">
+            <div
+              class="ucp-toggle"
+              id="ucp-stay-toggle"
+              role="switch"
+              aria-checked="false"
+            >
+              <div class="ucp-thumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="ucp-slider">
+            <button class="ucp-nav" id="ucp-prev" title="Previous background">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div
+              class="ucp-carousel"
+              id="ucp-carousel"
+              aria-live="polite"
+            ></div>
+            <button class="ucp-nav" id="ucp-next" title="Next background">
+              <span class="material-icons">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+        <details class="ucp-credits" id="ucp-credits">
+          <summary>
+            <span class="material-icons">arrow_right</span>
+            Credits
+          </summary>
+          <div class="ucp-credits-list">
+            <div class="ucp-credits-list-item">
+              <span class="material-icons" style="font-size: 18px"
+                >palette</span
+              >
+              <div>
+                Design -
+                <a
+                  href="https://www.instagram.com/r3hman_007"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Abdurrehman</a
+                >
+              </div>
+            </div>
+
+            <div class="ucp-credits-list-item">
+              <span class="material-icons" style="font-size: 18px"
+                >cloud_download</span
+              >
+              <div>
+                Web Scraping -
+                <a
+                  href="https://www.instagram.com/graphitegrazer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Talha Abid</a
+                >
+              </div>
+            </div>
+
+            <div class="ucp-credits-list-item">
+              <span class="material-icons" style="font-size: 18px">code</span>
+              <div>
+                Code -
+                <a
+                  href="https://github.com/raz0229"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Abdullah Zafar</a
+                >
+
+                 <a
+                  href="http://github.com/bakrx12/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >• AbuBakr Aslam</a
+                >
+              </div>
+            </div>
+          </div>
+
+
+        
+
+        <div class="ucp-footer">
+          DM
+          <a
+            style="color: #7fbfff"
+            href="https://instagram.com/raz0229"
+            target="_blank"
+            rel="noopener noreferrer"
+            >@raz0229</a
+          >
+          for Feedback/Report Bugs
+        </div>
+      </div>
+    </div>
+    <script src="popup.js" defer></script>
+  </body>
+</html>

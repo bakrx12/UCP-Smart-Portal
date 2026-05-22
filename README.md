@@ -1,0 +1,81 @@
+# UCP Smart Portal
+
+Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and easier on the eyes. This extension injects custom styles and UI tweaks (dockbar, hidden legacy title bar, refined modals) to make everyday student workflows smoother.
+
+## ✨ Features
+- Glassmorphic UI theme (blur, translucency, subtle shadows)
+- Dockbar support for quicker navigation
+- Hidden old title bar for cleaner layout
+- Improved course info, outline, and assessment views
+- Polished course material modal
+- Lightweight: pure HTML/CSS/JS, no frameworks
+
+## 📁 Project Structure
+```
+ucp-redesign-extension/
+├─ assets/          # images, fonts, static assets
+├─ icons/           # extension icons
+├─ js/              # scripts injected into portal pages
+├─ styles/          # CSS stylesheets (glassmorphism)
+├─ index.html       # base page (dev/testing)
+├─ calendea.html    # calendar view (dev/testing)
+├─ manifest.json    # browser extension manifest (v3)
+└─ vite.svg         # asset (legacy/test)
+```
+
+## 🧩 How It Works
+The extension matches UCP Odoo portal pages and injects:
+- CSS (glassmorphic theme, layout fixes)
+- JS (UI enhancements: dockbar, modals, cleanups)
+No data leaves your browser; everything runs locally in the page context.
+
+## 🚀 Installation (Chrome / Edge)
+1. Download or clone this repo.
+2. Go to `chrome://extensions` (or Edge → Extensions).
+3. Toggle “Developer mode” (top right).
+4. Click “Load unpacked” and select the project folder.
+5. Open the UCP Odoo Student Portal. Refresh to apply styles.
+
+## 🔧 Development
+- Edit files under `styles/` and `js/`.
+- If you add new assets or scripts, ensure paths are correct in the injection logic and/or `manifest.json`.
+- Keep CSS effects subtle to avoid readability issues (glassmorphism can reduce contrast).
+
+## 🧪 Testing Checklist
+- Verify navbar/dockbar renders correctly on:
+  - Dashboard
+  - Course detail (info, outline, assessments)
+  - Calendar / materials modal
+- Check dark/light backgrounds for contrast and legibility.
+- Test on different zoom levels (90–125%).
+- Confirm no layout overlaps on smaller screens (≤1366px width).
+
+## 🛡 Privacy & Permissions
+- Runs locally, does not collect or share data.
+- Only requests permissions necessary to style UCP portal pages.
+
+## 💡 Customization
+- Adjust blur/opacity in `styles/*.css`:
+  - `backdrop-filter: blur(10px);`
+  - `background: rgba(255, 255, 255, 0.15);`
+- Tweak shadows and borders for better contrast:
+  - `box-shadow: 0 8px 24px rgba(0,0,0,0.15);`
+  - `border: 1px solid rgba(255,255,255,0.25);`
+
+## 🗺️ Roadmap
+- Dark mode polish
+- Accessibility pass (contrast, keyboard nav)
+- Per-page toggles (enable/disable features)
+- Performance profiling on low-end machines
+
+## 🤝 Contributing
+PRs welcome! Please:
+1. Open an issue describing the change.
+2. Keep changes scoped and documented.
+3. Test across key pages before submitting.
+
+## 📄 License
+Private repository. If you want to use or adapt this, contact the maintainer for permission.
+
+## 🙌 Credits
+Designed and developed by Raz (raz0229) with love for UCP students.

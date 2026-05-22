@@ -1,0 +1,115 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 3,
+  "name": "UCP Smart Portal",
+  "version": "2.3.6",
+  "description": "Modern UI/UX with built-in additional LMS features designed for UCP Portal",
+
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "UCP Smart Portal"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/enrollment/cards*"],
+      "js": ["js/new_enrollment.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/qa/feedback*"],
+      "js": ["js/student_feedback.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/web/login*"],
+      "js": ["js/homepage.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student*", "https://horizon.ucp.edu.pk/join*", "https://horizon.ucp.edu.pk/election*"],
+      "js": ["js/student.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/dashboard*"],
+      "js": ["js/student_dashboard.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/class/schedule*"],
+      "js": ["js/student_timetable.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/attendance*"],
+      "js": ["js/student_attendance.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/results*"],
+      "js": ["js/student_results.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/invoices*"],
+      "js": ["js/student_invoices.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/societies*"],
+      "js": ["js/student_societies.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/course*"],
+      "js": ["js/course/dockbar.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/course/material*"],
+      "js": ["js/course/course_material.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/course/submission*","https://horizon.ucp.edu.pk/student/course/assessment*", "https://horizon.ucp.edu.pk/student/course/info*", "https://horizon.ucp.edu.pk/student/course/outline*", "https://horizon.ucp.edu.pk/student/course/gradebook*"],
+      "js": ["js/course/course_submission.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/enrolled/courses*"],
+      "js": ["js/student_enrolled.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/course/gradebook*"],
+      "js": ["js/course/course_gradebook.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/exam/datesheet"],
+      "js": ["js/student_datesheet.js"]
+    },
+    {
+    "matches": ["https://horizon.ucp.edu.pk/student/course/material*"],
+      "js": [
+        "js/course/jszip.min.js",
+        "js/course/FileSaver.min.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background/script.js"
+  },
+
+  "permissions": ["storage", "scripting", "tabs"],
+  "icons": {
+          "16": "icons/icon16.png",
+          "32": "icons/icon32.png",
+          "48": "icons/icon48.png",
+          "128": "icons/icon128.png"
+  },
+        
+  "host_permissions": [
+    "https://horizon.ucp.edu.pk/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*", "assets/bgs/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

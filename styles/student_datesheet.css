@@ -1,0 +1,269 @@
+:root {
+    --ucp-ds-radius: 16px;
+    --ucp-ds-accent: #2563eb;
+    --ucp-ds-border: rgba(0,0,0,0.08);
+    --ucp-ds-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    --ucp-ds-glass: rgba(255,255,255,0.65);
+    --ucp-ds-text-dark: #1e293b;
+    --ucp-ds-muted: #64748b;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: linear-gradient(120deg,#f1f5f9,#e0f2fe);
+    color: var(--ucp-ds-text-dark);
+  }
+
+  /* body {
+    margin: 0;
+    padding: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+  } */
+
+  .ucp-ds-shell {
+    width: 100%;
+    max-width: 940px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ucp-ds-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .ucp-ds-card {
+    background: var(--ucp-ds-glass);
+    border-radius: var(--ucp-ds-radius);
+    border: 1px solid var(--ucp-ds-border);
+    box-shadow: var(--ucp-ds-shadow);
+    padding: 18px;
+    flex: 1 1 0;
+    min-width: 280px;
+  }
+
+  .ucp-ds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ucp-ds-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--ucp-ds-muted);
+  }
+
+  /* Countdown */
+  .ucp-ds-count {
+    padding: 10px 14px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    margin-top: 8px;
+    width: fit-content;
+  }
+  .ucp-ds-count--green { background: linear-gradient(90deg,#22c55e,#16a34a); }
+  .ucp-ds-count--orange { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .ucp-ds-count--red { background: linear-gradient(90deg,#ef4444,#f87171); }
+
+  .ucp-ds-remark {
+    margin-top: 8px;
+    font-weight: 600;
+    font-style: italic;
+    color: rgb(129, 131, 132);
+    text-align: center;
+    margin-top: 0.9rem;
+  }
+
+  .ucp-ds-btn {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: var(--ucp-ds-accent);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all .2s;
+    justify-content: center;
+    width: 100%;
+    text-decoration: none !important;
+
+  }
+  .ucp-ds-btn:hover:not(:disabled) { /* :not(:disabled) added */
+    background: var(--ucp-ds-accent);
+    color: white;
+  }
+    /* Style for disabled button */
+    .ucp-ds-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f1f5f9; /* Light background for disabled state */
+        color: var(--ucp-ds-muted);
+    }
+
+  .ucp-ds-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .ucp-ds-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 999px;
+    padding: 6px 10px;
+    border: 1px solid rgba(0,0,0,0.05);
+    font-size: 13px;
+    color: var(--ucp-ds-text-dark);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  }
+
+  .ucp-ds-legend-swatch {
+    width: 24px;
+    height: 14px;
+    border-radius: 6px;
+  }
+
+  /* Calendar */
+  .ucp-ds-calendar {
+    background: var(--ucp-ds-glass);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-radius: var(--ucp-ds-radius);
+    border: 1px solid var(--ucp-ds-border);
+    box-shadow: var(--ucp-ds-shadow);
+    padding: 18px;
+  }
+
+  .ucp-ds-cal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: var(--ucp-ds-text-dark);
+  }
+
+  /* Day Names Row */
+  .ucp-ds-day-names {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--ucp-ds-muted);
+    padding-bottom: 8px; /* Added separation from grid */
+  }
+
+  .ucp-ds-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    /* margin-top: 12px; -- Removed because day-names is added above */
+  }
+
+  .ucp-ds-day {
+    background: rgba(255, 255, 255, 0.708);
+    border-radius: 12px;
+    padding: 10px;
+    min-height: 90px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .ucp-ds-day--muted {
+    background: #f1f5f995;
+    color: #292a2c;
+  }
+    /* New style for collapsed empty days */
+    .ucp-ds-day--empty {
+        /* padding: 4px;  */
+        min-height: auto; /* Remove minimum height */
+        display: flex; /* Keep display flex */
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 10px; /* Smaller text for number */
+        color: var(--ucp-ds-muted);
+        box-shadow: none;
+        background: #f1f5f9; /* Same as muted color */
+        transition: none;
+        cursor: default;
+    }
+    .ucp-ds-day--empty:hover {
+        transform: none; /* Disable hover effect */
+        box-shadow: none;
+    }
+
+  .ucp-ds-day:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  .ucp-ds-exam {
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .ucp-ds-abbrev { font-size: 13px; font-weight: 900; }
+  .ucp-ds-venue {
+    background: #ef4444;
+    color: white;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 11px;
+  }
+  .ucp-ds-ongoing { border: 3px solid #3b82f6; }
+  .ucp-ds-past { opacity: 0.6; filter: grayscale(60%); }
+
+  /* Gradients */
+  .ucp-ds-grad-0 { background: linear-gradient(135deg,#fef3c7,#fde68a); }
+  .ucp-ds-grad-1 { background: linear-gradient(135deg,#d1fae5,#86efac); }
+  .ucp-ds-grad-2 { background: linear-gradient(135deg,#dbf4ff,#7dd3fc); }
+  .ucp-ds-grad-3 { background: linear-gradient(135deg,#fdd6e0,#fbcfe8); }
+  .ucp-ds-grad-4 { background: linear-gradient(135deg,#fde68a,#fbd38d); }
+  .ucp-ds-grad-5 { background: linear-gradient(135deg,#e9d5ff,#c4b5fd); }
+  .ucp-ds-grad-6 { background: linear-gradient(135deg,#fce7f3,#fecdd3); }
+  .ucp-ds-grad-7 { background: linear-gradient(135deg,#c7f9cc,#a7f3d0); }
+
+  /* Tooltip */
+  .ucp-ds-tooltip {
+    position: absolute;
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: none;
+    font-size: 13px;
+    width: 250px;
+    z-index: 100;
+  }
+
+
+  .md-card {
+    display: none;
+  }

@@ -1,0 +1,350 @@
+/* ---------------------------------------------------------
+   GLOBAL ROOT + COLOR SYSTEM
+--------------------------------------------------------- */
+:root {
+  --muted: #000;
+  --glass: rgba(255, 255, 255, 0.6);
+  --card-radius: 22px;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial;
+}
+
+/* ---------------------------------------------------------
+   BACKGROUND BLOBS
+--------------------------------------------------------- */
+.ig-bg-blobs {
+  position: fixed;
+  pointer-events: none;
+  inset: 0;
+  z-index: 0;
+}
+.ig-blob {
+  position: absolute;
+  opacity: 0.55;
+  border-radius: 50%;
+}
+.ig-b1 {
+  width: 360px;
+  height: 360px;
+  background: linear-gradient(135deg, #c7e3ff, #d0f7e2);
+  left: 8%;
+  top: 6%;
+}
+.ig-b2 {
+  width: 260px;
+  height: 260px;
+  background: linear-gradient(135deg, #ffd6a5, #ffe6f0);
+  right: 6%;
+  bottom: 8%;
+}
+
+/* ---------------------------------------------------------
+   MAIN WRAPPER
+--------------------------------------------------------- */
+.ig-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: 2rem auto;
+  max-width: 1200px;
+}
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+.ig-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.ig-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.ig-app-title {
+  font-size: 22px;
+  font-weight: 800;
+}
+.ig-app-sub {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ig-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ig-search {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 20, 40, 0.05);
+  background: rgba(255, 255, 255, 0.7);
+  min-width: 200px;
+}
+
+.ig-sort-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #eef2ff, #f8fbff);
+  cursor: pointer;
+
+}
+
+/* ---------------------------------------------------------
+   GRID
+--------------------------------------------------------- */
+.ig-invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ---------------------------------------------------------
+   CARD BASE
+--------------------------------------------------------- */
+.ig-card {
+  position: relative;
+  border-radius: var(--card-radius);
+  padding: 24px;
+  background: var(--invoice-grad);
+
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  animation: ig-pulse 2s ease-in-out infinite;
+}
+
+.ig-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.14);
+}
+
+/* frosted overlay */
+.ig-glass-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   TOP BLOCK
+--------------------------------------------------------- */
+.ig-card .ig-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ig-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, #f3f8ff, #ffffff);
+  font-weight: 700;
+  font-size: 13px;
+
+}
+
+/* ---------------------------------------------------------
+   STATUS PILL
+--------------------------------------------------------- */
+.ig-status-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.ig-status-paid {
+  background: rgba(0, 255, 170, 0.35);
+  color: #005b3c;
+}
+
+.ig-status-due {
+  background: rgba(255, 102, 102, 0.35);
+  color: #8a0000;
+}
+
+/* ---------------------------------------------------------
+   METADATA SECTION
+--------------------------------------------------------- */
+.ig-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+}
+.ig-meta .ig-m {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.ig-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent);
+}
+
+/* ---------------------------------------------------------
+   BUTTONS
+--------------------------------------------------------- */
+.ig-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ig-btn {
+
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 13px;
+}
+
+.ig-btn:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.ig-btn.disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  filter: grayscale(0.2);
+}
+
+/* ---------------------------------------------------------
+   PAID INVOICES: DULL BY DEFAULT
+--------------------------------------------------------- */
+.ig-card.ig-paid {
+  opacity: 0.1; /* very dull */
+  filter: grayscale(0.9) brightness(0.3) contrast(0.55); /* heavily muted */
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto; /* buttons remain interactive */
+  animation: none;
+}
+
+/* ---------------------------------------------------------
+   HOVER: PAID LOOKS EXACTLY LIKE DRAFT CARDS (Updated)
+--------------------------------------------------------- */
+.ig-card.ig-paid:hover {
+  /* These lines ensure the paid card is fully vibrant and readable on hover, 
+     matching the look of a non-paid card. */
+  opacity: 1 !important;
+  filter: none !important;
+
+  /* Retain the hover animation */
+  transform: translateY(-6px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.14);
+}
+
+/* Buttons fully vibrant on hover */
+.ig-card.ig-paid:hover .ig-btn {
+  opacity: 1;
+  filter: none;
+}
+
+/* Shimmer overlay for glass effect */
+.ig-card.ig-paid::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ig-card.ig-paid:hover::before {
+  opacity: 1;
+  animation: shimmerMove 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmerMove {
+  0% {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(300%) rotate(25deg);
+  }
+}
+@keyframes ig-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+@media (max-width: 980px) {
+  .ig-invoice-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .ig-invoice-grid {
+    grid-template-columns: 1fr;
+  }
+  .ig-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ig-search {
+    width: 100%;
+  }
+}
+
+/* Hide old container */
+#page_content_inner {
+  display: none !important;
+}

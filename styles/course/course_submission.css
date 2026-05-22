@@ -1,0 +1,271 @@
+.md-card {
+    background: rgba(255,255,255,0.25) !important;
+    border: 1px solid rgba(255,255,255,0.4) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;
+    padding: 20px 25px !important;
+    transition: all .3s ease !important;
+  }
+
+  .md-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.12) !important;
+  }
+
+  .uk-tab {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    border-bottom: none !important;
+    margin-bottom: 25px !important;
+  }
+  .uk-tab li a {
+    display: inline-block !important;
+    background: rgba(255,255,255,0.4) !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    text-decoration: none !important;
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    transition: all .3s ease !important;
+  }
+  .uk-tab li.uk-active a,
+  .uk-tab li a:hover {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6) !important;
+    color: #fff !important;
+    box-shadow: 0 0 10px rgba(37,99,235,0.3) !important;
+  }
+
+  .uk-overflow-container {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: rgba(255,255,255,0.35) !important;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05) !important;
+  }
+
+  table.uk-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    text-align: left !important;
+  }
+  thead tr {
+    background: linear-gradient(90deg, #60a5fa, #2563eb) !important;
+    color: #fff !important;
+  }
+  th, td {
+    padding: 14px 18px !important;
+        text-wrap: auto !important;
+        align-content: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+  }
+  td {    text-wrap: auto !important;}
+  tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease !important;
+  }
+  tbody tr:hover {
+    background: rgba(255,255,255,0.25) !important;
+    transform: scale(1.01) !important;
+  }
+
+  .btn.btn-primary.upload_submission {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #34d399, #10b981) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 10px rgba(16,185,129,0.3) !important;
+    transition: all 0.3s ease !important;
+  }
+  .btn.btn-primary.upload_submission:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.4) !important;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+  }
+
+  th, td p {
+    margin: 0 !important;
+  }
+
+   .course-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .course-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .course-code {
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+
+
+
+/* Modal specific styling (prefixed with #studentSubmission) */
+  #studentSubmission.modal.fade.show {
+    background: rgba(15, 23, 42, 0.45) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    animation: fadeIn 0.4s ease !important;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0 !important; transform: scale(0.97) !important; }
+    to { opacity: 1 !important; transform: scale(1) !important; }
+  }
+
+  #studentSubmission .modal-dialog.modal-dialog-centered.modal-xl {
+    max-width: 1000px !important;
+    left: 5%;
+  }
+
+  #studentSubmission .modal-content {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
+    overflow: hidden !important;
+    animation: slideUp 0.5s ease !important;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(10px) !important; opacity: 0 !important; }
+    to { transform: translateY(0) !important; opacity: 1 !important; }
+  }
+
+  #studentSubmission .modal-header {
+    background: linear-gradient(90deg, #60a5fa, #2563eb) !important;
+    color: #fff !important;
+    border-bottom: none !important;
+    padding: 20px 24px !important;
+  }
+
+  #studentSubmission .modal-title {
+    font-weight: 700 !important;
+    font-size: 1.4rem !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  #studentSubmission .btn-close {
+    background: rgba(255,255,255,0.8) !important;
+    border-radius: 50% !important;
+    border: none !important;
+    width: 28px !important;
+    height: 28px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+  }
+  #studentSubmission .btn-close:hover {
+    background: rgba(255,255,255,1) !important;
+    transform: rotate(90deg) !important;
+  }
+
+  #studentSubmission .modal-body {
+    padding: 25px 30px !important;
+    color: #1e293b !important;
+  }
+
+  #studentSubmission .container-fluid .d-flex {
+    margin: 10px 0 !important;
+    padding: 10px !important;
+    text-align: center;
+    align-items: center;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,0.35) !important;
+  }
+
+  #studentSubmission .w-25 {
+    font-weight: 600 !important;
+    color: #334155 !important;
+  }
+
+  #studentSubmission .w-75 {
+    color: #2563eb !important;
+    font-weight: 500 !important;
+    margin-left: 1rem;
+  }
+
+  #studentSubmission hr {
+    border: none !important;
+    height: 1px !important;
+    background: rgba(37,99,235,0.3) !important;
+    margin: 20px 0 !important;
+  }
+
+  #studentSubmission table.table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background: rgba(255,255,255,0.4) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+  #studentSubmission table.table thead tr {
+    background: linear-gradient(90deg, #93c5fd, #2563eb) !important;
+    color: white !important;
+  }
+  #studentSubmission table.table th,
+  #studentSubmission table.table td {
+    padding: 14px 18px !important;
+    text-align: left !important;
+  }
+  #studentSubmission table.table tbody tr {
+    transition: background 0.3s ease !important;
+  }
+  #studentSubmission table.table tbody tr:hover {
+    background: rgba(255,255,255,0.3) !important;
+  }
+
+  #studentSubmission #add_submission_attachment.btn.btn-primary.btn-sm {
+    background: linear-gradient(135deg, #34d399, #10b981) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    margin-top: 10px !important;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.3) !important;
+    transition: all 0.3s ease !important;
+  }
+  #studentSubmission #add_submission_attachment.btn.btn-primary.btn-sm:hover {
+    transform: scale(1.05) !important;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.4) !important;
+  }
+
+  #studentSubmission .modal-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    background: rgba(255,255,255,0.25) !important;
+    border-top: none !important;
+    padding: 20px 30px !important;
+  }
+
+  #studentSubmission #submit_attachment.md-btn.md-btn-success {
+    background: linear-gradient(90deg, #22c55e, #16a34a) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 24px !important;
+    color: white !important;
+    width: 100% !important;
+    height: auto !important;
+    font-weight: 600 !important;
+    box-shadow: 0 3px 10px rgba(34,197,94,0.4) !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+  }
+  #studentSubmission #submit_attachment.md-btn.md-btn-success:hover {
+    background: linear-gradient(90deg, #16a34a, #22c55e) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 5px 15px rgba(34,197,94,0.5) !important;
+  }
+
+    

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --glass-shadow: rgba(0, 0, 0, 0.08);
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+            
+            --course-1: #3b82f6;
+            --course-2: #8b5cf6;
+            --course-3: #ec4899;
+            --course-4: #f59e0b;
+            --course-5: #10b981;
+            --course-6: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .ai-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .ai-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .courses-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .course-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .course-title {
+            flex: 1;
+        }
+
+        .course-title h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .course-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.coreq {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .sections {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .section.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .section.enrolled {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-name {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.open {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.enrolled {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .schedule {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .schedule-item .material-icons {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .enroll-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .enroll-btn:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .enroll-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .enrolled-section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out backwards;
+            animation-delay: 0.2s;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .courses-section {
+            min-width: 0;
+        }
+
+        .timetable-wrapper {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .enrolled-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .enrolled-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .enrolled-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            min-height: 40px;
+        }
+
+        .enrolled-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .enrolled-tag .remove-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .enrolled-tag .remove-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .enrolled-tag .material-icons {
+            font-size: 14px;
+        }
+
+        .timetable-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            animation: fadeInUp 0.6s ease-out backwards;
+            animation-delay: 0.3s;
+        }
+
+        .timetable-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timetable-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .timetable-container {
+            overflow-x: auto;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+        }
+
+        .spinner-circle {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .timetable th {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .timetable th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .timetable th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .timetable td {
+            padding: 0.5rem;
+            text-align: center;
+            min-width: 100px;
+            height: 80px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .timetable td:first-child {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.7);
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .timetable-cell {
+            background: var(--course-1);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .timetable-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .timetable-cell .course-abbr {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .timetable-cell .room-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.625rem;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .toast .material-icons {
+            font-size: 24px;
+        }
+
+        .toast.success .material-icons {
+            color: var(--success);
+        }
+
+        .toast.error .material-icons {
+            color: var(--error);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .course-select {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .course-checkbox:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .course-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .preference-select {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .preference-option {
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preference-option:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .preference-option input[type="radio"] {
+            display: none;
+        }
+
+        .preference-option input[type="radio"]:checked + label {
+            font-weight: 600;
+        }
+
+        .preference-option.selected {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .timetable-wrapper {
+                position: static;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .ai-button {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .preference-select {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Course Enrollment</h1>
+            <p>Select your courses for 6th Semester</p>
+        </div>
+
+        <div class="enrolled-section">
+            <div class="enrolled-header">
+                <span class="material-icons" style="color: var(--success);">check_circle</span>
+                <h2>Enrolled Courses</h2>
+            </div>
+            <div class="enrolled-list" id="enrolledList">
+                <span style="color: var(--text-secondary); font-size: 0.875rem;">No courses enrolled yet</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="courses-section">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <span class="material-icons" style="color: var(--primary);">school</span>
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Available Courses</h2>
+                </div>
+                <div class="courses-grid" id="coursesGrid"></div>
+            </div>
+
+            <div class="timetable-wrapper">
+                <div class="timetable-section">
+                    <div class="timetable-header">
+                        <span class="material-icons" style="color: var(--primary);">calendar_today</span>
+                        <h2>Weekly Timetable</h2>
+                    </div>
+                    <div class="timetable-container" id="timetableContainer">
+                        <div class="spinner">
+                            <div class="spinner-circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="ai-button" onclick="openAIModal()">
+        <span class="material-icons">psychology</span>
+        Let AI Decide
+    </button>
+
+    <div class="modal" id="aiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="material-icons" style="color: var(--primary);">psychology</span>
+                <h3>AI Course Selection</h3>
+                <button class="modal-close" onclick="closeAIModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Select Courses to Enroll</label>
+                <div class="course-select" id="aiCourseSelect"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Your Preference</label>
+                <div class="preference-select">
+                    <div class="preference-option" onclick="selectPreference('days-off')">
+                        <span class="material-icons">weekend</span>
+                        <input type="radio" name="preference" value="days-off" id="pref-days">
+                        <label for="pref-days">Days Off</label>
+                    </div>
+                    <div class="preference-option" onclick="selectPreference('morning')">
+                        <span class="material-icons">wb_sunny</span>
+                        <input type="radio" name="preference" value="morning" id="pref-morning">
+                        <label for="pref-morning">Morning</label>
+                    </div>
+                    <div class="preference-option" onclick="selectPreference('evening')">
+                        <span class="material-icons">nights_stay</span>
+                        <input type="radio" name="preference" value="evening" id="pref-evening">
+                        <label for="pref-evening">Evening</label>
+                    </div>
+                    <div class="preference-option" onclick="selectPreference('no-gaps')">
+                        <span class="material-icons">view_agenda</span>
+                        <input type="radio" name="preference" value="no-gaps" id="pref-nogaps">
+                        <label for="pref-nogaps">No Gaps</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeAIModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="processAISelection()">
+                    <span class="material-icons" style="font-size: 20px;">auto_awesome</span>
+                    Generate Schedule
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const toEnroll = [
+            {
+                courseName: "Computer Vision - Lab",
+                semester: "6th Semester",
+                type: "Core Course",
+                coreq: "Computer Vision",
+                availableSections: [
+                    {
+                        sectionName: "AF1",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Wed", startTime: "08:00", endTime: "08:55", class: "A-CL001" },
+                            { day: "Wed", startTime: "09:00", endTime: "09:55", class: "A-CL001" },
+                            { day: "Wed", startTime: "10:00", endTime: "10:55", class: "A-CL001" }
+                        ]
+                    },
+                    {
+                        sectionName: "AF2",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Thu", startTime: "08:00", endTime: "08:55", class: "A-CL001" },
+                            { day: "Thu", startTime: "09:00", endTime: "09:55", class: "A-CL001" },
+                            { day: "Thu", startTime: "10:00", endTime: "10:55", class: "A-CL001" }
+                        ]
+                    }
+                ]
+            },
+            {
+                courseName: "Knowledge Representation and Reasoning",
+                semester: "6th Semester",
+                type: "Core Course",
+                coreq: "['Nill']",
+                availableSections: [
+                    {
+                        sectionName: "AF1",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Mon", startTime: "12:00", endTime: "12:55", class: "C-116" },
+                            { day: "Mon", startTime: "13:00", endTime: "13:55", class: "C-116" },
+                            { day: "Thu", startTime: "13:00", endTime: "13:55", class: "C-117" }
+                        ]
+                    },
+                    {
+                        sectionName: "AF2",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Tue", startTime: "12:00", endTime: "12:55", class: "C-306" },
+                            { day: "Wed", startTime: "12:00", endTime: "12:55", class: "C-306" },
+                            { day: "Tue", startTime: "13:00", endTime: "13:55", class: "C-306" }
+                        ]
+                    }
+                ]
+            },
+            {
+                courseName: "Computer Vision",
+                semester: "6th Semester",
+                type: "Core Course",
+                coreq: "Computer Vision - Lab",
+                availableSections: [
+                    {
+                        sectionName: "AF2",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Fri", startTime: "11:00", endTime: "11:55", class: "C-117" },
+                            { day: "Fri", startTime: "12:00", endTime: "12:55", class: "C-117" }
+                        ]
+                    },
+                    {
+                        sectionName: "AF1",
+                        status: "Open",
+                        enrollButtonLink: "",
+                        classSchedule: [
+                            { day: "Tue", startTime: "11:00", endTime: "11:55", class: "C-117" },
+                            { day: "Tue", startTime: "12:00", endTime: "12:55", class: "C-117" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const enrolledCourses = [];
+        let timetableData = {};
+        const courseColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'];
+
+        function getCourseColor(courseName) {
+            const index = enrolledCourses.findIndex(c => c.courseName === courseName);
+            return courseColors[index % courseColors.length];
+        }
+
+        function getCourseAbbr(courseName) {
+            return courseName.split(' ')
+                .map(word => word[0])
+                .filter(char => char && char.toUpperCase() === char)
+                .join('');
+        }
+
+        function showToast(message, type = 'success') {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="material-icons">${type === 'success' ? 'check_circle' : 'error'}</span>
+                <div>
+                    <div style="font-weight: 600;">${type === 'success' ? 'Success' : 'Error'}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">${message}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function checkConflict(schedule1, schedule2) {
+            for (let slot1 of schedule1) {
+                for (let slot2 of schedule2) {
+                    if (slot1.day === slot2.day) {
+                        const start1 = parseInt(slot1.startTime.replace(':', ''));
+                        const end1 = parseInt(slot1.endTime.replace(':', ''));
+                        const start2 = parseInt(slot2.startTime.replace(':', ''));
+                        const end2 = parseInt(slot2.endTime.replace(':', ''));
+
+                        if ((start1 < end2 && end1 > start2) || (start2 < end1 && end2 > start1)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function hasConflictWithEnrolled(schedule) {
+            for (let enrolled of enrolledCourses) {
+                if (checkConflict(schedule, enrolled.schedule)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        async function fetchTimetable() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const timetable = {};
+                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                    const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+
+                    days.forEach(day => {
+                        timetable[day] = {};
+                        times.forEach(time => {
+                            timetable[day][time] = null;
+                        });
+                    });
+
+                    enrolledCourses.forEach(course => {
+                        course.schedule.forEach(slot => {
+                            if (timetable[slot.day] && timetable[slot.day][slot.startTime] !== undefined) {
+                                timetable[slot.day][slot.startTime] = {
+                                    courseName: course.courseName,
+                                    class: slot.class,
+                                    startTime: slot.startTime,
+                                    endTime: slot.endTime
+                                };
+                            }
+                        });
+                    });
+
+                    resolve(timetable);
+                }, 1000);
+            });
+        }
+
+        async function updateTimetable() {
+            const container = document.getElementById('timetableContainer');
+            container.innerHTML = '<div class="spinner"><div class="spinner-circle"></div></div>';
+
+            timetableData = await fetchTimetable();
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+
+            let tableHTML = '<table class="timetable"><thead><tr><th>Time</th>';
+            days.forEach(day => {
+                tableHTML += `<th>${day}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            times.forEach(time => {
+                tableHTML += `<tr><td>${time}</td>`;
+                days.forEach(day => {
+                    const slot = timetableData[day][time];
+                    if (slot) {
+                        const color = getCourseColor(slot.courseName);
+                        const abbr = getCourseAbbr(slot.courseName);
+                        tableHTML += `
+                            <td>
+                                <div class="timetable-cell" 
+                                     style="background: ${color};"
+                                     onmouseenter="showTooltip(event, '${slot.courseName}', '${slot.startTime} - ${slot.endTime}')"
+                                     onmouseleave="hideTooltip()">
+                                    <div class="course-abbr">${abbr}</div>
+                                    <div class="room-badge">${slot.class}</div>
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        tableHTML += '<td></td>';
+                    }
+                });
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
+        }
+
+        function showTooltip(event, courseName, timeRange) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = `<strong>${courseName}</strong><br>${timeRange}`;
+            tooltip.classList.add('show');
+            
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.left = rect.left + rect.width / 2 + 'px';
+            tooltip.style.top = rect.top - 10 + 'px';
+            tooltip.style.transform = 'translate(-50%, -100%)';
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        function updateEnrolledList() {
+            const list = document.getElementById('enrolledList');
+            if (enrolledCourses.length === 0) {
+                list.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.875rem;">No courses enrolled yet</span>';
+            } else {
+                list.innerHTML = enrolledCourses.map(course => `
+                    <div class="enrolled-tag">
+                        <span>${course.courseName} (${course.sectionName})</span>
+                        <button class="remove-btn" onclick="removeCourse('${course.courseName}', '${course.sectionName}')">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function removeCourse(courseName, sectionName) {
+            // Simulate POST request
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const index = enrolledCourses.findIndex(c => c.courseName === courseName && c.sectionName === sectionName);
+            if (index !== -1) {
+                enrolledCourses.splice(index, 1);
+                updateEnrolledList();
+                await updateTimetable();
+                renderCourses();
+                showToast(`Removed ${courseName}`, 'success');
+            }
+        }
+
+        async function enrollInSection(courseName, section) {
+            const course = toEnroll.find(c => c.courseName === courseName);
+
+            // Check if already enrolled in this course
+            const alreadyEnrolled = enrolledCourses.some(c => c.courseName === courseName);
+            if (alreadyEnrolled) {
+                showToast('Already enrolled in this course', 'error');
+                return;
+            }
+
+            // Check for conflicts
+            if (hasConflictWithEnrolled(section.classSchedule)) {
+                showToast('Schedule conflict with enrolled courses', 'error');
+                return;
+            }
+
+            // Handle co-requisite enrollment
+            let coreqCourse = null;
+            let coreqSection = null;
+
+            if (course.coreq && !course.coreq.includes('Nill')) {
+                const coreqEnrolled = enrolledCourses.some(c => c.courseName === course.coreq);
+                
+                if (!coreqEnrolled) {
+                    // Find the co-req course
+                    coreqCourse = toEnroll.find(c => c.courseName === course.coreq);
+                    
+                    if (coreqCourse) {
+                        // Find a suitable section for the co-req that doesn't conflict
+                        for (let coreqSec of coreqCourse.availableSections) {
+                            if (coreqSec.status !== 'Open') continue;
+                            
+                            // Check for conflicts with current section and enrolled courses
+                            const allSchedules = [...section.classSchedule];
+                            let hasConflict = false;
+                            
+                            // Check conflict with the section we're trying to enroll
+                            if (checkConflict(coreqSec.classSchedule, section.classSchedule)) {
+                                continue;
+                            }
+                            
+                            // Check conflict with already enrolled courses
+                            if (hasConflictWithEnrolled(coreqSec.classSchedule)) {
+                                continue;
+                            }
+                            
+                            // Found a suitable section
+                            coreqSection = coreqSec;
+                            break;
+                        }
+                        
+                        if (!coreqSection) {
+                            showToast(`No available section for co-requisite: ${course.coreq}`, 'error');
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // Simulate enrollment request
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            // Enroll in the main course
+            enrolledCourses.push({
+                courseName: courseName,
+                sectionName: section.sectionName,
+                schedule: section.classSchedule
+            });
+
+            // Enroll in co-req if needed
+            if (coreqSection) {
+                enrolledCourses.push({
+                    courseName: coreqCourse.courseName,
+                    sectionName: coreqSection.sectionName,
+                    schedule: coreqSection.classSchedule
+                });
+                showToast(`Enrolled in ${courseName} (${section.sectionName}) and co-requisite ${coreqCourse.courseName} (${coreqSection.sectionName})`, 'success');
+            } else {
+                showToast(`Enrolled in ${courseName} (${section.sectionName})`, 'success');
+            }
+
+            updateEnrolledList();
+            await updateTimetable();
+            renderCourses();
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('coursesGrid');
+            grid.innerHTML = toEnroll.map((course, index) => {
+                const hasCoreq = course.coreq && !course.coreq.includes('Nill');
+                const isEnrolled = enrolledCourses.some(c => c.courseName === course.courseName);
+
+                return `
+                    <div class="course-card" style="animation-delay: ${index * 0.1}s;">
+                        <div class="course-header">
+                            <div class="course-title">
+                                <h3>${course.courseName}</h3>
+                                <div class="course-meta">
+                                    <span class="badge">
+                                        <span class="material-icons" style="font-size: 14px;">school</span>
+                                        ${course.type}
+                                    </span>
+                                    ${hasCoreq ? `
+                                        <span class="badge coreq">
+                                            <span class="material-icons" style="font-size: 14px;">link</span>
+                                            Co-req: ${course.coreq}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sections">
+                            ${course.availableSections.map(section => {
+                                const hasConflict = hasConflictWithEnrolled(section.classSchedule);
+                                const sectionEnrolled = enrolledCourses.some(c => 
+                                    c.courseName === course.courseName && c.sectionName === section.sectionName
+                                );
+                                const isDisabled = section.status !== 'Open' || hasConflict || (isEnrolled && !sectionEnrolled);
+
+                                return `
+                                    <div class="section ${isDisabled ? 'disabled' : ''} ${sectionEnrolled ? 'enrolled' : ''}">
+                                        <div class="section-header">
+                                            <div class="section-name">
+                                                <span class="material-icons" style="font-size: 20px;">class</span>
+                                                Section ${section.sectionName}
+                                            </div>
+                                            <span class="status-badge ${sectionEnrolled ? 'enrolled' : section.status.toLowerCase()}">
+                                                ${sectionEnrolled ? 'Enrolled' : section.status}
+                                            </span>
+                                        </div>
+                                        <div class="schedule">
+                                            ${section.classSchedule.map(slot => `
+                                                <div class="schedule-item">
+                                                    <span class="material-icons">schedule</span>
+                                                    ${slot.day} ${slot.startTime}-${slot.endTime}
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        <button class="enroll-btn" 
+                                                onclick="enrollInSection('${course.courseName}', ${JSON.stringify(section).replace(/"/g, '&quot;')})"
+                                                ${isDisabled ? 'disabled' : ''}>
+                                            <span class="material-icons" style="font-size: 18px;">
+                                                ${sectionEnrolled ? 'check_circle' : hasConflict ? 'block' : 'add_circle'}
+                                            </span>
+                                            ${sectionEnrolled ? 'Enrolled' : hasConflict ? 'Time Conflict' : 'Enroll'}
+                                        </button>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAIModal() {
+            const modal = document.getElementById('aiModal');
+            const courseSelect = document.getElementById('aiCourseSelect');
+            
+            courseSelect.innerHTML = toEnroll.map(course => `
+                <label class="course-checkbox">
+                    <input type="checkbox" value="${course.courseName}" 
+                           ${enrolledCourses.some(c => c.courseName === course.courseName) ? 'checked disabled' : ''}>
+                    <span>${course.courseName}</span>
+                </label>
+            `).join('');
+
+            modal.classList.add('show');
+        }
+
+        function closeAIModal() {
+            const modal = document.getElementById('aiModal');
+            modal.classList.remove('show');
+        }
+
+        function selectPreference(preference) {
+            document.querySelectorAll('.preference-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.querySelector(`input[value="${preference}"]`).checked = true;
+        }
+
+        async function processAISelection() {
+            const selectedCourses = Array.from(document.querySelectorAll('#aiCourseSelect input:checked'))
+                .map(input => input.value);
+            const preference = document.querySelector('input[name="preference"]:checked')?.value;
+
+            if (selectedCourses.length === 0) {
+                showToast('Please select at least one course', 'error');
+                return;
+            }
+
+            if (!preference) {
+                showToast('Please select a preference', 'error');
+                return;
+            }
+
+            closeAIModal();
+            showToast('AI is analyzing optimal schedule...', 'success');
+
+            // Simulate AI processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Simple AI logic based on preference
+            for (let courseName of selectedCourses) {
+                if (enrolledCourses.some(c => c.courseName === courseName)) continue;
+
+                const course = toEnroll.find(c => c.courseName === courseName);
+                let bestSection = null;
+
+                for (let section of course.availableSections) {
+                    if (section.status !== 'Open') continue;
+                    if (hasConflictWithEnrolled(section.classSchedule)) continue;
+
+                    if (!bestSection) {
+                        bestSection = section;
+                        continue;
+                    }
+
+                    // Apply preference logic
+                    if (preference === 'morning') {
+                        const sectionAvgTime = section.classSchedule.reduce((sum, slot) => 
+                            sum + parseInt(slot.startTime.split(':')[0]), 0) / section.classSchedule.length;
+                        const bestAvgTime = bestSection.classSchedule.reduce((sum, slot) => 
+                            sum + parseInt(slot.startTime.split(':')[0]), 0) / bestSection.classSchedule.length;
+                        
+                        if (sectionAvgTime < bestAvgTime) {
+                            bestSection = section;
+                        }
+                    } else if (preference === 'evening') {
+                        const sectionAvgTime = section.classSchedule.reduce((sum, slot) => 
+                            sum + parseInt(slot.startTime.split(':')[0]), 0) / section.classSchedule.length;
+                        const bestAvgTime = bestSection.classSchedule.reduce((sum, slot) => 
+                            sum + parseInt(slot.startTime.split(':')[0]), 0) / bestSection.classSchedule.length;
+                        
+                        if (sectionAvgTime > bestAvgTime) {
+                            bestSection = section;
+                        }
+                    } else if (preference === 'days-off') {
+                        const sectionDays = new Set(section.classSchedule.map(s => s.day)).size;
+                        const bestDays = new Set(bestSection.classSchedule.map(s => s.day)).size;
+                        
+                        if (sectionDays < bestDays) {
+                            bestSection = section;
+                        }
+                    }
+                }
+
+                if (bestSection) {
+                    enrolledCourses.push({
+                        courseName: courseName,
+                        sectionName: bestSection.sectionName,
+                        schedule: bestSection.classSchedule
+                    });
+                }
+            }
+
+            updateEnrolledList();
+            await updateTimetable();
+            renderCourses();
+            showToast(`AI successfully enrolled you in ${selectedCourses.length} course(s)`, 'success');
+        }
+
+        // Initialize
+        renderCourses();
+        updateTimetable();
+    </script>
+</body>
+</html>

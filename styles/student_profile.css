@@ -1,0 +1,395 @@
+.uk-width-large-3-10 {
+    display: none;
+}
+.uk-width-large-7-10 {
+    width: 100% !important;
+}
+button.profile_default_fields {
+  margin: 1rem;
+}
+#user_profile .uk-tab > li.uk-active > a {
+  border: none !important;
+  box-shadow: none !important;
+}
+#user_profile div.md-list-addon-element {
+  display: flex;
+  justify-content: end;
+}
+#user_profile i.md-list-addon-icon {
+  font-size: 2rem;
+}
+
+/* Glassmorphic Profile Redesign */
+#user_profile {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+#user_profile .md-card {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+#user_profile .md-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.8), 
+    transparent
+  );
+}
+
+
+/* Header Section */
+#user_profile .user_heading {
+  background: linear-gradient(135deg, 
+    rgba(153, 27, 30, 0.1) 0%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    rgba(153, 27, 30, 0.05) 100%);
+  padding: 40px 30px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+#user_profile .user_heading::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, 
+    rgba(153, 27, 30, 0.1) 0%, 
+    transparent 70%);
+}
+
+/* Avatar Styling */
+#user_profile .user_heading_avatar .thumbnail {
+  /* background: rgba(255, 255, 255, 0.6);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  padding: 4px; */
+  border: none;
+  border-radius: unset;
+  background: none;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+#user_profile .user_heading_avatar {
+  float: right;
+}
+
+#user_profile .user_heading_avatar img {
+  border-radius: 10px;
+  border: solid 4px darkslategrey;
+}
+
+
+/* Heading Content */
+#user_profile .user_heading_content h2 {
+  color: #f4f4f4;
+  font-weight: 700;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+#user_profile .user_heading_content .sub-heading {
+  color: #f4f4f4;
+  font-size: 1.1rem;
+  display: block;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+/* Stats Grid */
+#user_profile .user_stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+#user_profile .user_stats li {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#user_profile .user_stats li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+#user_profile .user_stats li:hover::before {
+  left: 100%;
+}
+
+#user_profile .user_stats li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+#user_profile .user_stats .heading_a {
+  color: #000000b9;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Edit Buttons */
+#user_profile .md-fab {
+  background: linear-gradient(135deg, #991B1E, #c53030) !important;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 
+    0 4px 16px rgba(153, 27, 30, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#user_profile .md-fab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.4), 
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+#user_profile .md-fab:hover::before {
+  left: 100%;
+}
+
+#user_profile .md-fab:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 
+    0 8px 24px rgba(153, 27, 30, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Tabs */
+#user_profile .uk-tab {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 8px;
+  margin: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#user_profile .uk-tab > li > a {
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: #4a5568;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#user_profile .uk-tab > li.uk-active > a {
+  background: rgba(153, 27, 30, 0.1);
+  color: #991B1E;
+  box-shadow: 0 2px 8px rgba(153, 27, 30, 0.2);
+}
+
+#user_profile .uk-tab > li > a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #991B1E, #c53030);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+#user_profile .uk-tab > li.uk-active > a::before {
+  width: 80%;
+}
+
+/* Content Sections */
+#user_profile .user_content {
+  padding: 0 30px 30px;
+}
+
+#user_profile .heading_c {
+  color: #2d3748;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  padding-left: 16px;
+}
+
+#user_profile .heading_c::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #991B1E, #c53030);
+  border-radius: 2px;
+}
+
+/* List Items */
+#user_profile .md-list {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#user_profile .md-list-addon li {
+  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+#user_profile .md-list-addon li:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+#user_profile .md-list-addon-element {
+  background: linear-gradient(135deg, #991B1E, #c53030);
+  border-radius: 10px;
+  padding: 12px;
+  margin-right: 16px;
+  box-shadow: 0 4px 12px rgba(153, 27, 30, 0.3);
+}
+
+#user_profile .md-list-addon-icon {
+  color: white !important;
+  font-size: 1.2rem;
+}
+
+#user_profile .md-list-heading {
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+#user_profile .uk-text-muted {
+  color: #718096 !important;
+  font-size: 0.9rem;
+}
+
+/* Input Fields */
+#user_profile .md-input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+#user_profile .md-input:focus {
+  outline: none;
+  border-color: #991B1E;
+  box-shadow: 0 0 0 3px rgba(153, 27, 30, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #user_profile .user_heading {
+    padding: 30px 20px 20px;
+    text-align: center;
+  }
+  
+  #user_profile .user_stats {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  #user_profile .uk-tab {
+    margin: 15px;
+    padding: 6px;
+  }
+  
+  #user_profile .uk-tab > li > a {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  #user_profile .user_content {
+    padding: 0 20px 20px;
+  }
+  
+  #user_profile .md-list-addon li {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  #user_profile .user_heading_content h2 {
+    font-size: 1.8rem;
+  }
+  
+  #user_profile .user_stats li {
+    padding: 15px;
+  }
+  
+  #user_profile .uk-tab {
+    flex-direction: column;
+  }
+  
+  #user_profile .uk-tab > li {
+    margin-bottom: 8px;
+  }
+}
+
+/* Loading Animation */
+#user_profile .thumbnail img {
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Smooth transitions for edit mode */
+#user_profile .profile_edit_fields,
+#user_profile .profile_default_fields {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

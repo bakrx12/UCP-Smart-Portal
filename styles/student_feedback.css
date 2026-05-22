@@ -1,0 +1,263 @@
+/* ---------- Button Attention Animations ---------- */
+@keyframes soft-bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes glow-pulse {
+    0% {
+        box-shadow: 0 0 0 rgba(106,92,255,0.0),
+                    0 8px 20px rgba(0,0,0,0.28);
+    }
+    50% {
+        box-shadow: 0 0 32px rgba(106,92,255,0.50),
+                    0 16px 40px rgba(0,0,0,0.32);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(106,92,255,0.0),
+                    0 8px 20px rgba(0,0,0,0.28);
+    }
+}
+
+/* ---------- Wrapper ---------- */
+#skip-survey-wrapper {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 99999;
+}
+
+/* ---------- Button ---------- */
+#skip-surveys-btn {
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 28px;
+    background: linear-gradient(135deg, #6a5cff, #9b87ff);
+    color: white;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    position: relative;
+
+    animation:
+        soft-bounce 1.6s infinite ease-in-out,
+        glow-pulse 2.2s infinite ease-in-out;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+#skip-surveys-btn:hover:not(:disabled) {
+    transform: translateY(-4px) scale(1.04);
+    filter: brightness(1.03);
+}
+
+#skip-surveys-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+#skip-surveys-btn:disabled {
+    background: linear-gradient(135deg, #9a97b9, #7b788d);
+    cursor: not-allowed;
+    animation: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+/* ---------- Button Content ---------- */
+.btn-icon {
+    font-size: 28px;
+}
+
+.btn-text {
+    letter-spacing: 0.3px;
+}
+
+.btn-loader {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+#skip-surveys-btn:disabled .btn-loader {
+    display: inline-block;
+}
+
+#skip-surveys-btn:disabled .btn-text,
+#skip-surveys-btn:disabled .btn-icon {
+    opacity: 0.6;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------- Tooltip (JS-controlled visibility) ---------- */
+#survey-tooltip {
+    position: absolute;
+    bottom: 84px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    width: 200px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.2),
+        0 0 0 1px rgba(0,0,0,0.04);
+
+    font-family: 'Roboto', Arial, sans-serif;
+
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+}
+
+/* visibility classes toggled by JS */
+#skip-survey-wrapper.tooltip-visible #survey-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#skip-survey-wrapper.tooltip-hidden #survey-tooltip {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.tooltip-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* ---------- Tooltip Options ---------- */
+#survey-tooltip label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    cursor: pointer;
+    color: #444;
+    font-size: 14px;
+}
+
+#survey-tooltip label:hover {
+    color: #6a5cff;
+}
+
+#survey-tooltip input[type="radio"] {
+    accent-color: #6a5cff;
+    cursor: pointer;
+}
+
+/* ---------- Overlay ---------- */
+#survey-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: block;
+    pointer-events: auto;
+}
+
+#survey-overlay .overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.62);
+}
+
+/* center message */
+#survey-overlay .overlay-center {
+    z-index: 9;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 720px;
+    width: calc(100% - 60px);
+    text-align: center;
+    color: #fff;
+    padding: 28px 24px;
+    pointer-events: none; /* clicking overlay still closes since parent listens for clicks */
+}
+
+#survey-overlay .overlay-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+#survey-overlay .overlay-sub {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 6px;
+}
+
+#survey-overlay .overlay-hint {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-top: 10px;
+}
+
+/* spotlight circle that highlights the button */
+#survey-overlay .overlay-spotlight {
+    position: fixed;
+    bottom: -150px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.62); /* darken outside the circle visually */
+    pointer-events: none;
+    border: 3px solid rgba(255,255,255,0.95);
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    transition: left 120ms ease, top 120ms ease, width 120ms ease, height 120ms ease;
+}
+
+/* arrow from center to the button */
+#survey-overlay .overlay-arrow {
+    position: absolute;
+    left: 50%; top: 50%;
+    height: 6px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.65));
+    transform-origin: left center;
+    border-radius: 6px;
+    transition: transform 120ms ease, width 120ms ease, left 120ms ease, top 120ms ease;
+    pointer-events: none;
+}
+#survey-overlay .overlay-arrow::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid rgba(255,255,255,0.95);
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+
+/* accessibility: hide overlay content from keyboard (overlay itself handles dismiss) */
+#survey-overlay [role="dialog"] { pointer-events: none; }
+
+#skip-surveys-btn.no-surveys {
+    animation: none;
+    box-shadow: none;
+    background: linear-gradient(135deg, #b5b5c9, #9e9eb5);
+    cursor: default;
+}
