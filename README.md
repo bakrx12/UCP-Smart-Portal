@@ -10,6 +10,10 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
 - Polished course material, timetable, gradebook style
 - Lightweight: pure HTML/CSS/JS, no frameworks
 
+<img width="1636" height="987" alt="image" src="https://github.com/user-attachments/assets/03f32e63-a56e-4840-8165-b36674e4da80" />
+<img width="1895" height="991" alt="image" src="https://github.com/user-attachments/assets/93ebe0d8-dc03-475d-a35f-c358928e280c" />
+
+
 ## 📁 Project Structure
 ```
 ucp-redesign-extension/
