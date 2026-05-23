@@ -28,20 +28,32 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
     Redesigned Student Timetable  </td>
 </tr>
 
+
+  </tr>
+  <tr>
+    <td> <img width="1173" height="992" alt="image" src="https://github.com/user-attachments/assets/32f984b7-1b45-4d7a-ab5c-db1afe218f61" />
+
+    Default UCP Portal's Course Overview
+   </td>
+    <td> <img width="1636" height="987" alt="image" src="https://github.com/user-attachments/assets/03f32e63-a56e-4840-8165-b36674e4da80" />
+    At a glance Course Overview, with performance graph summary </td>
+</tr>
+
   </tr>
   <tr>
     <td> <img width="1050" height="697" alt="image" src="https://github.com/user-attachments/assets/45536169-7c58-44b7-8de0-1e108628e78e" />
-    Default UCP Portal's Course overview
+    Default UCP Portal's Course Assessment 
    </td>
     <td> <img width="1606" height="986" alt="image" src="https://github.com/user-attachments/assets/bbdad921-bc35-4b27-a751-69c2639c507c" />
-    At a glance overview, with graph and much more  </td>
+    Smart UCP Portal's Redesigned version </td>
 </tr>
   
 </table>
 
+<img width="1455" height="909" alt="image" src="https://github.com/user-attachments/assets/f32983cc-8bd9-4606-9fb9-01ca70457e70" />
+<img width="1415" height="987" alt="image" src="https://github.com/user-attachments/assets/0f762ff5-7b16-437a-917d-c11374c6bbd6" />
+<img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
 
-<img width="1636" height="987" alt="image" src="https://github.com/user-attachments/assets/03f32e63-a56e-4840-8165-b36674e4da80" />
-<img width="1504" height="982" alt="image" src="https://github.com/user-attachments/assets/74a9636b-fdcd-46c7-8d24-3071ef065919" />
 
 ## 📁 Project Structure
 ```
