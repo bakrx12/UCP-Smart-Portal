@@ -23,7 +23,8 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
   <tr>
     <td> <img width="1750" height="943" alt="image" src="https://github.com/user-attachments/assets/683f06f8-e2c0-4208-9262-ac23263a8c79" />
     Default UCP Portal's Timetable
-   </td> <img width="1665" height="987" alt="image" src="https://github.com/user-attachments/assets/7a7b8475-ecdb-4435-8503-e0fb2205ed14" />
+   </td>
+    <td> <img width="1665" height="987" alt="image" src="https://github.com/user-attachments/assets/7a7b8475-ecdb-4435-8503-e0fb2205ed14" />
     Redesigned Timetable, mini </td>
 </tr>
 </table>
