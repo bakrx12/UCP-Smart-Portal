@@ -18,14 +18,13 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
     Default UCP Portal's Student Dashboard
  </td>
     <td> <img width="1662" height="987" alt="image" src="https://github.com/user-attachments/assets/46ce6789-6d57-42a2-822b-71997b2d7ea3" />
-
     Smart UCP Portal's Student Dashboard </td>
   </tr>
   <tr>
     <td> <img width="1750" height="943" alt="image" src="https://github.com/user-attachments/assets/683f06f8-e2c0-4208-9262-ac23263a8c79" />
     Default UCP Portal's Student Timetable
    </td>
-    <td> <img width="1665" height="987" alt="image" src="https://github.com/user-attachments/assets/7a7b8475-ecdb-4435-8503-e0fb2205ed14" />
+    <td> <img width="1593" height="984" alt="image" src="https://github.com/user-attachments/assets/96dd7a5a-34bb-4f07-82f7-531c8a859f58" />
     Redesigned Student Timetable  </td>
 </tr>
 
@@ -33,10 +32,9 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
   </tr>
   <tr>
     <td> <img width="1173" height="992" alt="image" src="https://github.com/user-attachments/assets/32f984b7-1b45-4d7a-ab5c-db1afe218f61" />
-
     Default UCP Portal's Course Overview
    </td>
-    <td> <img width="1636" height="987" alt="image" src="https://github.com/user-attachments/assets/03f32e63-a56e-4840-8165-b36674e4da80" />
+    <td> <img width="1609" height="990" alt="image" src="https://github.com/user-attachments/assets/e19371da-b793-4eb8-a99e-06752641eb9f" />
     At a glance Course Overview, with performance graph summary </td>
 </tr>
 
@@ -51,7 +49,6 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
   
 </table>
 
-<img width="1455" height="909" alt="image" src="https://github.com/user-attachments/assets/f32983cc-8bd9-4606-9fb9-01ca70457e70" />
 <img width="1415" height="987" alt="image" src="https://github.com/user-attachments/assets/0f762ff5-7b16-437a-917d-c11374c6bbd6" />
 <img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
 
