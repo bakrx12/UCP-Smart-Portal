@@ -17,7 +17,8 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1836" height="990" alt="AFTER (dashboard)" src="https://github.com/user-attachments/assets/46d55316-1761-4804-a88f-e02663db436f" />
+    <td> <img width="1662" height="987" alt="image" src="https://github.com/user-attachments/assets/46ce6789-6d57-42a2-822b-71997b2d7ea3" />
+
     Smart UCP Portal's Student Dashboard </td>
   </tr>
   <tr>
