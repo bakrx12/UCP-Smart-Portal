@@ -71,6 +71,7 @@ The extension matches UCP Odoo portal pages and injects:
 - CSS (glassmorphic theme, layout fixes)
 - JS (UI enhancements: dockbar, modals, cleanups)
 No data leaves your browser; everything runs locally in the page context.
+Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 ## 🚀 Installation (Chrome / Edge)
 1. Download or clone this repo.
@@ -84,19 +85,6 @@ No data leaves your browser; everything runs locally in the page context.
 - If you add new assets or scripts, ensure paths are correct in the injection logic and/or `manifest.json`.
 - Keep CSS effects subtle to avoid readability issues (glassmorphism can reduce contrast).
 
-## 🧪 Testing Checklist
-- Verify navbar/dockbar renders correctly on:
-  - Dashboard
-  - Course detail (info, outline, assessments)
-  - Calendar / materials modal
-- Check dark/light backgrounds for contrast and legibility.
-- Test on different zoom levels (90–125%).
-- Confirm no layout overlaps on smaller screens (≤1366px width).
-
-## 🛡 Privacy & Permissions
-- Runs locally, does not collect or share data.
-- Only requests permissions necessary to style UCP portal pages.
-
 ## 💡 Customization
 - Adjust blur/opacity in `styles/*.css`:
   - `backdrop-filter: blur(10px);`
@@ -106,10 +94,11 @@ No data leaves your browser; everything runs locally in the page context.
   - `border: 1px solid rgba(255,255,255,0.25);`
 
 ## 🗺️ Roadmap
-- Dark mode polish
+- Lightweight dark mode optimization 
+- More Background options to complement design 
 - Accessibility pass (contrast, keyboard nav)
-- Per-page toggles (enable/disable features)
 - Performance profiling on low-end machines
+
 
 ## 🤝 Contributing
 PRs welcome! Please:
