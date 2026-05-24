@@ -46,11 +46,20 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
     <td> <img width="1606" height="986" alt="image" src="https://github.com/user-attachments/assets/bbdad921-bc35-4b27-a751-69c2639c507c" />
     Smart UCP Portal's Redesigned version </td>
 </tr>
+
+</tr>
+
+  </tr>
+  <tr>
+    <td> <img width="1415" height="987" alt="image" src="https://github.com/user-attachments/assets/0f762ff5-7b16-437a-917d-c11374c6bbd6" />
+   </td>
+    <td> <img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
+</tr>
   
 </table>
 
-<img width="1415" height="987" alt="image" src="https://github.com/user-attachments/assets/0f762ff5-7b16-437a-917d-c11374c6bbd6" />
-<img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
+
+
 
 
 ## 📁 Project Structure
