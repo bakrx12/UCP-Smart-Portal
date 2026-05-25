@@ -1,658 +1,395 @@
-/* ==== Global Background with Overlay ==== */
-:root {
-  --bg-overlay-transparency: 0.6;
-}
-
-body.bg {
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Dark overlay + blur for subtle glass effect */
-body.bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, var(--bg-overlay-transparency));
-  z-index: 0;
-}
-
-
-
-
-
-
-
-
-/* Looks ugly */
-  .short_image {
-    background: none !important;
-    position: static !important; /* removes the forced absolute positioning */
-    padding-bottom: 0 !important;
-    position: unset !important;
-    width: 100% !important;
-    text-align: -webkit-center;
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "TOGGLE_POWER_CHANGED") {
+    chrome.runtime.sendMessage({ type: "RELOAD_ME" });
   }
+});
 
-  .short_image .container:nth-child(2) {
-    display: none;
-  }
+const currentMonth = new Date().getMonth();
+const isWinter = currentMonth >= 11 || currentMonth <= 1;
+const isRamadan2026 = new Date() <= new Date("2026-03-19T23:59:59");
+const body = document.querySelector("body.bg");
 
-/* ==== Glassmorphic Login Card ==== */
-.custom-login {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 420px;
-  padding: 2rem 2.5rem;
-  border-radius: 25px;
+if (isRamadan2026) {
+  body.style.background = `url("${chrome.runtime.getURL("/assets/homepage/bg-ramadan.jpg")}") no-repeat center center fixed`;
+  body.style.backgroundSize = "cover";
+  body.style.minHeight = "100vh";
+  body.style.setProperty("--bg-overlay-transparency", "0.0");
 
-  background: rgba(13, 13, 13, 0.766);
+  injectRamadanLanterns();
+} else if (isWinter) {
+  body.style.background = `url("${chrome.runtime.getURL("/assets/homepage/bg-winter.jpg")}") no-repeat center center fixed`;
+  body.style.backgroundSize = "cover";
+  body.style.minHeight = "100vh";
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  text-align: center;
-  animation: fadeIn 1s ease-out;
+  const snowContainer = document.createElement("div");
+  snowContainer.className = "snow-container";
+
+  const layers = [
+    { count: 140, size: [5, 8], speed: [18, 26], depth: "near" },
+    { count: 150, size: [4, 6], speed: [26, 36], depth: "mid" },
+    { count: 120, size: [3, 5], speed: [34, 48], depth: "far" },
+  ];
+
+  layers.forEach((layer) => {
+    for (let i = 0; i < layer.count; i++) {
+      const flake = document.createElement("div");
+      flake.className = `snowflake depth-${layer.depth}`;
+
+      const size = rand(layer.size);
+      const duration = rand(layer.speed);
+      const delay = Math.random() * -60;
+
+      flake.style.width = `${size}px`;
+      flake.style.height = `${size}px`;
+      flake.style.left = `${Math.random() * 100}vw`;
+      flake.style.opacity = Math.random() * 0.5 + 0.5;
+      flake.style.animationDuration = `${duration}s`;
+      flake.style.animationDelay = `${delay}s`;
+
+      flake.style.setProperty("--drift", `${(Math.random() - 0.5) * 15}vw`);
+      flake.style.setProperty("--sway", `${Math.random() * 8 + 4}s`);
+
+      snowContainer.appendChild(flake);
+    }
+  });
+
+  document.body.appendChild(snowContainer);
+
+  // ---------------- Snow accumulation ----------------
+  const snowGround = document.createElement("div");
+  snowGround.className = "snow-ground";
+  document.body.appendChild(snowGround);
+
+  let snowHeight = 6;
+  const maxSnowHeight = 140;
+  const accumulationRate = 0.15;
+
+  setInterval(() => {
+    if (snowHeight < maxSnowHeight) {
+      snowHeight += accumulationRate;
+      snowGround.style.setProperty("--snow-height", `${snowHeight}px`);
+    }
+  }, 1000);
 }
 
-/* ==== Logo ==== */
-div.mb-4 {
-    margin-bottom: 0 !important;
+function rand([min, max]) {
+  return Math.random() * (max - min) + min;
 }
 
-img.logo_ucp {
-  position: unset !important;
-  height: 10rem;
-  margin: 2rem 0 0 0;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-  padding-left: 0;
-}
+// ================= RAMADAN LANTERNS =================
 
-/* ==== Inputs ==== */
-.custom-login .form-control {
-  border-radius: 30px !important;
-  background: rgba(255,255,255,0.18) !important;
-  color: #fff !important;
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 0.8rem 1rem;
-  transition: all 0.3s ease;
-}
+function injectRamadanLanterns() {
+  // ── Top bar ──────────────────────────────────────────────────────────────────
+  const topBar = document.createElement("div");
+  topBar.id = "ramadan-lanterns-bar";
+  topBar.innerHTML = `
+    <div id="ramadan-lanterns-bar-trim"></div>
+    <span class="ramadan-bar-ornament">✦</span>
+    <span id="ramadan-bar-text">رمضان كريم &nbsp;·&nbsp; Ramadan Kareem</span>
+    <span class="ramadan-bar-ornament">✦</span>
+  `;
+  document.body.appendChild(topBar);
 
-.custom-login .form-control::placeholder {
-  color: rgba(255,255,255,0.7);
-}
+  // ── Lanterns scene ────────────────────────────────────────────────────────────
+  const scene = document.createElement("div");
+  scene.id = "ramadan-lanterns-scene";
+  document.body.appendChild(scene);
 
-.custom-login .form-control:focus {
-  background: rgba(255,255,255,0.28) !important;
-  box-shadow: 0 0 12px rgba(72,149,239,0.6);
-  border-color: rgba(72,149,239,0.8);
-  outline: none;
-}
+  const LANTERNS = [
+    {
+      stringH: 55,
+      bodyW: 46,
+      bodyH: 62,
+      lit: true,
+      color: "#c0392b",
+      dark: "#7a1a10",
+      rib: "#8b1510",
+      tassel: "#c0392b",
+    },
+    {
+      stringH: 95,
+      bodyW: 38,
+      bodyH: 52,
+      lit: false,
+      color: "#c87820",
+      dark: "#7a4a08",
+      rib: "#9b5810",
+      tassel: "#c87820",
+    },
+    {
+      stringH: 38,
+      bodyW: 56,
+      bodyH: 72,
+      lit: true,
+      color: "#9b1a0c",
+      dark: "#5a0e06",
+      rib: "#7a1008",
+      tassel: "#9b1a0c",
+    },
+    {
+      stringH: 115,
+      bodyW: 34,
+      bodyH: 46,
+      lit: false,
+      color: "#d4940c",
+      dark: "#8a5a04",
+      rib: "#9a6408",
+      tassel: "#d4940c",
+    },
+    {
+      stringH: 68,
+      bodyW: 48,
+      bodyH: 64,
+      lit: true,
+      color: "#b02810",
+      dark: "#6a1808",
+      rib: "#8a1808",
+      tassel: "#b02810",
+    },
+  ];
 
-/* ==== Buttons ==== */
-.custom-login .btn-outline-primary {
-  border-radius: 30px;
-  padding: 0.6rem 1.4rem;
-  font-weight: 500;
-  color: #fff !important;
-  border: 1px solid rgba(255,255,255,0.4);
-  transition: all 0.3s ease;
-}
+  LANTERNS.forEach((cfg, i) => {
+    const W = cfg.bodyW,
+      H = cfg.bodyH;
 
-.custom-login .btn-outline-primary:hover {
-  background: linear-gradient(135deg, #2e2e2e, #1b1b1b);
-  border-color: transparent;
-  transform: translateY(-2px);
-}
+    const asm = document.createElement("div");
+    asm.className = "ramadan-lantern-assembly" + (cfg.lit ? " lit" : "");
+    asm.style.animation = `ramadan-idle-sway ${4.5 + i * 0.55}s ease-in-out ${i * 0.65}s infinite`;
 
-/* ==== Microsoft Login Button ==== */
-.custom-login a.btn-outline-primary {
-  /* display: inline-flex; */
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 0.8rem;
-  /* width: 100%; */
-}
+    // String
+    const str = document.createElement("div");
+    str.className = "ramadan-string";
+    str.style.height = cfg.stringH + "px";
+    asm.appendChild(str);
 
-/* ==== Animations ==== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    // Top cap
+    const capT = document.createElement("div");
+    capT.className = "ramadan-cap-top";
+    capT.style.cssText = `width:${W * 0.66}px; height:11px; background:linear-gradient(to bottom,${rl_lighten(cfg.color, 0.28)},${cfg.dark});`;
+    asm.appendChild(capT);
 
-/* ==== Responsive Styling ==== */
-@media (max-width: 768px) {
-  .custom-login {
-    max-width: 90%;
-    padding: 1.5rem;
-  }
-  .logo_ucp {
-    height: 5rem;
-  }
-}
+    // Frame
+    const frame = document.createElement("div");
+    frame.className = "ramadan-frame";
+    frame.style.cssText = `width:${W}px; height:${H}px;`;
 
-@media (max-width: 480px) {
-  .custom-login {
-    padding: 1rem;
-    border-radius: 20px;
-  }
-  .logo_ucp {
-    height: 4rem;
-  }
-  .custom-login .btn-outline-primary {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-}
+    // Halo
+    const halo = document.createElement("div");
+    halo.className = "ramadan-glow-halo";
+    halo.style.cssText = `width:${W * 3.2}px; height:${H * 3.2}px; background:radial-gradient(ellipse at center,${rl_rgba(cfg.color, 0.52)} 0%,${rl_rgba(cfg.color, 0.18)} 32%,transparent 62%);`;
+    frame.appendChild(halo);
 
+    // Paper
+    const paper = document.createElement("div");
+    paper.className = "ramadan-paper";
+    rl_setPaperBg(paper, cfg, cfg.lit);
+    frame.appendChild(paper);
 
+    // Inner glow
+    const ig = document.createElement("div");
+    ig.className = "ramadan-inner-glow";
+    ig.style.opacity = cfg.lit ? "1" : "0";
+    frame.appendChild(ig);
 
+    // Flame
+    const flame = document.createElement("div");
+    flame.className = "ramadan-flame";
+    flame.style.cssText = `width:${W * 0.13}px; height:${H * 0.16}px; bottom:${H * 0.28}px;`;
+    frame.appendChild(flame);
 
+    // Vertical ribs
+    for (let r = 0; r < 8; r++) {
+      const t = r / 7;
+      const angle = (t - 0.5) * Math.PI * 0.9;
+      const cx = W / 2 + (Math.sin(angle) * W) / 2;
+      const ribW = Math.max(1, 2 * Math.abs(Math.cos(angle)));
+      const opacity = (0.28 + 0.52 * Math.abs(Math.cos(angle))).toFixed(2);
+      const rib = document.createElement("div");
+      rib.style.cssText = `position:absolute;top:4%;height:92%;left:${cx - ribW / 2}px;width:${ribW}px;background:${cfg.rib};opacity:${opacity};border-radius:1px;`;
+      frame.appendChild(rib);
+    }
 
+    // Horizontal bands
+    [0.18, 0.5, 0.82].forEach((y) => {
+      const band = document.createElement("div");
+      band.style.cssText = `position:absolute;left:0;right:0;top:${y * 100}%;height:2px;background:${cfg.rib};opacity:0.55;border-radius:1px;`;
+      frame.appendChild(band);
+    });
 
+    // Sheen
+    const sheen = document.createElement("div");
+    sheen.className = "ramadan-sheen";
+    frame.appendChild(sheen);
 
-/* ==== Snow Effect ==== */
-/* ================= SNOW SYSTEM ================= */
+    asm.appendChild(frame);
 
-.snow-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-}
+    // Bottom cap
+    const capB = document.createElement("div");
+    capB.className = "ramadan-cap-bottom";
+    capB.style.cssText = `width:${W * 0.66}px;height:11px;background:linear-gradient(to bottom,${cfg.dark},${rl_darken(cfg.color, 0.55)});`;
+    asm.appendChild(capB);
 
-.snowflake {
-  position: absolute;
-  top: -12px;
-  background: radial-gradient(circle, #fff 65%, rgba(255,255,255,0.6));
-  border-radius: 50%;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.75));
-  animation:
-    snow-fall linear infinite,
-    snow-sway ease-in-out infinite;
-}
+    // Tassel
+    const tl = document.createElement("div");
+    tl.className = "ramadan-tassel-line";
+    tl.style.cssText = `height:14px;background:${cfg.tassel};`;
+    asm.appendChild(tl);
 
-/* Vertical fall */
-@keyframes snow-fall {
-  to {
-    transform: translateY(100vh);
-  }
-}
+    const tk = document.createElement("div");
+    tk.className = "ramadan-tassel-knot";
+    tk.style.cssText = `width:9px;height:9px;background:${cfg.tassel};`;
+    asm.appendChild(tk);
 
-/* Smooth horizontal wind sway */
-@keyframes snow-sway {
-  0%   { margin-left: 0; }
-  50%  { margin-left: var(--drift); }
-  100% { margin-left: 0; }
-}
+    const fringe = document.createElement("div");
+    fringe.className = "ramadan-tassel-fringe";
+    for (let s = 0; s < 10; s++) {
+      const st = document.createElement("div");
+      st.className = "ramadan-tassel-strand";
+      st.style.cssText = `height:${7 + Math.floor(Math.random() * 7)}px;background:linear-gradient(to bottom,${cfg.tassel},transparent);`;
+      fringe.appendChild(st);
+    }
+    asm.appendChild(fringe);
 
-/* Parallax depth tuning */
-.depth-near {
-  animation-duration: inherit, var(--sway);
-  filter: drop-shadow(0 0 10px rgba(255,255,255,0.9));
-}
+    scene.appendChild(asm);
 
-.depth-mid {
-  animation-duration: inherit, calc(var(--sway) * 1.4);
-}
+    // Hover sway
+    asm.addEventListener("mousemove", (e) => {
+      const r = asm.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / 28;
+      asm.style.animationPlayState = "paused";
+      asm.style.transform = `rotate(${Math.max(-9, Math.min(9, dx * 3.5))}deg)`;
+    });
+    asm.addEventListener("mouseleave", () => {
+      asm.style.transform = "";
+      asm.style.animationPlayState = "running";
+    });
 
-.depth-far {
-  animation-duration: inherit, calc(var(--sway) * 2);
-  opacity: 0.7;
-}
-
-/* ================= FROSTED EDGES (NO BLUR) ================= */
-
-body.bg::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 40%),
-    radial-gradient(circle at top right, rgba(255,255,255,0.35), transparent 40%),
-    radial-gradient(circle at bottom left, rgba(255,255,255,0.3), transparent 45%),
-    radial-gradient(circle at bottom right, rgba(255,255,255,0.3), transparent 45%),
-    linear-gradient(to bottom, rgba(255,255,255,0.15), transparent 20%, transparent 80%, rgba(255,255,255,0.15));
-}
-
-
-/* ================= SNOW ACCUMULATION ================= */
-/* ================= REALISTIC SNOW ACCUMULATION ================= */
-
-.snow-ground {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  height: var(--snow-height, 6px);
-  pointer-events: none;
-  z-index: 1;
-
-  background:
-    /* surface highlights */
-    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.95), transparent 60%),
-    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.9), transparent 65%),
-    radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.92), transparent 60%),
-
-    /* body of snow */
-    linear-gradient(
-      to top,
-      rgba(255,255,255,0.98),
-      rgba(255,255,255,0.92) 45%,
-      rgba(255,255,255,0.85) 70%,
-      transparent 100%
-    );
-
-  /* uneven accumulation mask */
-  mask-image:
-    radial-gradient(circle at 15% 100%, black 40%, transparent 65%),
-    radial-gradient(circle at 40% 100%, black 55%, transparent 75%),
-    radial-gradient(circle at 65% 100%, black 45%, transparent 70%),
-    radial-gradient(circle at 85% 100%, black 50%, transparent 72%);
-
-  transition: height 12s ease-out;
-}
-
-
-/* ================= NEWS SECTION (BOTTOM LEFT) ================= */
-
-.news-section {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 3;
-  max-width: 350px;
-  padding: 1.2rem 1.5rem;
-  border-radius: 20px;
-  
-  background: rgba(40, 40, 40, 0.12);
-  
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  
-  animation: slideInLeft 0.8s ease-out;
-  transition: all 0.3s ease;
-}
-
-.news-section:hover {
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
-  transform: translateY(-2px);
-}
-
-.news-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.8rem;
-}
-
-.news-icon {
-  width: 24px;
-  height: 24px;
-  fill: #96c4ff;
-}
-
-.news-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #ffffff;
-}
-
-.news-headline {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.news-subtitle {
-  font-size: 0.85rem;
-  color: rgba(222, 222, 222, 0.85);
-  line-height: 1.4;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-@keyframes slideInLeft {
-  from { 
-    opacity: 0; 
-    transform: translateX(-30px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
-  }
-}
-
-
-/* ================= FEEDBACK LINK (BOTTOM RIGHT) ================= */
-
-.feedback-link {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 3;
-  
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  
-  padding: 0.9rem 1.5rem;
-  border-radius: 30px;
-  
-  background: rgba(255, 255, 255, 0.12);
-  
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  
-  animation: slideInRight 0.8s ease-out;
-  transition: all 0.3s ease;
-}
-
-.feedback-link:hover {
-  background: linear-gradient(135deg, #1D2C55, #4895EF);
-  border-color: transparent;
-  box-shadow: 0 0 20px rgba(72, 149, 239, 0.7);
-  transform: translateY(-2px);
-  text-decoration: none;
-  color: #fff;
-}
-
-.feedback-icon {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
-}
-
-@keyframes slideInRight {
-  from { 
-    opacity: 0; 
-    transform: translateX(30px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
-  }
-}
-
-
-/* ================= RESPONSIVE ADJUSTMENTS ================= */
-
-@media (max-width: 768px) {
-  .news-section {
-    bottom: 1.5rem;
-    left: 1.5rem;
-    max-width: 280px;
-    padding: 1rem 1.2rem;
-  }
-  
-  .news-headline {
-    font-size: 0.9rem;
-  }
-  
-  .news-subtitle {
-    font-size: 0.8rem;
-  }
-  
-  .feedback-link {
-    bottom: 1.5rem;
-    right: 1.5rem;
-    padding: 0.75rem 1.2rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .news-section {
-    bottom: 1rem;
-    left: 1rem;
-    max-width: calc(100vw - 2rem);
-    padding: 0.9rem 1rem;
-  }
-  
-  .news-headline {
-    font-size: 0.85rem;
-  }
-  
-  .news-subtitle {
-    font-size: 0.75rem;
-  }
-  
-  .feedback-link {
-    bottom: auto;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.7rem 1rem;
-    font-size: 0.8rem;
-  }
-  
-  .feedback-icon {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-#ramadan-lanterns-bar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 58px;
-      z-index: 999999;
-      background: linear-gradient(
-        to bottom,
-        #1a0d04 0%, #38190a 18%, #4e280e 40%,
-        #5a3010 55%, #4e280e 72%, #38190a 85%, #1a0d04 100%
+    // Click toggle
+    asm.addEventListener("click", () => {
+      const nowLit = asm.classList.toggle("lit");
+      rl_setPaperBg(paper, cfg, nowLit);
+      ig.style.opacity = nowLit ? "1" : "0";
+      const idleAnim = asm.style.animation;
+      asm.style.animation = "none";
+      void asm.offsetWidth;
+      asm.style.animation =
+        "ramadan-click-swing 1.6s cubic-bezier(0.36,0.07,0.19,0.97) forwards";
+      asm.addEventListener(
+        "animationend",
+        () => {
+          asm.style.animation = idleAnim;
+        },
+        { once: true },
       );
-      box-shadow:
-        0 6px 28px rgba(0,0,0,0.95),
-        0 2px 8px rgba(0,0,0,0.8),
-        inset 0 1px 0 rgba(255,200,80,0.1),
-        inset 0 -2px 0 rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: visible;
-      font-family: 'Georgia', serif;
-      pointer-events: none;
-    }
-    #ramadan-lanterns-bar::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        transparent 0px, transparent 55px,
-        rgba(0,0,0,0.1) 55px, rgba(0,0,0,0.1) 57px,
-        transparent 57px, transparent 140px,
-        rgba(255,180,60,0.03) 140px, rgba(255,180,60,0.03) 142px
-      );
-    }
-    #ramadan-lanterns-bar-trim {
-      position: absolute;
-      bottom: -3px; left: 0; right: 0;
-      height: 5px;
-      background: linear-gradient(
-        to right,
-        #5a3008, #9b6020, #d4a040, #f0c060, #d4a040,
-        #9b6020, #d4a040, #f0c060, #d4a040, #9b6020,
-        #d4a040, #f0c060, #d4a040, #9b6020, #5a3008
-      );
-      border-radius: 0 0 2px 2px;
-      z-index: 1000000;
-    }
-    #ramadan-bar-text {
-      position: relative;
-      z-index: 2;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      color: #f0c060;
-      text-shadow:
-        0 0 10px rgba(240,180,60,0.7),
-        0 0 28px rgba(220,140,20,0.4),
-        0 1px 4px rgba(0,0,0,0.95);
-      user-select: none;
-      pointer-events: none;
-    }
-    .ramadan-bar-ornament {
-      position: relative;
-      z-index: 2;
-      font-size: 16px;
-      color: rgba(210,160,50,0.75);
-      margin: 0 16px;
-      text-shadow: 0 0 8px rgba(210,160,50,0.5);
-      pointer-events: none;
-    }
-    .ramadan-nail {
-      position: absolute;
-      bottom: -7px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #d4aa50, #8a5010, #3a1e04);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,220,100,0.25);
-      z-index: 1000001;
-      transform: translateX(-50%);
-    }
-    #ramadan-lanterns-scene {
-      position: fixed;
-      top: 55px;
-      left: 0; right: 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-start;
-      padding: 0 6vw;
-      z-index: 999998;
-      pointer-events: none;
-    }
-    .ramadan-lantern-assembly {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transform-origin: top center;
-      pointer-events: all;
-      position: relative;
-    }
-    .ramadan-string {
-      width: 2px;
-      background: linear-gradient(to bottom, #6b3a1e 0%, #3a2010 60%, #5c3010 100%);
-      border-radius: 1px;
-      flex-shrink: 0;
-    }
-    .ramadan-cap-top {
-      border-radius: 5px 5px 0 0;
-      flex-shrink: 0;
-      box-shadow: 0 -1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,200,80,0.2);
-    }
-    .ramadan-frame {
-      position: relative;
-      border-radius: 40% 40% 44% 44% / 46% 46% 54% 54%;
-      flex-shrink: 0;
-      overflow: visible;
-    }
-    .ramadan-paper {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      transition: background 0.9s ease;
-    }
-    .ramadan-inner-glow {
-      position: absolute;
-      inset: 8%;
-      border-radius: 50%;
-      pointer-events: none;
-      transition: opacity 0.9s ease;
-      background: radial-gradient(ellipse at 45% 40%,
-        rgba(255,248,180,0.95) 0%,
-        rgba(255,175,50,0.75) 38%,
-        rgba(220,80,10,0.25) 72%,
-        transparent 100%
-      );
-    }
-    .ramadan-glow-halo {
-      position: absolute;
-      border-radius: 50%;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0.5);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.9s ease, transform 0.9s ease;
-    }
-    .ramadan-lantern-assembly.lit .ramadan-glow-halo {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-      animation: ramadan-halo-pulse 3s ease-in-out infinite;
-    }
-    @keyframes ramadan-halo-pulse {
-      0%,100% { opacity: 0.65; transform: translate(-50%,-50%) scale(1); }
-      50%      { opacity: 0.88; transform: translate(-50%,-50%) scale(1.1); }
-    }
-    .ramadan-flame {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
-      background: radial-gradient(ellipse at 50% 80%,
-        #fffde4 0%, #ffe566 22%, #ff9900 58%, transparent 100%
-      );
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      pointer-events: none;
-      animation: ramadan-flicker 0.13s ease-in-out infinite alternate;
-      z-index: 20;
-    }
-    .ramadan-lantern-assembly.lit .ramadan-flame { opacity: 1; }
-    @keyframes ramadan-flicker {
-      0%   { transform: translateX(-50%) scaleX(1)   scaleY(1);    filter: brightness(1); }
-      100% { transform: translateX(-50%) scaleX(0.8) scaleY(1.12); filter: brightness(1.18); }
-    }
-    .ramadan-sheen {
-      position: absolute;
-      top: 10%; left: 13%;
-      width: 26%; height: 30%;
-      border-radius: 50%;
-      background: radial-gradient(ellipse, rgba(255,255,255,0.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .ramadan-cap-bottom {
-      border-radius: 0 0 5px 5px;
-      flex-shrink: 0;
-    }
-    .ramadan-tassel-line  { width: 1.5px; flex-shrink: 0; margin: 0 auto; }
-    .ramadan-tassel-knot  { border-radius: 50%; margin: 0 auto; }
-    .ramadan-tassel-fringe { display: flex; justify-content: center; gap: 1px; }
-    .ramadan-tassel-strand { width: 1px; border-radius: 0 0 1px 1px; }
-    @keyframes ramadan-idle-sway {
-      0%   { transform: rotate(0deg); }
-      30%  { transform: rotate(1.3deg); }
-      70%  { transform: rotate(-1.3deg); }
-      100% { transform: rotate(0deg); }
-    }
-    @keyframes ramadan-click-swing {
-      0%   { transform: rotate(0deg); }
-      10%  { transform: rotate(-10deg); }
-      28%  { transform: rotate(8deg); }
-      46%  { transform: rotate(-5deg); }
-      62%  { transform: rotate(3deg); }
-      76%  { transform: rotate(-1.5deg); }
-      88%  { transform: rotate(0.6deg); }
-      100% { transform: rotate(0deg); }
-    }
+    });
+  });
+
+  // Place nails
+  function placeRamadanNails() {
+    topBar.querySelectorAll(".ramadan-nail").forEach((n) => n.remove());
+    scene.querySelectorAll(".ramadan-lantern-assembly").forEach((item) => {
+      const rect = item.getBoundingClientRect();
+      const nail = document.createElement("div");
+      nail.className = "ramadan-nail";
+      nail.style.left = rect.left + rect.width / 2 + "px";
+      topBar.appendChild(nail);
+    });
+  }
+  requestAnimationFrame(() => requestAnimationFrame(placeRamadanNails));
+  window.addEventListener("resize", placeRamadanNails);
+
+  // ── Colour helpers (prefixed to avoid collisions) ────────────────────────────
+  function rl_hexToRgb(hex) {
+    return {
+      r: parseInt(hex.slice(1, 3), 16),
+      g: parseInt(hex.slice(3, 5), 16),
+      b: parseInt(hex.slice(5, 7), 16),
+    };
+  }
+  function rl_rgba(hex, a) {
+    const { r, g, b } = rl_hexToRgb(hex);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function rl_lighten(hex, f) {
+    const { r, g, b } = rl_hexToRgb(hex);
+    return `rgb(${Math.min(255, r + Math.round((255 - r) * f))},${Math.min(255, g + Math.round((255 - g) * f))},${Math.min(255, b + Math.round((255 - b) * f))})`;
+  }
+  function rl_darken(hex, f) {
+    const { r, g, b } = rl_hexToRgb(hex);
+    return `rgb(${Math.max(0, Math.round(r * (1 - f)))},${Math.max(0, Math.round(g * (1 - f)))},${Math.max(0, Math.round(b * (1 - f)))})`;
+  }
+  function rl_setPaperBg(el, cfg, lit) {
+    el.style.background = lit
+      ? `radial-gradient(ellipse at 42% 38%,${rl_lighten(cfg.color, 0.92)} 0%,${rl_lighten(cfg.color, 0.48)} 26%,${cfg.color} 58%,${cfg.dark} 100%)`
+      : `radial-gradient(ellipse at 42% 38%,${rl_lighten(cfg.color, 0.07)} 0%,${rl_darken(cfg.color, 0.42)} 55%,${cfg.dark} 100%)`;
+  }
+}
+
+// ================= NEWS SECTION =================
+
+const NEWS_URL =
+  "https://raw.githubusercontent.com/raz0229/ucp-news/main/news.json";
+
+function trimText(text, maxLength) {
+  if (!text) return "";
+  return text.length > maxLength ? text.slice(0, maxLength - 3) + "..." : text;
+}
+
+async function fetchNews() {
+  try {
+    const res = await fetch(NEWS_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("Fetch failed");
+    return await res.json();
+  } catch (e) {
+    console.error("News fetch error:", e);
+    return {
+      headline: "Updates coming soon",
+      subtitle: "Please check back later.",
+    };
+  }
+}
+
+async function createNewsSection() {
+  const { headline, subtitle } = await fetchNews();
+
+  const el = document.createElement("div");
+  el.className = "news-section";
+
+  el.innerHTML = `
+    <div class="news-header">
+      <span class="news-label">Latest UCP News</span>
+    </div>
+    <div class="news-headline">${trimText(headline, 50)}</div>
+    <div class="news-subtitle">${trimText(subtitle, 70)}</div>
+  `;
+
+  document.body.appendChild(el);
+}
+
+function createFeedbackLink() {
+  const feedbackLink = document.createElement("a");
+  feedbackLink.className = "feedback-link";
+  feedbackLink.href = "https://www.instagram.com/raz0229";
+  feedbackLink.target = "_blank";
+
+  feedbackLink.innerHTML = `
+    <svg class="feedback-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+      <path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/>
+    </svg>
+    Give Feedback
+  `;
+
+  document.body.appendChild(feedbackLink);
+}
+
+// Initialize
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    createNewsSection();
+    createFeedbackLink();
+  });
+} else {
+  createNewsSection();
+  createFeedbackLink();
+}
