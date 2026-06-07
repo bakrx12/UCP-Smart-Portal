@@ -60,12 +60,12 @@ chrome.storage.local.get('toggle_power', (result) => {
 
         const startHour = 8;
         const endHour = 22;
-        const daysArr = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+        const daysArr = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
         const timeTable = extractTimeTableInfo();
         //console.log('Time Table =', timeTable);
 
-        // 🔥 FIX: detect minimum slot duration dynamically
+        // detect minimum slot duration dynamically
         let slotDurationInMinutes = 60;
 
         if (timeTable.length > 0) {
@@ -156,9 +156,9 @@ chrome.storage.local.get('toggle_power', (result) => {
                 if (entry) {
                     const grad = getGradientClass(entry.courseName);
                     row += `<td><div class="glassmorphic-timetable-slot ${classes} ${grad}" tabindex="0">
-                    <div class="glassmorphic-timetable-title">${`${entry.courseName.substring(0, 29)}${entry.courseName.length > 29 ? '...' : ''}`}</div>
+                    <div class="glassmorphic-timetable-title">${`${entry.courseName.substring(0, 28)}${entry.courseName.length > 28 ? '...' : ''}`}</div>
                     <div class="glassmorphic-timetable-meta" style="font-size: 0.8rem;">
-                    ${entry.roomNo == MAKEUP_CLASS ? `<span style="color: crimson; font-weight: 700;">${entry.roomNo}</span>` : entry.roomNo}
+                    ${entry.roomNo == MAKEUP_CLASS ? `<span style="color: crimson; font-weight: 650;">${entry.instructorName}</span>` : entry.roomNo}
                     </div>
                     <div class="glassmorphic-timetable-tooltip">
                     <strong>${entry.courseName}</strong><br>
