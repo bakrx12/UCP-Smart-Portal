@@ -123,7 +123,7 @@ th.glassmorphic-timetable-time-col {
   );
   color: #0b1724;
   font-weight: 600;
-  height: 92px;
+  height: 62px;
   min-width: 90px;
 }
 
@@ -138,7 +138,7 @@ tbody:nth-of-type(1) tr th:nth-of-type(1) {
   border-top-right-radius: 1.5rem;
   border-top-left-radius: 1.5rem;
 }
-tbody:nth-of-type(8) tr th {
+tbody:nth-of-type(7) tr th {
   border-bottom-right-radius: 1.5rem;
   border-bottom-left-radius: 1.5rem;
 }
