@@ -35,7 +35,7 @@ Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and 
     Default UCP Portal's Course Overview
    </td>
     <td> <img width="1609" height="990" alt="image" src="https://github.com/user-attachments/assets/e19371da-b793-4eb8-a99e-06752641eb9f" />
-    At a glance Course Overview, with performance shown in graphs </td>
+    At a glance Course Overview, with performance summary shown in graphs </td>
 </tr>
 
   </tr>
