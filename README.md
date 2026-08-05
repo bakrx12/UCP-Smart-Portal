@@ -2,7 +2,7 @@
 
 <p align="center">
   <img alt="Chrome MV3" src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white">
-  <img alt="Javascript" src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white">
+  <img alt="Javascript" src="https://img.shields.io/badge/Javascript-5.x-3178C6?logo=javascript&logoColor=white">
   <img alt="No framework" src="https://img.shields.io/badge/UI-vanilla_DOM-555">
   <img alt="License" src="https://img.shields.io/badge/License-PolyForm_Noncommercial-blue">
 </p>
