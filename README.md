@@ -1,5 +1,14 @@
 <h1 align="center">UCP Smart Portal</h1>
-https://img.shields.io/badge/just%20the%20CSS-8A2BE2
+
+<p align="center">
+  <img alt="Chrome MV3" src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white">
+  <img alt="No framework" src="https://img.shields.io/badge/UI-vanilla_DOM-555">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.3.0-orange">
+  <img alt="License" src="https://img.shields.io/badge/License-PolyForm_Noncommercial-blue">
+</p>
+
 Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and easier on the eyes. This extension injects custom styles and UI tweaks (dockbar, hidden legacy title bar, refined modals) to make everyday student workflows smoother.
 
 ## ✨ Features
