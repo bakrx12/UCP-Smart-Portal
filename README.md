@@ -30,7 +30,7 @@
   <a href="#-installation"><b>Install</b></a> &nbsp;·&nbsp;
   <a href="#-architecture">Project Structure</a> &nbsp;·&nbsp;
   <a href="#-known-issues">Known issues</a> &nbsp;·&nbsp;
-    <a href="#-roadmap">Road Map</a> &nbsp;·&nbsp;
+  <a href="#-roadmap">Roadmap</a> &nbsp;·&nbsp;
   <a href="#-attributions">Attributions</a>
 </p>
 
@@ -162,7 +162,8 @@ Alternatively, you can download the extension on [Chrome webstore](https://chrom
 > **Note:** Firefox temporary add-ons are removed when Firefox is restarted, so you'll need to load the extension again after restarting Firefox.
 
 
-## 📁 Project Structure
+## 📁 Architecture
+Project structure for UCP Smart Portal
 ```
 UCP-Smart-Portal/
 ├── assets/ # Portal assets, backgrounds, logos, and images
