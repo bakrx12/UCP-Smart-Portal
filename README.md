@@ -26,9 +26,11 @@
 <p align="center">
   <a href="#-news">News</a> &nbsp;·&nbsp;
   <a href="#-features">Features</a> &nbsp;·&nbsp;
+  <a href="#-screenshots">Screenshots</a> &nbsp;·&nbsp;
   <a href="#-installation"><b>Install</b></a> &nbsp;·&nbsp;
-  <a href="#%EF%B8%8F-architecture">Project Structure</a> &nbsp;·&nbsp;
-  <a href="#%EF%B8%8F-known-issues">Known issues</a>
+  <a href="#-architecture">Project Structure</a> &nbsp;·&nbsp;
+  <a href="#-known-issues">Known issues</a>
+  <a href="#-attributions">Attributions</a> &nbsp;·&nbsp;
 </p>
 
 <br/>
