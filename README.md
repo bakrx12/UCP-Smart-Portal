@@ -23,16 +23,70 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="#-news">News</a> &nbsp;·&nbsp;
+  <a href="#-features">Features</a> &nbsp;·&nbsp;
+  <a href="#-installation"><b>Install</b></a> &nbsp;·&nbsp;
+  <a href="#%EF%B8%8F-architecture">Project Structure</a> &nbsp;·&nbsp;
+  <a href="#%EF%B8%8F-known-issues">Known issues</a>
+</p>
 
-[WIP] New Timetable Redesign, Dark Mode Support as by original creator, attendence veiwer and better notification handling 
+<br/>
+
+> [!WARNING]
+> **Beta (0.2.4).** [WIP] Notification, Course Updates & Settings Page
+> Extension is still experimental. Read [Known issues](#%EF%B8%8F-known-issues) first.
+
+<br/>
+
+## 📰 News
+
+- **[v0.3.0](../../releases/tag/v0.3.0)** · *2026-07-12* · **Dashboard widgets, Notifications, & Customization**<br/>
+  At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
+
+- **[v0.2.0](../../releases/tag/v0.2.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
+  Added support for Night/Dark Mode, add-your-own timetable (JSON), backup **export/import**, and lightweight update.
+
+- **[v0.1.0](../../releases/tag/v0.1.0)** · *(2024)* · **Birth of UCP Smart Portal, Redesigned Portal**<br/>
+  Frustrated by the UI, few seniors gathered up and redesigned the student portal. Glassmorphic UI. Dockbar.
+
+<sub>Full notes for every version live on the [**Releases**](../../releases) page.</sub>
+
+<br/>
+
 
 ## ✨ Features
-- Glassmorphic UI Theme
-- Dockbar support for quicker navigation
-- Hidden old title bar for cleaner layout
-- Improved course info, outline, and assessment views
-- Polished course material, timetable, gradebook style
-- Lightweight: pure HTML/CSS/JS, no frameworks
+
+#### 🎨 UI & Customization
+- Modern glassmorphic-inspired UI with a clean, student-focused dashboard.
+- **Dark Mode & Night Mode** for a more comfortable viewing experience.
+- Custom backgrounds with **blur, background color matching, and preset themes**.
+- Fully customizable dashboard — choose which widgets, cards, and information are displayed.
+
+#### 📊 Academic Dashboard
+- At-a-glance **CGPA, credit hours, term progress, next class, and attendance** information.
+- Course overview with **submissions, upcoming assessments, and make-up classes**.
+- Customizable course cards with **course code, section, credit hours, and quick actions**.
+- Quick-access buttons for gradebooks, announcements, course materials, assessments, and outlines.
+
+#### 🔔 Notifications & Updates
+- Centralized **Notifications & Updates** hub for academic calendar, portal news, course updates, miscellaneous announcements, and UCP feeds.
+- Background **course-update scanning** to detect changes without manually checking every course.
+- **Push notifications** for newly detected course updates.
+- Filter course updates by **submissions, content, grades, or all updates**.
+- Manual **Scan Now** and automatic background checks.
+
+#### ⚙️ Personalization & Productivity
+- **Stay Active** mode to prevent automatic portal logout.
+- Customizable notification behavior, including **Instant Push** mode.
+- Configurable dashboard widgets, cards, notification tabs, and default course actions.
+- New enrollment interface with an alternative card-based layout.
+- Local storage and cache controls for managing extension data.
+
+#### 🚀 Lightweight
+- Built as a browser extension that works directly on the existing UCP Smart Portal.
+- Designed to enhance the existing portal without requiring a separate application.
+- Focused on a lightweight, responsive experience with minimal friction for everyday student use.
 
 ## 🖼 Screenshots
 
@@ -83,7 +137,29 @@
 </table>
 
 
+## 🚀 Installation
 
+Offers support for Manifest V3 Chromium browsers (Chrome, Edge, Brave). It isn't on the Chrome Web Store, so you load it unpacked.
+
+### Chromium Browsers (recommended) 
+
+1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
+2. Unzip it somewhere.
+3. Open `chrome://extensions` in your browser.
+4. Turn on **Developer mode** (top right).
+5. Click **Load unpacked** and select the unzipped extension folder.
+6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
+
+### Mozilla FireFox [WIP]
+
+1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
+2. Unzip it somewhere.
+3. Open `about:debugging` in Firefox and select **This Firefox**.
+4. Click **Load Temporary Add-on**.
+5. Open the unzipped extension folder and select `manifest.json`.
+6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
+
+> **Note:** Firefox temporary add-ons are removed when Firefox is restarted, so you'll need to load the extension again after restarting Firefox. :contentReference[oaicite:0]{index=0}
 
 
 ## 📁 Project Structure
