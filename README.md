@@ -29,8 +29,9 @@
   <a href="#-screenshots">Screenshots</a> &nbsp;·&nbsp;
   <a href="#-installation"><b>Install</b></a> &nbsp;·&nbsp;
   <a href="#-architecture">Project Structure</a> &nbsp;·&nbsp;
-  <a href="#-known-issues">Known issues</a>
-  <a href="#-attributions">Attributions</a> &nbsp;·&nbsp;
+  <a href="#-known-issues">Known issues</a> &nbsp;·&nbsp;
+    <a href="#-roadmap">Road Map</a> &nbsp;·&nbsp;
+  <a href="#-attributions">Attributions</a>
 </p>
 
 <br/>
