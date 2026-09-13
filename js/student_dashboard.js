@@ -1969,13 +1969,14 @@ chrome.storage.local.get("toggle_power", (result) => {
     // Every course subpage, for the right-click menu. path:null = the course
     // root (the card's own link).
     const COURSE_LINKS = [
-      { icon: "home", label: "Course page", path: null },
+      { icon: "campaign", label: "Announcements", path: "announcement" },
+      { icon: "list_alt", label: "Course outline", path: "outline" },
+      { icon: "article", label: "Course material", path: "material" },
       { icon: "grade", label: "Gradebook", path: "gradebook" },
       { icon: "assignment", label: "Submissions", path: "submission" },
-      { icon: "article", label: "Course material", path: "material" },
       { icon: "quiz", label: "Assessments", path: "assessment" },
-      { icon: "campaign", label: "Announcements", path: "announcement" },
-      { icon: "list_alt", label: "Outline", path: "outline" },
+
+
     ];
     let courseCardCfg = { ...COURSE_CARD_CFG_DEFAULT };
 
