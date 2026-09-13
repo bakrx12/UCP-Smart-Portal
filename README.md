@@ -34,21 +34,18 @@
 <br/>
 
 > [!WARNING]
-> **Beta (0.2.4).** [WIP] Notification, Course Updates & Settings Page
+> **Beta (3.6.0).** [WIP] Notification, Course Updates & Settings Page
 > Extension is still experimental. Read [Known issues](#%EF%B8%8F-known-issues) first.
 
 <br/>
 
 ## 📰 News
 
-- **[v0.2.4](../../releases/tag/v0.3.0)** · *2026-09-14* · **Dashboard widgets, Notifications, & Customization**<br/>
+- **[v3.6.0](../../releases/tag/v0.3.0)** · *2026-09-14* · **Dashboard widgets, Notifications, & Customization**<br/>
   At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
 
-- **[v0.2.0](../../releases/tag/v0.2.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
+- **[v3.5.0](../../releases/tag/v0.2.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
   Added support for Night/Dark Mode, add-your-own timetable (JSON), backup **export/import**, and lightweight update.
-
-- **[v0.1.0](../../releases/tag/v0.1.0)** · *2024* · **Birth of UCP Smart Portal, Redesigned Portal**<br/>
-  Frustrated by the UI, few seniors gathered up and redesigned the student portal. Glassmorphic UI. Dockbar.
 
 <sub>Full notes for every version live on the [**Releases**](../../releases) page.</sub>
 
@@ -253,7 +250,7 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 ## ⚠️ Known issues
 
-This is a `0.2.4` beta, so expect some rough edges. The extension otherwise works as expected.
+This is a `3.6.0` beta, so expect some rough edges. The extension otherwise works as expected.
 
 - **Settings page buttons** are currently broken — clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
 - **Notifications** are currently a **work in progress** and may not function reliably yet.
