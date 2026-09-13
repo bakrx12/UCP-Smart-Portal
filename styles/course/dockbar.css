@@ -22,7 +22,7 @@
   z-index: 1;
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.50);
+  background: rgba(8, 12, 18, 0.72);
 }
 
 .liquidGlass-shine {
@@ -106,16 +106,49 @@ a {
   border-radius: 2.5rem;
 }
 
-.dock img {
-  width: 45px;
-  padding: 0;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-  cursor: pointer;
+.dock .material-icons {
+  display: block;
+  width: 36px;
+  height: 36px;
+  font-size: 30px;
+  line-height: 34px;
+  text-align: center;
+  opacity: 12;
+  background: rgba(0, 0, 0, 0.752); /* transparent-ish, not white */
+  border: none;
+  border: none;
+  border-radius: 7px;
+  transition: all 0.4s;
 }
 
-.dock img:hover {
-  transform: scale(2);
-  transform-origin: center center;
+/*
+Dock pills — dark-glass tab styling matched to the dashboard notification
+tabs (styles/notification_widget.css .ucp-shell-tab tokens): dark tint fill,
+hairline border, brighter on hover. The PILL (<a>) carries the surface; the
+icons themselves keep a transparent background.
+*/
+.dock a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  background: rgba(10, 14, 20, 0.353);
+  border: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.dock a:hover {
+  background: rgba(10, 14, 20, 0.46);
+  border-color: rgba(255, 255, 255, 0.698);
+}
+
+.dock a:hover .material-icons {
+  color: rgba(255, 255, 255, 0.028);
+  opacity: 1;
+}
+
+.dock .material-icons {
+  margin: 0px;
 }
 
 @keyframes moveBackground {
@@ -123,7 +156,7 @@ a {
     background-position: 0% 0%;
   }
   to {
-    background-position: 0% -1500%;
+    background-position: 0% -1000%;
   }
 }
 
@@ -142,26 +175,29 @@ a {
   z-index: 9999;
 }
 
-.dock img {
-  transition: transform 0.25s ease-out; /* smoother enlarge */
+.dock .material-icons {
+  transition: transform 0.25s ease-out, color 0.2s ease, opacity 0.2s ease; /* smoother enlarge + tab-like fade */
 }
 
-/* Selected dock item indicator */
+/* Keep the portal's UIkit radio-button decoration off the dock pills —
+   the hairline border above is the pill's own. */
+.dock a::before,
+.dock a::after {
+  content: none;
+}
+
+/* Selected dock item — the active pill: brighter surface + full-white icon,
+   mirroring the notification tabs' .ucp-shell-tab-active (#fff). Icons keep
+   a transparent background; the pill carries the highlight. */
 .dock a.selected {
-  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
-.dock a.selected::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%) rotate(180deg);
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid rgba(0, 0, 0, 0.7); /* arrow color */
+.dock a.selected .material-icons {
+  color: #fff;
+  opacity: 1;
+  background: transparent;
 }
 
 
@@ -170,4 +206,134 @@ a {
 /* HIDE OLD NAVBAR AND TITLE BAR*/
 h3.heading_b.uk-margin-bottom, ul.uk-tab:not(.uk-tab-grid) {
   display: none !important;
+}
+
+/* Shared course-page surface, header, and accent treatment. */
+.course-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 16px;
+  width: fit-content;
+  max-width: calc(100% - 32px);
+  margin: 0 auto 20px !important;
+  padding: 14px 18px !important;
+  text-align: center;
+  background: rgba(8, 12, 18, 0.68) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+@media (max-width: 520px) {
+  .course-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.course-name,
+.course-code {
+  color: rgba(220, 221, 222, 0.952) !important;
+}
+
+.course-name {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+}
+
+.course-code {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  background: rgba(8, 12, 18, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  font-size: 0.82rem !important;
+}
+
+.course-header .material-icons,
+body.ucp-bg-accent .course-header .material-icons,
+body.ucp-bg-accent .dock .material-icons {
+  color: var(--ucp-accent, #ffffff28) !important;
+}
+
+.md-card,
+.course-card,
+.ggb-wrap,
+.ggb-card,
+.uk-overflow-container,
+.modal-content {
+  background: rgba(8, 12, 18, 0.164) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.34) !important;
+  color: rgba(255, 255, 255, 0.789) !important;
+}
+
+body.ucp-bg-accent .course-header,
+body.ucp-bg-accent .course-header .course-code,
+body.ucp-bg-accent .dock {
+  border-color: color-mix(in srgb, var(--ucp-accent, #ffffff00) 45%, transparent) !important;
+}
+
+body.ucp-bg-accent .dock {
+  box-shadow: 0 10px 34px color-mix(in srgb, var(--ucp-accent, #ffffff00) 24%, transparent) !important;
+}
+
+.course-title-icon {
+  margin-right: 10px;
+  font-size: 26px !important;
+}
+
+.ggb-summary,
+.ggb-sum-card,
+.ggb-final-grade,
+.ggb-row,
+.ggb-icon,
+.ggb-circle-wrap {
+  background: rgba(8, 12, 18, 0.52) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.772) !important;
+}
+
+.ggb-sum-title,
+.ggb-final-label,
+.ggb-sub,
+.ggb-weight,
+.ggb-circle-text .den {
+  color: rgba(255, 255, 255, 0.851) !important;
+}
+
+.ggb-sum-value,
+.ggb-final-value,
+.ggb-type,
+.ggb-row,
+.ggb-title h1 {
+  color: rgba(255, 255, 255, 0.03) !important;
+}
+
+body.ucp-bg-accent .ggb-title .material-icons,
+body.ucp-bg-accent .ggb-icon,
+body.ucp-bg-accent .ggb-final-value,
+body.ucp-bg-accent .cm-icon,
+body.ucp-bg-accent .course-title-icon {
+  color: var(--ucp-accent, #fff) !important;
+}
+
+.course-card table,
+.course-card table thead,
+.course-card table tbody,
+.course-card table tr,
+.uk-overflow-container table,
+.uk-overflow-container table tr {
+  background: rgba(8, 12, 18, 0.42) !important;
+  color: rgba(255, 255, 255, 0.144) !important;
+}
+
+.course-card th,
+.course-card td,
+.uk-overflow-container th,
+.uk-overflow-container td {
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0) !important;
 }
