@@ -1,14 +1,17 @@
 :root {
     --ucp-ds-radius: 16px;
     --ucp-ds-accent: #2563eb;
-    --ucp-ds-border: rgba(0,0,0,0.08);
-    --ucp-ds-shadow: 0 12px 32px rgba(0,0,0,0.08);
-    --ucp-ds-glass: rgba(255,255,255,0.65);
-    --ucp-ds-text-dark: #1e293b;
-    --ucp-ds-muted: #64748b;
-    font-family: 'Inter', system-ui, sans-serif;
-    background: linear-gradient(120deg,#f1f5f9,#e0f2fe);
-    color: var(--ucp-ds-text-dark);
+    /* Dark-glass hairline + shadow (the old black 0.08 values were invisible
+       on the dark cards). No page background / font / text-color overrides:
+       the page sits on the extension wallpaper like every other portal page. */
+    --ucp-ds-border: rgba(255,255,255,0.14);
+    --ucp-ds-shadow: 0 12px 32px rgba(0,0,0,0.28);
+    /* Dark translucent surface (same treatment as the societies/invoices
+       cards) — readable over the wallpaper in day and night, no blur. */
+    --ucp-ds-glass: rgba(10,14,20,0.55);
+    /* Muted text is a WHITE tint (the old slate #64748b was near-invisible
+       on the dark cards). */
+    --ucp-ds-muted: rgba(255,255,255,0.6);
   }
 
   /* body {
@@ -54,14 +57,15 @@
   .ucp-ds-title {
     font-size: 0.9rem;
     font-weight: 800;
-    color: var(--ucp-ds-muted);
+    color: rgba(255,255,255,0.72);
   }
 
-  /* Countdown */
+  /* Countdown — DARK text: the pill sits on a bright green/orange/red
+     gradient, so the old near-white (0.22 alpha) text was invisible. */
   .ucp-ds-count {
     padding: 10px 14px;
     border-radius: 12px;
-    color: white;
+    color: #0f172a;
     font-weight: 700;
     font-size: 15px;
     margin-top: 8px;
@@ -75,19 +79,21 @@
     margin-top: 8px;
     font-weight: 600;
     font-style: italic;
-    color: rgb(129, 131, 132);
+    color: rgba(255,255,255,0.7);
     text-align: center;
     margin-top: 0.9rem;
   }
 
+  /* WHITE text: the buttons sit on the dark-glass cards, so the old black
+     text (and the near-transparent hover text) was unreadable. */
   .ucp-ds-btn {
     margin-top: 12px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: white;
-    color: var(--ucp-ds-accent);
-    border: 1px solid rgba(0,0,0,0.08);
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 10px !important;
     padding: 1rem !important;
     cursor: pointer;
@@ -99,15 +105,15 @@
 
   }
   .ucp-ds-btn:hover:not(:disabled) { /* :not(:disabled) added */
-    background: var(--ucp-ds-accent);
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
   }
     /* Style for disabled button */
     .ucp-ds-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        background: #f1f5f9; /* Light background for disabled state */
-        color: var(--ucp-ds-muted);
+        background: rgba(255,255,255,0.08);
+        color: rgba(255, 255, 255, 0.45);
     }
 
   .ucp-ds-legend {
@@ -121,12 +127,12 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.22);
     border-radius: 999px;
     padding: 6px 10px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.25);
     font-size: 13px;
-    color: var(--ucp-ds-text-dark);
+    color: #fff;
     box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   }
 
@@ -139,7 +145,6 @@
   /* Calendar */
   .ucp-ds-calendar {
     background: var(--ucp-ds-glass);
-    backdrop-filter: blur(18px) saturate(160%);
     border-radius: var(--ucp-ds-radius);
     border: 1px solid var(--ucp-ds-border);
     box-shadow: var(--ucp-ds-shadow);
@@ -151,7 +156,7 @@
     justify-content: space-between;
     align-items: center;
     font-weight: 700;
-    color: var(--ucp-ds-text-dark);
+    color: #fff;
   }
 
   /* Day Names Row */
@@ -163,7 +168,7 @@
     text-align: center;
     font-weight: 700;
     font-size: 0.85rem;
-    color: var(--ucp-ds-muted);
+    color: rgba(255,255,255,0.65);
     padding-bottom: 8px; /* Added separation from grid */
   }
 
@@ -175,7 +180,8 @@
   }
 
   .ucp-ds-day {
-    background: rgba(255, 255, 255, 0.708);
+    /* dark tile on the dark card (like the societies tiles) */
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 10px;
     min-height: 90px;
@@ -186,10 +192,11 @@
     box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
     transition: all 0.2s ease;
     position: relative;
+    color: #fff;
   }
   .ucp-ds-day--muted {
-    background: #f1f5f995;
-    color: #292a2c;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.55);
   }
     /* New style for collapsed empty days */
     .ucp-ds-day--empty {
@@ -200,9 +207,9 @@
         align-items: center;
         text-align: center;
         font-size: 10px; /* Smaller text for number */
-        color: var(--ucp-ds-muted);
+        color: rgba(255,255,255,0.5);
         box-shadow: none;
-        background: #f1f5f9; /* Same as muted color */
+        background: rgba(255,255,255,0.1);
         transition: none;
         cursor: default;
     }
