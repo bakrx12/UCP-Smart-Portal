@@ -44,10 +44,10 @@
 
 ## 📰 News
 
-- **[v3.6.0](../../releases/tag/v0.3.0)** · *2026-09-14* · **Dashboard widgets, Notifications, & Customization**<br/>
+- **[v3.6.0](../../releases/tag/v3.6.0)** · *2026-09-22* [WIP] · **Dashboard widgets, Notifications, & Customization**<br/>
   At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
 
-- **[v3.5.0](../../releases/tag/v0.2.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
+- **[v3.5.0](../../releases/tag/v3.5.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
   Added support for Night/Dark Mode, add-your-own timetable (JSON), backup **export/import**, and lightweight update.
 
 <sub>Full notes for every version live on the [**Releases**](../../releases) page.</sub>
