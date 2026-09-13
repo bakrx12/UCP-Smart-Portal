@@ -1,18 +1,22 @@
     :root {
-      --glass-border: rgba(255,255,255,0.5);
+      --glass-border: rgba(255,255,255,0.2);
       --radius: 16px;
       --accent: #2563eb;
       --muted: #64748b;
       --shadow: rgba(0,0,0,0.1);
-      font-family: 'Inter', sans-serif;
+      /* Dark translucent card surface (same treatment as the societies /
+         invoices cards) instead of the old white/light tints. (The previous
+         0.048 alpha was effectively transparent — the cards had no surface.
+         No font override: the page uses the portal's own font stack.) */
+      --glass-bg: rgba(10, 14, 20, 0.55);
     }
     .courses-info-container {
       justify-self: center;
       width: 100%;
-      max-width: 900px;
+      max-width: 1000px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 20px; /* card spacing (was 0 — the cards stacked flush) */
     }
 
     .courses-info-card {
@@ -27,10 +31,10 @@
     }
 
     .courses-info-card:nth-child(1) {
-      background: rgba(147,197,253,0.4); /* Blue tint */
+      background: var(--glass-bg);
     }
     .courses-info-card:nth-child(2) {
-      background: rgba(167,243,208,0.4); /* Green tint */
+      background: var(--glass-bg);
     }
 
     .courses-info-card:hover {
@@ -38,7 +42,7 @@
       box-shadow: 0 15px 40px rgba(0,0,0,0.12);
     }
 
-    .courses-info-header {
+    .courses-info-header {  
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -48,15 +52,15 @@
     div.courses-info-name {
       font-size: 1.4rem !important;
       font-weight: 700 !important;
-      color: var(--accent) !important;
+      color: #ffffff !important;
       display: flex;
       align-items: center;
-      gap: 40px;
+      gap: 12px; /* icon→name gap (was 40px — matches the portal's .course-header 16px family) */
     }
 
     .courses-info-code {
-      background: rgba(37,99,235,0.15);
-      color: var(--accent);
+      background: rgba(37,99,235,0.25);
+      color: #93c5fd;
       padding: 4px 10px;
       border-radius: 8px;
       font-weight: 600;
@@ -67,16 +71,16 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 5px;
     }
 
     .courses-info-detail {
-      background: rgba(255,255,255,0.35);
-      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 11px;
       padding: 10px 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 5px;
       box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
     }
 
@@ -85,17 +89,18 @@
       color: var(--accent);
     }
 
+    /* Readable muted label (the old #dfdfdf46 was near-invisible on the
+       dark tiles). */
     .courses-info-detail p {
       margin: 0;
       font-weight: 600;
-      color: #1e293b;
+      color: rgba(255,255,255,0.6);
     }
 
+    /* Course-type value ("Regular", "Concurrent", …) — no red badge
+       background; the value reads like the other detail labels. */
     .courses-info-detail.course-type p {
-      background: #dc2626;
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 8px;
+      color: rgba(255,255,255,0.85);
       font-size: 0.85rem;
       font-weight: 700;
     }
@@ -108,15 +113,16 @@
     .course-name {
       font-size: 2rem;
       font-weight: 700;
-      color: var(--accent);
+      color: #ffffff;
     }
 
     .course-code {
       font-size: 1.1rem;
-      color: var(--muted);
+      color: rgba(255, 255, 255, 0.65);
     }
 
 
    .md-card {
+    background: #49474715;
     display: none !important;
    }
