@@ -2,9 +2,9 @@
 
 <p align="center">
   Modern student portal experience, built for UCP students.<br/>
-  Born from the frustration of navigating the default portal, it adds a customizable dashboard,<br/>
-  Glassmorphic theme, academic widgets, course updates, notifications, and other quality-of-life features.
-  This extension injects custom styles and UI tweaks such as dockbar, hidden legacy title bar, and refined modals.
+  Born from the frustration of navigating the default portal, it adds a customizable dashboard,<br>
+  Glassmorphic theme, academic widgets, course updates, notifications, and other quality-of-life features.<br>
+  This extension injects custom styles and UI tweaks such as dockbar, hidden legacy title bar, and refined modals.</br>
 </p>
 
 <p align="center">
