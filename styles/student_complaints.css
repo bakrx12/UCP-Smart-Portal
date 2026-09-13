@@ -1,0 +1,64 @@
+/* =========================================================================
+ * /student/complaints — no dedicated extension UI exists for this page, so
+ * the university's own markup (cards, tables, forms) shows through. These
+ * rules glassify those surfaces to match the rest of the extension (trans-
+ * parent, white text) so the page is readable in both day and night mode
+ * without changing the portal's structure.
+ * ========================================================================= */
+
+#page_content .md-card,
+#page_content .uk-card {
+  background: rgba(57, 57, 57, 0.737) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  color: #cac5c5;
+}
+
+/* headings / body text on the transparent surfaces */
+#page_content .md-card h1,
+#page_content .md-card h2,
+#page_content .md-card h3,
+#page_content .md-card h4,
+#page_content .md-card h5,
+#page_content .md-card p,
+#page_content .md-card a,
+#page_content .md-card li {
+  color: #fff;
+}
+
+/* tables */
+#page_content .md-card table th {
+  background: #234a99 !important;
+  color: #fff !important;
+}
+#page_content .md-card table td {
+  color: rgba(232, 231, 231, 0.92);
+}
+
+/* form labels + fields */
+#page_content .md-card .uk-form-label,
+#page_content .md-card label {
+  color: rgba(255, 255, 255, 0.85);
+}
+#page_content .md-card input[type="text"],
+#page_content .md-card input[type="email"],
+#page_content .md-card input[type="tel"],
+#page_content .md-card input[type="number"],
+#page_content .md-card input[type="date"],
+#page_content .md-card textarea,
+#page_content .md-card select {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+#page_content .md-card textarea::placeholder,
+#page_content .md-card input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* status-style badges that the portal renders with light backgrounds */
+#page_content .md-card .uk-badge,
+#page_content .md-card .label {
+  color: #1f1d1d;
+}
