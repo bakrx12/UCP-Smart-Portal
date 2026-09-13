@@ -5,14 +5,14 @@
  * - Universal box-sizing for consistent layout.
  */
 :root {
-  --primary-glass: rgba(255, 255, 255, 0.3);
+  --primary-glass: rgba(32, 31, 31, 0.3);
   --secondary-glass: rgba(153, 27, 30, 0.7);
   --light-glass: rgba(0, 0, 0, 0.183);
   --dark-glass: rgba(0, 0, 0, 0.2);
   --border-glass: 1px solid rgba(255, 255, 255, 0.18);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --transition-slow: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --transition-fast: all 0.3s ease;
+  --transition-slow: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-fast: all 0.25s ease;
 
   --ucp-blue:#234a99; /* banner blue */
 --ucp-blue-dark:#1d3f83; /* accents */
@@ -60,7 +60,7 @@ li.logout-btn {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #de2645;
+  background: #de264565;
   color: #fff !important;
 }
 li[title="Notifications"] {
@@ -69,20 +69,16 @@ li[title="Notifications"] {
 
 
 /* ===== GLOBAL STYLES ===== */
+/* NOTE: the body must stay background-less — styles/shell.css renders the
+   wallpaper on a z-index:-1 body::before layer, and any opaque <body>
+   background paints over it. (The old gradientBG animation on the body
+   background is gone for the same reason.) */
 body {
-  background-size: 100% 150%;
-  animation: gradientBG 15s ease infinite;
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* ===== GLASSMORPHIC UTILITY CLASS ===== */
@@ -98,8 +94,8 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
 }
-
-/* Glassmorphic Notification Bell */
+/*
+ Glassmorphic Notification Bell
     .notification-bell {
       position: fixed;
       top: 20px;
@@ -118,13 +114,13 @@ body {
       text-decoration: none;
     }
 
-    /* Material Icon (Bell) */
+    /* Material Icon (Bell) 
     .notification-bell .material-icons {
       font-size: 28px;
       color: rgb(37, 29, 29);
     }
 
-    /* Red Notification Badge */
+     Red Notification Badge 
     .notification-count {
       position: absolute;
       top: 10px;
@@ -140,7 +136,7 @@ body {
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+    }*/
 
 
     /* ===== SIDEBAR ===== */
@@ -179,7 +175,7 @@ body {
 }
 
 .material-icons {
-  color: #fff !important;
+  color: #ffffff7e !important;
   margin-right: 10px;
   transition: var(--transition-fast);
 }
@@ -191,6 +187,8 @@ body {
 /* ===== CONTENT AREA ===== */
 #page_content {
   background: transparent !important;
+  /* The portal pads content below its top bar; we hide #top_bar, so trim
+     that dead space so page content sits higher on every page. */
 }
 
 #top_bar {
@@ -198,8 +196,8 @@ body {
   border-bottom: var(--border-glass);
   box-shadow: var(--shadow-glass);
   border-radius: 0 0 16px 16px;
-  padding: 10px 20px;
-  margin-bottom: 20px;
+  padding: 10px 0px;
+  margin-bottom: 1px;
 }
 
 #breadcrumbs {
@@ -240,6 +238,10 @@ body.sidebar_main_active #page_content:before {
 
  .page_content {
   margin-left: 17rem;
+  /* Keep the content wrapper background-less so the extension wallpaper
+     (styles/shell.css body::before) shows through instead of the portal's
+     own page background. */
+  background: transparent !important;
  }
 
 @media screen and (max-width: 1230px) {
