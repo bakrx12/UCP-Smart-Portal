@@ -2,47 +2,18 @@
    GLOBAL ROOT + COLOR SYSTEM
 --------------------------------------------------------- */
 :root {
-  --muted: #000;
-  --glass: rgba(255, 255, 255, 0.6);
+  /* Sub-copy is a white tint, not pure white (the pure-white --muted made
+     subtitles read as loud as the title). */
+  --muted: rgba(255, 255, 255, 0.6);
+  /* Dark translucent surface — white text stays readable over the
+     wallpaper in BOTH day and night (a white 0.14 card washed out). */
+  --glass: rgba(10, 14, 20, 0.55);
   --card-radius: 22px;
-
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Arial;
+  /* No font override: the page uses the portal's own font stack. */
 }
 
-/* ---------------------------------------------------------
-   BACKGROUND BLOBS
---------------------------------------------------------- */
-.ig-bg-blobs {
-  position: fixed;
-  pointer-events: none;
-  inset: 0;
-  z-index: 0;
-}
-.ig-blob {
-  position: absolute;
-  opacity: 0.55;
-  border-radius: 50%;
-}
-.ig-b1 {
-  width: 360px;
-  height: 360px;
-  background: linear-gradient(135deg, #c7e3ff, #d0f7e2);
-  left: 8%;
-  top: 6%;
-}
-.ig-b2 {
-  width: 260px;
-  height: 260px;
-  background: linear-gradient(135deg, #ffd6a5, #ffe6f0);
-  right: 6%;
-  bottom: 8%;
-}
+/* (the decorative background blobs were removed — the page sits
+   directly on the extension wallpaper, like the other pages) */
 
 /* ---------------------------------------------------------
    MAIN WRAPPER
@@ -51,7 +22,7 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  margin: 2rem auto;
+  margin: 0.5rem auto 2rem;
   max-width: 1200px;
 }
 
@@ -74,6 +45,7 @@
 .ig-app-title {
   font-size: 22px;
   font-weight: 800;
+  color: #fff;
 }
 .ig-app-sub {
   color: var(--muted);
@@ -89,8 +61,9 @@
 .ig-search {
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(10, 20, 40, 0.05);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   min-width: 200px;
 }
 
@@ -100,10 +73,10 @@
   align-items: center;
   padding: 10px 14px;
   border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #eef2ff, #f8fbff);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   cursor: pointer;
-
 }
 
 /* ---------------------------------------------------------
@@ -118,32 +91,31 @@
 /* ---------------------------------------------------------
    CARD BASE
 --------------------------------------------------------- */
+/* Clean, colorless, translucent card — matches the rest of the
+   extension's cards (no per-term tint, no frosted overlay, no pulse). */
 .ig-card {
   position: relative;
   border-radius: var(--card-radius);
   padding: 24px;
-  background: var(--invoice-grad);
+  background: var(--glass);
+  color: #fff;
 
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
-  animation: ig-pulse 2s ease-in-out infinite;
 }
 
 .ig-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
-/* frosted overlay */
-.ig-glass-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: inherit;
-  pointer-events: none;
+.ig-card .ig-top,
+.ig-card .ig-m,
+.ig-card .ig-small {
+  color: var(--muted);
 }
 
 /* ---------------------------------------------------------
@@ -161,10 +133,11 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: 100px;
-  background: linear-gradient(135deg, #f3f8ff, #ffffff);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
   font-weight: 700;
   font-size: 13px;
-
 }
 
 /* ---------------------------------------------------------
@@ -181,13 +154,13 @@
 }
 
 .ig-status-paid {
-  background: rgba(0, 255, 170, 0.35);
-  color: #005b3c;
+  background: rgba(0, 255, 170, 0.18);
+  color: #6ee7b7;
 }
 
 .ig-status-due {
-  background: rgba(255, 102, 102, 0.35);
-  color: #8a0000;
+  background: rgba(255, 102, 102, 0.18);
+  color: #fca5a5;
 }
 
 /* ---------------------------------------------------------
@@ -204,10 +177,16 @@
   color: var(--muted);
 }
 
+/* The Payable amount keeps full-white emphasis (it previously inherited the
+   old pure-white --muted; the token is now a tint for sub-copy). */
+.ig-amount {
+  color: #fff;
+}
+
 .ig-divider {
   height: 1px;
   margin: 14px 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), transparent);
 }
 
 /* ---------------------------------------------------------
@@ -220,18 +199,18 @@
 }
 
 .ig-btn {
-
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 8px 12px;
   cursor: pointer;
   transition: 0.2s ease;
   font-size: 13px;
+  color: #fff;
 }
 
 .ig-btn:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .ig-btn.disabled {
@@ -302,25 +281,7 @@
   animation: shimmerMove 1.2s ease-in-out infinite;
 }
 
-@keyframes shimmerMove {
-  0% {
-    transform: translateX(-100%) rotate(25deg);
-  }
-  100% {
-    transform: translateX(300%) rotate(25deg);
-  }
-}
-@keyframes ig-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    transform: scale(1.03);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
-  }
-}
+
 
 /* ---------------------------------------------------------
    RESPONSIVE
