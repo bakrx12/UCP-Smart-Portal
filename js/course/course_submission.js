@@ -113,7 +113,6 @@ function extractInstructorName() {
       <div class="ccm-row ccm-row-full"><span class="ccm-label">Full course code</span><span class="ccm-value ccm-full-code">${ccEscape(full)}</span></div>
       <div class="ccm-row"><span class="ccm-label">Course code</span><span class="ccm-value">${ccEscape(courseCodeLabel)}</span></div>
       <div class="ccm-row"><span class="ccm-label">Section</span><span class="ccm-value">${ccEscape(sectionLabel)}</span></div>
-      <div class="ccm-row"><span class="ccm-label">Instructor</span><span class="ccm-value">${ccEscape(instructor)}</span></div>
     </div>
     `
   );
