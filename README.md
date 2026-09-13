@@ -95,7 +95,7 @@
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1662" height="987" alt="image" src="https://github.com/user-attachments/assets/1d4a894a-4386-44d0-94fb-1e60e0a72bae" />
+    <td> <img width="1586" height="802" alt="image" src="https://github.com/user-attachments/assets/a459ef05-01d4-42e5-93e8-673132ad7af5" />
     UCP Smart Portal's Student Dashboard </td>
   </tr>
   <tr>
@@ -103,10 +103,8 @@
     Default UCP Portal's Student Timetable
    </td>
     <td> <img width="1538" height="987" alt="image" src="https://github.com/user-attachments/assets/4fb9af05-3d01-44b5-8327-865ac6afa05c" />
-  />
     Redesigned Student Timetable with additional features  </td>
 </tr>
-
 
   </tr>
   <tr>
@@ -114,7 +112,7 @@
     Default UCP Portal's Course Overview
    </td>
     <td> <img width="1609" height="990" alt="image" src="https://github.com/user-attachments/assets/e19371da-b793-4eb8-a99e-06752641eb9f" />
-    At a glance Course Gradebook Overview, with performance summary shown in graphs </td>
+    At a glance Course Gradebook Overview </td>
 </tr>
 
   </tr>
@@ -130,15 +128,17 @@
 
   </tr>
   <tr>
-    <td> <img width="1415" height="987" alt="image" src="https://github.com/user-attachments/assets/0f762ff5-7b16-437a-917d-c11374c6bbd6" />
-   </td>
-    <td> <img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
+    <td> <img width="1304" height="858" alt="image" src="https://github.com/user-attachments/assets/1d915fdd-2d5f-4599-a180-6b768c59be37" />
+      Dashboard featuring Academic Calendar & much more </td>
+    <td> <img width="1479" height="968" alt="image" src="https://github.com/user-attachments/assets/fa4cc8b1-0da0-4e76-ac72-862cd5129a8d" />
+      Result & Exam page showing active courses </td>
 </tr>
   </tr>
   <tr>
-    <td> <img width="1600" height="641" alt="image" src="https://github.com/user-attachments/assets/8c674f7c-5200-4140-a499-7d489e6cc4c0" />
-   </td>
-    <td> <img width="1190" height="985" alt="image" src="https://github.com/user-attachments/assets/9b37b652-5982-4a59-a363-dabf270e18bb" />
+    <td> <img width="1392" height="935" alt="image" src="https://github.com/user-attachments/assets/e33ded8a-19e2-4b17-9277-e57875bc8676" />
+    Setting Background customization </td>
+    <td> <img width="1534" height="871" alt="image" src="https://github.com/user-attachments/assets/b0b458b0-97eb-4897-bf9a-e235cc169746" />
+    Background Notification for course updates </td>
 </tr>
 
 
