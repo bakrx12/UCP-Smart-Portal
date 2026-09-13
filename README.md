@@ -1,12 +1,15 @@
 <h1 align="center">UCP Smart Portal</h1>
 
 <p align="center">
+Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and easier on the eyes. This extension injects custom styles and UI tweaks (dockbar, hidden legacy title bar, refined modals) to make everyday student workflows smoother.
+</p>
+
+<p align="center">
   <img alt="Chrome MV3" src="https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white">
   <img alt="Javascript" src="https://img.shields.io/badge/Javascript-5.x-3178C6?logo=javascript&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/License-PolyForm_Noncommercial-blue">
 </p>
 
-Glassmorphic Style Redesign of UCP’s Odoo Student Portal—clean, modern, and easier on the eyes. This extension injects custom styles and UI tweaks (dockbar, hidden legacy title bar, refined modals) to make everyday student workflows smoother.
 
 [WIP] New Timetable Redesign, Dark Mode Support as by original creator, attendence veiwer and better notification handling 
 
