@@ -1,18 +1,14 @@
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.6);
+  /* Dark translucent surface — white text reads over the wallpaper in
+     BOTH day and night (a white 0.4 card washed out over a bright photo). */
+  --glass-bg: rgba(10, 14, 20, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.2);
   --muted: #6b7280;
   --accent: #3b82f6;
   --success: #16a34a;
   --danger: #ef4444;
   --radius: 14px;
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Arial;
+  /* No font override: the page uses the portal's own font stack. */
 }
 .societies-container {
   display: flex;
@@ -44,7 +40,7 @@
   margin-top: 16px;
 }
 .society-item {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -56,7 +52,7 @@
   transition: all 0.25s ease;
 }
 .society-item:hover {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.14);
   transform: scale(1.05);
 }
 .society-item .material-icons {
@@ -74,23 +70,27 @@
 }
 .join-dropdown,
 .join-button {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.12);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: 10px 14px;
   margin: 8px;
   font-size: 15px;
+  color: #fff;
   transition: all 0.3s ease;
 }
+/* The Join button takes the CURRENT accent (the user's background-sampled
+   accent from Settings when accent mode is on — --ucp-accent — else this
+   page's own blue) as a FLAT fill: no green gradient. */
 .join-button {
   cursor: pointer;
-  background: linear-gradient(90deg, #a7f3d0, #6ee7b7);
-  color: #065f46;
+  background: var(--ucp-accent, var(--accent));
+  color: #fff;
   font-weight: 600;
 }
 .join-button:hover {
   transform: scale(1.05);
-  background: linear-gradient(90deg, #6ee7b7, #a7f3d0);
+  background: color-mix(in srgb, var(--ucp-accent, var(--accent)) 82%, white);
 }
 
 /* Vote card */
@@ -110,18 +110,19 @@ div#voteCandidates {
   justify-self: center;
 }
 .candidate {
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 14px;
   text-align: center;
   cursor: pointer;
   border: 2px solid transparent;
+  color: #fff;
   transition: all 0.25s ease;
 }
 .candidate.selected {
   border-color: var(--accent);
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-  background: rgba(224, 242, 254, 0.6);
+  background: rgba(59, 130, 246, 0.3);
 }
 .candidate:hover {
   transform: scale(1.03);
@@ -145,7 +146,7 @@ div#voteCandidates {
 .loading-bar {
   width: 100%;
   height: 4px;
-  background: #eee;
+  background: rgba(255, 255, 255, 0.15);
   margin-bottom: 10px;
   overflow: hidden;
   border-radius: 2px;
@@ -174,14 +175,14 @@ div#voteCandidates {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #999;
+  color: rgba(255, 255, 255, 0.6);
   padding: 1rem;
   text-align: center;
 }
 
 .fallback .material-icons {
   font-size: 40px;
-  color: #ccc;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 5px;
 }
 
@@ -191,15 +192,16 @@ div#voteCandidates {
 }
 
 .society-item {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
   transition: background 0.2s ease;
 }
 .society-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
 }
 .society-header {
   font-weight: 500;
@@ -236,6 +238,26 @@ div#voteCandidates {
 .custom-toast.warning {
   background-color: #ffc107;
   color: #000;
+}
+
+/* Night mode — deepen the surfaces so the page reads as blackish,
+   matching the rest of the extension. */
+body.ucp-night .glass-card {
+  background: rgba(8, 11, 16, 0.78) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night .society-item {
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+body.ucp-night .society-item:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+body.ucp-night .candidate {
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+body.ucp-night .join-dropdown {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
 }
 
 #page_content_inner {
