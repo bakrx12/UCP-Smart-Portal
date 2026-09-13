@@ -5,19 +5,22 @@ div#attendance-container-new {
 }
 
 .glass {
-      background: rgba(0, 0, 0, 0.312);
+      /* the extension's standard dark-glass surface (same token family as
+         the dashboard tiles / societies / invoices cards) so the page reads
+         identically in day and night */
+      background: rgba(8, 12, 18, 0.58);
       border-radius: 20px;
       padding: 20px;
       margin: 20px 0;
       width: 90%;
       max-width: 900px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .glass:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     }
 
     /* ---------- Dropdown Section ---------- */
@@ -32,8 +35,10 @@ div#attendance-container-new {
     }
 
     select {
-      background: rgba(0, 0, 0, 0.4);
-      border: none;
+      /* inset white-tint tile (like the datesheet day tiles), not a second
+         black slab inside the dark-glass card */
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 12px;
       padding: 10px 15px;
       color: #fff;
@@ -89,12 +94,14 @@ div#attendance-container-new {
       margin-top: 15px;
     }
 
+    /* Inset white-tint tiles (same family as the societies / enrolled /
+       datesheet tiles) — the old flat #232323 slabs read as black boxes. */
     .info-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: #232323b8;
-      color:rgba(243, 243, 243, 0.906);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
       padding: 10px 15px;
       border-radius: 12px;
       font-size: 15px;
@@ -102,7 +109,7 @@ div#attendance-container-new {
 
     .info-item i {
       font-size: 20px;
-      color: #474747;
+      color: var(--ucp-accent, #93c5fd);
     }
 
     /* ---------- Calendar ---------- */
@@ -117,7 +124,7 @@ div#attendance-container-new {
     .calendar-header button {
       background: rgba(255, 255, 255, 0.08);
       border: none;
-      color: #0f0f0f92;
+      color: #ffffff;
       padding: 6px 12px;
       border-radius: 50%;
       cursor: pointer;
@@ -139,7 +146,7 @@ div#attendance-container-new {
       font-weight: bold;
 
       font-size: 14px;
-      color: #143055d3 /* Slightly muted color */
+      color: #ffffff; /* matches the white day numbers in the grid */
     }
 
     .calendar-grid {
