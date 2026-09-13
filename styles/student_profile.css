@@ -25,17 +25,18 @@ button.profile_default_fields {
 }
 
 #user_profile .md-card {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 24px;
   overflow: hidden;
+    transform: translateY(-60px);
   position: relative;
 }
 
 #user_profile .md-card::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: 0px;
   left: 0;
   right: 0;
   height: 1px;
@@ -47,12 +48,12 @@ button.profile_default_fields {
 }
 
 
-/* Header Section */
+/* Header Section — transparent (no colored tint) */
 #user_profile .user_heading {
-  background: linear-gradient(135deg, 
-    rgba(153, 27, 30, 0.1) 0%, 
-    rgba(255, 255, 255, 0.3) 50%, 
-    rgba(153, 27, 30, 0.05) 100%);
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 100%);
   padding: 40px 30px 30px;
   position: relative;
   overflow: hidden;
@@ -65,9 +66,7 @@ button.profile_default_fields {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, 
-    rgba(153, 27, 30, 0.1) 0%, 
-    transparent 70%);
+  background: none;
 }
 
 /* Avatar Styling */
@@ -81,26 +80,27 @@ button.profile_default_fields {
   background: none;
   display: flex;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* Avatar sits to the LEFT of the Name / Registration No. / Faculty block */
 #user_profile .user_heading_avatar {
-  float: right;
+  float: left;
+  margin-right: 22px;
 }
 
 #user_profile .user_heading_avatar img {
   border-radius: 10px;
-  border: solid 4px darkslategrey;
+  border: solid 4px rgba(37, 115, 249, 0.547);
 }
 
 
-/* Heading Content */
+/* Heading Content (the text-shadow on the Name / Registration No. /
+   Faculty headings is gone — it was an unnecessary glow on the text) */
 #user_profile .user_heading_content h2 {
   color: #f4f4f4;
   font-weight: 700;
   font-size: 2.2rem;
   margin-bottom: 8px;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 #user_profile .user_heading_content .sub-heading {
@@ -120,37 +120,12 @@ button.profile_default_fields {
 }
 
 #user_profile .user_stats li {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.28);
   padding: 20px;
   border-radius: 16px;
   text-align: center;
-  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-}
-
-#user_profile .user_stats li::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.2), 
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-#user_profile .user_stats li:hover::before {
-  left: 100%;
-}
-
-#user_profile .user_stats li:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
 }
 
 #user_profile .user_stats .heading_a {
@@ -160,67 +135,76 @@ button.profile_default_fields {
   margin-bottom: 8px;
 }
 
-/* Edit Buttons */
+/* Edit Buttons — plain red button, no shimmer / no hover spin (the
+   ::before sweep and the scale+rotate hover animation are removed; the
+   base look is kept). */
 #user_profile .md-fab {
   background: linear-gradient(135deg, #991B1E, #c53030) !important;
   border: none;
   border-radius: 50%;
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(153, 27, 30, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
-#user_profile .md-fab::before {
-  content: '';
+/* Direct fallback for the portal's edit control when its markup is rendered
+   after the profile script runs. */
+#user_profile button.profile_default_fields.md-fab,
+#user_profile button.profile_edit_fields.md-fab {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 10 !important;
+}
+
+/* The red box the portal highlights around the About / Bio data: slightly
+   rounded, and its glow (box-shadow) removed. Tagged by js/student_profile.js. */
+#user_profile .ucp-about-bio {
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+/* The "Edit" button moved next to the About / Bio heading (tagged by
+   js/student_profile.js) — sits at the right end of the heading row. */
+#user_profile .ucp-fab-inline {
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.4), 
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-#user_profile .md-fab:hover::before {
-  left: 100%;
-}
-
-#user_profile .md-fab:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 
-    0 8px 24px rgba(153, 27, 30, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  right: 12px !important;
+  top: 12px !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 2;
 }
 
 /* Tabs */
 #user_profile .uk-tab {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(10, 14, 20, 0.62) !important;
   border-radius: 16px;
-  padding: 8px;
-  margin: 20px;
+  padding: 10px;
+  margin: 10px !important;
+  width: 25%;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #user_profile .uk-tab > li > a {
   border-radius: 12px;
   padding: 12px 24px;
-  color: #4a5568;
+  color: #fff !important;
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  text-shadow: none;
 }
 
 #user_profile .uk-tab > li.uk-active > a {
   background: rgba(153, 27, 30, 0.1);
-  color: #991B1E;
+  color: #fff !important;
   box-shadow: 0 2px 8px rgba(153, 27, 30, 0.2);
 }
 
@@ -242,16 +226,17 @@ button.profile_default_fields {
 
 /* Content Sections */
 #user_profile .user_content {
-  padding: 0 30px 30px;
+  padding: 0 30px 40px;
 }
 
 #user_profile .heading_c {
-  color: #2d3748;
+  color: #fff;
   font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 20px;
   position: relative;
   padding-left: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85);
 }
 
 #user_profile .heading_c::before {
@@ -261,21 +246,37 @@ button.profile_default_fields {
   top: 50%;
   transform: translateY(-50%);
   width: 4px;
-  height: 24px;
+  height: 34px;
   background: linear-gradient(135deg, #991B1E, #c53030);
   border-radius: 2px;
 }
 
+body.ucp-bg-accent #user_profile .heading_c {
+  color: #fff !important;
+}
+
+body.ucp-bg-accent #user_profile .heading_c::before {
+  background: #fff;
+}
+
+body.ucp-bg-accent #user_profile .uk-tab > li > a,
+body.ucp-bg-accent #user_profile .uk-tab > li.uk-active > a {
+  color: var(--ucp-accent, #fff) !important;
+}
+
 /* List Items */
 #user_profile .md-list {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(10, 14, 20, 0.62) !important;
   border-radius: 16px;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #user_profile .md-list-addon li {
-  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.35);
   margin-bottom: 12px;
   padding: 16px;
   border-radius: 12px;
@@ -285,7 +286,7 @@ button.profile_default_fields {
 
 #user_profile .md-list-addon li:hover {
   transform: translateX(4px);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(28, 32, 40, 0.78);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -293,8 +294,13 @@ button.profile_default_fields {
   background: linear-gradient(135deg, #991B1E, #c53030);
   border-radius: 10px;
   padding: 12px;
-  margin-right: 16px;
+  margin-right: 4px;
   box-shadow: 0 4px 12px rgba(153, 27, 30, 0.3);
+}
+
+#user_profile .md-list-addon,
+#user_profile .md-list.md-list-addon {
+  background: rgba(10, 14, 20, 0.62) !important;
 }
 
 #user_profile .md-list-addon-icon {
@@ -303,14 +309,19 @@ button.profile_default_fields {
 }
 
 #user_profile .md-list-heading {
-  color: #2d3748;
+  color: #fff !important;
   font-weight: 600;
   font-size: 1.1rem;
 }
 
 #user_profile .uk-text-muted {
-  color: #718096 !important;
+  color: #fff !important;
   font-size: 0.9rem;
+}
+
+#user_profile .md-list-addon li,
+#user_profile .md-list-addon * {
+  color: #fff !important;
 }
 
 /* Input Fields */
@@ -330,7 +341,7 @@ button.profile_default_fields {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 728px) {
   #user_profile .user_heading {
     padding: 30px 20px 20px;
     text-align: center;
@@ -342,7 +353,7 @@ button.profile_default_fields {
   }
   
   #user_profile .uk-tab {
-    margin: 15px;
+    margin: 10px !important;
     padding: 6px;
   }
   
@@ -378,18 +389,62 @@ button.profile_default_fields {
   }
 }
 
-/* Loading Animation */
-#user_profile .thumbnail img {
-  animation: fadeIn 1s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
 
 /* Smooth transitions for edit mode */
 #user_profile .profile_edit_fields,
 #user_profile .profile_default_fields {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Night mode — turn every surface blackish (dark translucent) so the
+   white text stays readable, matching the rest of the extension. */
+body.ucp-night #user_profile .md-card {
+  background: rgba(10, 14, 20, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night #user_profile .user_heading {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+body.ucp-night #user_profile .user_stats li {
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+body.ucp-night #user_profile .md-list {
+  background: rgba(10, 14, 20, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night #user_profile .md-list-addon li {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night #user_profile .md-list-addon,
+body.ucp-night #user_profile .md-list.md-list-addon {
+  background: rgba(10, 14, 20, 0.75) !important;
+}
+body.ucp-night #user_profile .md-list-addon li:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+body.ucp-night #user_profile .uk-tab {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night #user_profile .md-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+}
+body.ucp-night #user_profile .md-input:focus {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+body.ucp-night #user_profile .uk-text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+body.ucp-night #user_profile .uk-tab > li.uk-active > a {
+  background: rgba(153, 27, 30, 0.35) !important;
+  color: #fca5a5 !important;
+}
+body.ucp-night #user_profile .user_stats .heading_a,
+body.ucp-night #user_profile .heading_c,
+body.ucp-night #user_profile .md-list-heading,
+body.ucp-night #user_profile .uk-tab > li > a {
+  color: #fff !important;
 }
