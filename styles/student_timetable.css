@@ -1,348 +1,1103 @@
+/* =========================================================================
+   UCP Smart Portal — Student Timetable (grid/card design)
+   All rules are namespaced (ucp-tt-*) and scoped so they never leak onto the
+   rest of the UCP portal page. The two rules at the top hide the original
+   portal timetable that this design replaces.
+   ========================================================================= */
+
 h3.heading_b.uk-margin-bottom {
   display: none;
 }
 
-/* Better cross-browser scrollbar hints */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(30, 144, 255, 0.9) rgba(255, 255, 255, 0.06);
-}
-
-/* Custom WebKit scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 12px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  transition:
-    box-shadow 0.18s ease,
-    transform 0.18s ease,
-    background 0.18s ease;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(30, 144, 255, 1),
-    rgba(220, 53, 69, 1)
-  );
-  box-shadow: 0 6px 18px rgba(30, 144, 255, 0.22);
-  transform: translateY(-1px);
-}
-
-.glassmorphic-timetable-card {
-  width: calc(80vw - 48px);
-  /* height: calc(100vh - 48px); */
-  max-width: 1600px;
-  /* max-height: 1100px; */
-  border-radius: 22px;
-  padding: 18px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.03)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 10px 30px rgba(16, 24, 40, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  overflow: auto;
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-  animation: glassmorphic-card-intro 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
-}
-
-.glassmorphic-timetable-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.22);
-}
-@keyframes glassmorphic-card-intro {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-table.glassmorphic-timetable-table {
-  border-collapse: collapse;
-  table-layout: fixed;
-  width: max-content;
-  min-width: 90%;
-}
-
-th,
-td {
-  padding: 20px;
-  text-align: left;
-  width: 90px;
-  height: 100px;
-  color: #ebebeb;
-  font-size: 0.9rem;
-  vertical-align: middle;
-  position: relative;
-}
-
-th.glassmorphic-timetable-day-col {
-  position: sticky;
-  left: 10;
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.02)
-  );
-  font-size: 1.3rem;
-  color: #0b1724;
-  font-weight: 300;
-  box-shadow: 2px 0 8px rgba(11, 23, 36, 0.04);
-  padding-left: 0px;
-  text-align: left  ;
-  min-width: 40px;
-}
-
-th.glassmorphic-timetable-time-col {
-  position: sticky;
-  top: 0;
-  padding: 18px;
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.02)
-  );
-  color: #0b1724;
-  font-weight: 600;
-  height: 62px;
-  min-width: 90px;
-}
-
-th.glassmorphic-timetable-day-col {
-  font-weight: 800;
-  background: rgba(0, 0, 0, 0.4);
-  text-align: center;
-  color: #fff;
-  z-index: 89;
-}
-tbody:nth-of-type(1) tr th:nth-of-type(1) {
-  border-top-right-radius: 1.5rem;
-  border-top-left-radius: 1.5rem;
-}
-tbody:nth-of-type(7) tr th {
-  border-bottom-right-radius: 1.5rem;
-  border-bottom-left-radius: 1.5rem;
-}
-
-/* SLOT */
-.glassmorphic-timetable-slot {
-  width: calc(95% - 0px);
-  height: calc(80% - 12px);
-  margin: 15px;
-  border-radius: 16px;
-  padding: 20px;
-  color: rgba(255, 255, 255, 0.98);
-  font-weight: 400;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  align-items: left;
-  box-sizing: border-box;
-  position: relative;
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    opacity 0.2s ease;
-  overflow: visible; /* allow tooltip to escape */
-  z-index: 1;
-}
-.glassmorphic-timetable-slot:hover {
-  transform: translateY(-6px);
-}
-
-.glassmorphic-timetable-past-slot {
-  border-color: rgba(128, 128, 128, 0.76);
-  box-shadow: 0 8px 25px rgb(128, 128, 128) !important;
-}
-.glassmorphic-timetable-current-slot {
-  border: solid 2px rgb(30, 144, 255);
-  border-color: rgb(30, 144, 255);
-  box-shadow: 0 8px 25px rgb(30, 144, 255) !important;
-}
-.glassmorphic-timetable-future-slot {
-  border: solid 2px rgba(0, 255, 81, 0.716);
-  border-color: rgba(0, 255, 166, 0.506);
-  box-shadow: 0 8px 25px rgb(156, 156, 156) !important;
-}
-.glassmorphic-timetable-empty-slot {
-  box-shadow: none !important;
-  background: transparent !important;
-  opacity: 0.24;
-}
-
-/* TOOLTIP */
-.glassmorphic-timetable-tooltip {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  background: rgba(6, 10, 20, 0.92);
-  color: #ffffff !important;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  line-height: 1.2;
-  text-align: left;
-  z-index: 99999;
-  transition:
-    opacity 0.26s cubic-bezier(0.2, 0.9, 0.3, 1),
-    transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1),
-    visibility 0.2s;
-  width: max-content;
-  max-width: 300px;
-  pointer-events: auto; /* allow hovering tooltip itself */
-}
-.glassmorphic-timetable-tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 7px;
-  border-style: solid;
-  border-color: rgba(6, 10, 20, 0.92) transparent transparent transparent;
-}
-
-/* show on hover OR keyboard focus */
-.glassmorphic-timetable-slot:hover .glassmorphic-timetable-tooltip,
-.glassmorphic-timetable-slot:focus .glassmorphic-timetable-tooltip,
-.glassmorphic-timetable-slot:focus-visible .glassmorphic-timetable-tooltip {
-  visibility: visible;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* focus style so keyboard users see it */
-.glassmorphic-timetable-slot:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(30, 144, 255, 0.12) inset;
-}
-
-/* Gradients (glassmorphic – darker, more nuanced, highly differentiated) */
-
-
-.glassmorphic-timetable-g-7 {
-  /* Burnt sunset: ember orange → oxblood */
-  background: linear-gradient(
-    135deg,
-   rgba(49, 49, 49, 0.55),
-    rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-6 {
-  /* Midnight indigo: navy blue → royal violet */
-  background: linear-gradient(
-    135deg,
-    rgba(49, 49, 49, 0.55),
-    rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-2 {
-  /* Deep forest: pine green → earthy olive */
-  background: linear-gradient(
-    135deg,
-    rgba(49, 49, 49, 0.55),
-   rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-3 {
-  /* Muted berry dusk: wine rose → storm blue */
-  background: linear-gradient(
-    135deg,
-   rgba(49, 49, 49, 0.55),
-    rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-4 {
-  /* Abyssal teal: dark turquoise → cold steel cyan */
-  background: linear-gradient(
-    135deg,
-   rgba(49, 49, 49, 0.55),
-   rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-5 {
-  /* Regal antique: aged brass → dark plum */
-  background: linear-gradient(
-    135deg,
-   rgba(49, 49, 49, 0.55),
-   rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-1 {
-  /* Cosmic aurora: deep amethyst → jade shadow */
-  background: linear-gradient(
-    135deg,
-    rgba(49, 49, 49, 0.55),
-  rgba(49, 49, 49, 0.55)
-  );
-}
-
-.glassmorphic-timetable-g-0 {
-  /* Volcanic earth: rust brown → smoked clay */
-  background: linear-gradient(
-    135deg,
-    rgba(49, 49, 49, 0.55),
-    rgba(49, 49, 49, 0.55)
-  );
-}*/
-
-.glassmorphic-timetable-slot .glassmorphic-timetable-title {
-  z-index: 2;
-  font-weight: 500;
-  font-size: 0.81rem;
-  text-align: left;
-  padding: 0 3px;
-}
-.glassmorphic-timetable-slot .glassmorphic-timetable-meta {
-  z-index: 2;
-  font-size: 0.72rem;
-  opacity: 0.85;
-  margin-top: 6px;
-}
-
-@media (max-width: 900px) {
-  th,
-  td {
-    width: 110px;
-    height: 78px;
-  }
-}
-@media (max-width: 640px) {
-  .glassmorphic-timetable-card {
-    width: calc(100vw - 18px);
-    height: calc(100vh - 18px);
-    padding: 12px;
-  }
-}
-
 .md-card {
   display: none !important;
+}
+
+/* --- Root container + theme variables --------------------------------- */
+#ucp-tt-root {
+  --bg-image: none;
+  --container-bg: rgba(0, 0, 0, 0.25);
+  --header-bg: rgba(20, 25, 30, 0.6);
+  --card-bg: rgba(20, 25, 30, 0.65);
+  --modal-bg: rgba(25, 30, 35, 0.95);
+  --input-bg: rgba(255, 255, 255, 0.08);
+  --text-color: #ffffff;
+  --subtext-color: #aaaaaa;
+  --border-color: rgba(255, 255, 255, 0.2);
+
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  background: transparent;
+  margin-top: 18px; /* breathing room below the portal page header */
+  padding: 8px 0 24px;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Night mode overrides the variables (scoped to the root, not the page body).
+   The root stays TRANSPARENT — the page's already-darkened background (shell
+   night veil / wallpaper) shows through; only the surfaces (container,
+   header, cards) are dark. (The old solid #0d1117 black slab is gone.) */
+#ucp-tt-root.ucp-tt-night {
+  --container-bg: rgba(10, 14, 20, 0.55);
+  --header-bg: #161b22;
+  --card-bg: #1e232a;
+  --modal-bg: #161b22;
+  --input-bg: #0d1117;
+  --text-color: #e6edf3;
+  --subtext-color: #8b949e;
+  --border-color: rgba(255, 255, 255, 0.12);
+  background-color: transparent;
+}
+
+/* Box-model / reset — class-scoped (NOT an ID) so component rules still win */
+.ucp-tt-app,
+.ucp-tt-app * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Translucent container -------------------------------------------- */
+.ucp-tt-timetable-container {
+  width: 100%;
+  max-width: 1650px;
+  margin: 0 auto;
+  background: var(--container-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* only the lecture grid scrolls (see .ucp-tt-timetable-content) */
+  position: relative;
+}
+
+/* --- Info widgets bar (Next Class + Term Progress) above the timetable ------ */
+.ucp-tt-widgets-bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 14px auto 0;
+  padding: 0 2px;
+  width: 100%;
+  max-width: 1650px;
+  box-sizing: border-box;
+}
+.ucp-tt-widget {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--container-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+  color: var(--text-color);
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.ucp-tt-widget-next { flex: 1 1 40%; min-width: 260px; }
+.ucp-tt-widget-progress { flex: 0 1 340px; min-width: 240px; }
+/* Material icon (replaces the old widget emoji) — schedule / timeline */
+.ucp-tt-widget-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex: 0 0 auto;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+.ucp-tt-widget-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ucp-tt-widget-head {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--subtext-color);
+}
+.ucp-tt-widget-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ucp-tt-widget-sub {
+  font-size: 0.78rem;
+  color: var(--subtext-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ucp-tt-widget-progress-row { display: flex; align-items: center; gap: 10px; }
+.ucp-tt-progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.ucp-tt-progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #34d399, #3b82f6);
+  transition: width 0.6s ease;
+}
+.ucp-tt-progress-pct {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-color);
+  flex: 0 0 auto;
+  min-width: 42px;
+  text-align: right;
+}
+
+/* --- Top profile control bar ------------------------------------------ */
+.ucp-tt-profile-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  color: var(--text-color);
+}
+
+.ucp-tt-profile-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ucp-tt-profile-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ucp-tt-custom-profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.ucp-tt-profile-dropdown-btn {
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: space-between;
+  transition: background 0.2s;
+}
+
+.ucp-tt-profile-dropdown-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ucp-tt-profile-dropdown-menu {
+  position: absolute;
+  top: 108%;
+  left: 0;
+  z-index: 10015;
+  width: 220px;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  padding: 6px 0;
+  display: none;
+}
+
+.ucp-tt-profile-dropdown-menu.show {
+  display: block;
+}
+
+.ucp-tt-dropdown-section-header {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--subtext-color);
+  padding: 6px 14px 2px 14px;
+  font-weight: 700;
+}
+
+.ucp-tt-dropdown-option-item {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.15s;
+}
+
+.ucp-tt-dropdown-option-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ucp-tt-dropdown-option-item.active {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ucp-tt-dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.ucp-tt-profile-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ucp-tt-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ucp-tt-zoom-btn {
+  min-width: 30px;
+  padding: 5px 8px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.ucp-tt-zoom-level {
+  min-width: 52px;
+  padding: 5px 6px;
+  color: var(--text-color);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ucp-tt-zoom-level:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ucp-tt-header-center-term {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  background: rgba(59, 130, 246, 0.15);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.ucp-tt-btn-action {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ucp-tt-btn-action:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ucp-tt-btn-action:disabled,
+.ucp-tt-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ucp-tt-btn-danger {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.ucp-tt-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.6);
+}
+
+/* --- Main grid area ---------------------------------------------------- */
+.ucp-tt-timetable-content {
+  display: flex;
+  width: 100%;
+  position: relative;
+  /* No scroll here: the day sidebar is a plain fixed-width column OUTSIDE the
+     scroll region, and the lecture grid scrolls inside .ucp-tt-main-grid.
+     (Scrolling the parent used to drag the left days column with the grid —
+     sticky pinning also misbehaves under the content's zoom.) */
+  overflow: visible;
+}
+
+/* Empty state overlay (no blur / no dimming) */
+.ucp-tt-empty-state-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.ucp-tt-empty-state-overlay.visible {
+  display: flex;
+}
+
+.ucp-tt-empty-state-card {
+  pointer-events: auto;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px 32px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  color: var(--text-color);
+}
+
+.ucp-tt-empty-state-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.ucp-tt-empty-state-card p {
+  font-size: 0.85rem;
+  color: var(--subtext-color);
+  margin-bottom: 18px;
+}
+
+.ucp-tt-empty-state-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ucp-tt-sidebar {
+  width: 90px;
+  min-width: 90px;
+  background: var(--header-bg);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  /* Plain fixed column — the horizontal scroll lives in .ucp-tt-main-grid,
+     so the day labels can never be scrolled out of view. */
+  flex: 0 0 auto;
+}
+
+.ucp-tt-sidebar-header {
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ucp-tt-day-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+
+.ucp-tt-day-label.ucp-tt-current-time-active {
+  background: rgba(59, 130, 246, 0.4);
+  border-left: 4px solid #60a5fa;
+  color: #ffffff;
+}
+
+.ucp-tt-time-slot.ucp-tt-current-time-active {
+  background: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.ucp-tt-cell.ucp-tt-current-time-active {
+  background: rgba(59, 130, 246, 0.15) !important;
+  box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.6);
+}
+
+/* The ONLY horizontal scroll region: the days column sits outside it. The
+   scroll container itself must be able to shrink (min-width: 0), so the old
+   1450px floor moves onto the grid content below. */
+.ucp-tt-main-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.ucp-tt-time-header {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(125px, 1fr));
+  min-width: 1450px;
+  height: 45px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ucp-tt-time-slot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-right: 1px solid var(--border-color);
+  transition: background 0.3s;
+}
+
+.ucp-tt-day-row {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(125px, 1fr));
+  min-width: 1450px; /* matches .ucp-tt-time-header inside the scroll region */
+  height: 95px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ucp-tt-day-row:last-child {
+  border-bottom: none;
+}
+
+.ucp-tt-cell {
+  border-right: 1px solid var(--border-color);
+  padding: 5px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+/* Conflict detection */
+.ucp-tt-cell.ucp-tt-has-conflict {
+  background: rgba(239, 68, 68, 0.25) !important;
+  box-shadow: inset 0 0 0 2px #f87171 !important;
+}
+
+.ucp-tt-cell.ucp-tt-has-conflict::before {
+  content: '⚠️ CONFLICT';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #fca5a5;
+  z-index: 15;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.ucp-tt-cell.ucp-tt-drag-over {
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+}
+
+.ucp-tt-add-btn {
+  display: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ucp-tt-cell:hover .ucp-tt-add-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ucp-tt-cell:has(.ucp-tt-card) .ucp-tt-add-btn {
+  display: none !important;
+}
+
+/* Cards */
+.ucp-tt-card {
+  width: 100%;
+  flex: 1;
+  min-height: 80px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 5px 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: grab;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.ucp-tt-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
+  z-index: 10;
+}
+
+/* Micro-card badge rows */
+.ucp-tt-card-meta-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.ucp-tt-mini-badge {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.63rem;
+  color: var(--text-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* Room badge */
+.ucp-tt-card-room-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.58rem;
+  font-weight: 500;
+  padding: 0px 4px;
+  border-radius: 3px;
+  box-shadow: none;
+  max-width: fit-content;
+}
+
+.ucp-tt-card-time-badge {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #ffffff;
+}
+
+.ucp-tt-card-title {
+  font-size: 0.73rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-color);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ucp-tt-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ucp-tt-card-teacher {
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hover swap */
+.ucp-tt-card:hover .ucp-tt-card-code-badge,
+.ucp-tt-card:hover .ucp-tt-card-section-badge {
+  display: none !important;
+}
+
+.ucp-tt-card:hover .ucp-tt-card-time-badge {
+  display: block !important;
+}
+
+.ucp-tt-card:hover .ucp-tt-card-teacher,
+.ucp-tt-card:hover .ucp-tt-card-room-badge {
+  display: block !important;
+}
+
+/* Dot color picker */
+.ucp-tt-color-dot-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ucp-tt-color-dot-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  outline: none;
+  overflow: hidden;
+}
+
+.ucp-tt-color-dot-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.ucp-tt-color-dot-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.ucp-tt-color-dot-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+/* Footer */
+.ucp-tt-footer-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--header-bg);
+  border-top: 1px solid var(--border-color);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  color: var(--text-color);
+}
+
+.ucp-tt-footer-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ucp-tt-footer-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ucp-tt-toggles-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ucp-tt-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.ucp-tt-toggle-item input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+/* Context menu */
+.ucp-tt-context-menu {
+  position: fixed;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 10020;
+  display: none;
+  min-width: 150px;
+}
+
+.ucp-tt-context-menu-item {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ucp-tt-context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Modals */
+.ucp-tt-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10010;
+}
+
+.ucp-tt-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ucp-tt-modal {
+  background: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  width: 380px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  color: var(--text-color);
+}
+
+.ucp-tt-modal-large {
+  width: 95%;
+  max-width: 1250px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ucp-tt-modal h3 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.ucp-tt-form-group {
+  margin-bottom: 12px;
+}
+
+.ucp-tt-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.ucp-tt-form-row .ucp-tt-form-group {
+  flex: 1;
+}
+
+.ucp-tt-form-group label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--subtext-color);
+  margin-bottom: 4px;
+}
+
+.ucp-tt-form-group input,
+.ucp-tt-form-group select,
+.ucp-tt-form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.ucp-tt-form-group select option {
+  background: #1e232a;
+  color: #fff;
+}
+
+.ucp-tt-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.ucp-tt-left-btns,
+.ucp-tt-right-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.ucp-tt-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ucp-tt-btn-cancel {
+  background: transparent;
+  color: var(--subtext-color);
+}
+
+.ucp-tt-btn-save {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.ucp-tt-btn-save:hover {
+  background: #2563eb;
+}
+
+/* Excel table view */
+.ucp-tt-excel-table-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.ucp-tt-excel-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-color);
+  font-size: 0.85rem;
+}
+
+.ucp-tt-excel-table th,
+.ucp-tt-excel-table td {
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.ucp-tt-excel-table th {
+  background: rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+}
+
+.ucp-tt-excel-table input,
+.ucp-tt-excel-table select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.ucp-tt-excel-table select option {
+  background: #1e232a;
+  color: #fff;
+}
+
+.ucp-tt-excel-table input:focus,
+.ucp-tt-excel-table select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* --- Academic calendar expander (below the timetable) ------------------- */
+.ucp-tt-acadcal {
+  width: 100%;
+  max-width: 1650px;
+  margin: 14px auto 0;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+.ucp-tt-acadcal-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--container-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.ucp-tt-acadcal-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+.ucp-tt-acadcal-toggle .material-icons {
+  font-size: 1.3rem;
+  opacity: 0.85;
+  flex: 0 0 auto;
+}
+.ucp-tt-acadcal-chev {
+  margin-left: auto;
+  font-size: 1.4rem;
+  transition: transform 0.2s ease;
+}
+.ucp-tt-acadcal-toggle[aria-expanded="true"] .ucp-tt-acadcal-chev {
+  transform: rotate(180deg);
+}
+.ucp-tt-acadcal-body {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ucp-tt-acadcal-body[hidden] {
+  display: none;
+}
+.ucp-tt-acadcal-state {
+  font-size: 0.82rem;
+  color: var(--subtext-color);
+  padding: 8px 2px;
+}
+.ucp-tt-acadcal-term {
+  background: var(--container-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+.ucp-tt-acadcal-term-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+.ucp-tt-acadcal-term-head .material-icons {
+  font-size: 1.2rem;
+  opacity: 0.85;
+}
+.ucp-tt-acadcal-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.82rem;
+}
+.ucp-tt-acadcal-row:last-child {
+  border-bottom: none;
+}
+.ucp-tt-acadcal-row.is-past {
+  opacity: 0.55;
+}
+.ucp-tt-acadcal-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--text-color);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ucp-tt-acadcal-date {
+  flex: 0 0 auto;
+  color: var(--subtext-color);
+  font-size: 0.78rem;
+}
+.ucp-tt-acadcal-when {
+  flex: 0 0 auto;
+  min-width: 78px;
+  text-align: right;
+  color: var(--subtext-color);
+  font-size: 0.75rem;
+}
+
+/* Print */
+@media print {
+  #ucp-tt-root {
+    background: #fff !important;
+    padding: 0;
+    color: #000 !important;
+  }
+  #ucp-tt-root .ucp-tt-timetable-container {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  #ucp-tt-root .ucp-tt-widgets-bar,
+  #ucp-tt-root .ucp-tt-profile-bar,
+  #ucp-tt-root .ucp-tt-footer-bar,
+  #ucp-tt-root .ucp-tt-add-btn,
+  #ucp-tt-root .ucp-tt-empty-state-overlay,
+  #ucp-tt-root .ucp-tt-acadcal {
+    display: none !important;
+  }
+  #ucp-tt-root .ucp-tt-sidebar,
+  #ucp-tt-root .ucp-tt-time-slot,
+  #ucp-tt-root .ucp-tt-day-label,
+  #ucp-tt-root .ucp-tt-card {
+    color: #000 !important;
+    border-color: #ddd !important;
+    background: #fff !important;
+  }
+  #ucp-tt-root .ucp-tt-card {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+  #ucp-tt-root .ucp-tt-mini-badge {
+    color: #000 !important;
+    border-color: #999 !important;
+    background: #eee !important;
+  }
 }
