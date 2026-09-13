@@ -256,9 +256,9 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 This is a `3.6.0` beta, so expect some rough edges. The extension otherwise works as expected.
 
-- **Settings page buttons** are currently broken — clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
+- **Settings page buttons** are currently broken, clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
 - **Notifications** are currently a **work in progress** and may not function reliably yet.
-- No other known issues at the moment.
+- No other known issues at the moment, above issues will be fixed in v3.6.2.
 
 <br/>
 
