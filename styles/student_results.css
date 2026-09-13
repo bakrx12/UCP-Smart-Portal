@@ -2,16 +2,16 @@
 :root {
   --bg-1: #f8fbff;
   --bg-2: #eef6ff;
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-2: rgba(255, 255, 255, 0.65);
-  --muted: #6b7280;
+  --glass: rgba(255, 255, 255, 0.18);
+  --glass-2: rgba(255, 255, 255, 0.2);
+  --muted: rgba(255, 255, 255, 0.72);
   --accent: #6b8cff;
   --radius: 16px;
   --glass-border: rgba(255, 255, 255, 0.7);
   --soft-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   --bg1: #fbfdff;
   --bg2: #eef6ff;
-  --glass: rgba(255, 255, 255, 0.55);
+  --glass: rgba(255, 255, 255, 0.18);
   --card-shadow: 0 10px 30px rgba(12, 20, 40, 0.06);
   --success: #16a34a;
   --warn: #f59e0b;
@@ -33,32 +33,65 @@
     Arial;
 }
 
+.loading-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-bottom: 10px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.loading-bar .bar {
+  width: 0;
+  height: 100%;
+  background: #4a90e2;
+  animation: loading 2s infinite;
+}
+
+@keyframes loading {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 80%;
+  }
+  100% {
+    width: 0;
+  }
+}
+
 .glass-tabs-bar {
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.25);
+  /* DARK GLASS by default (accent mode OFF): translucent so the wallpaper
+     shows through, but clearly visible — not a bare transparent box. NO
+     backdrop blur (removed) — the fill carries the "blackish glass" look
+     on its own. The accent-mode rules at the bottom of this sheet repaint
+     it with a translucent accent fill when the mode is on. */
+  background: rgba(10, 14, 20, 0.55);
 
   border-radius: 20px;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.1),
-    0 0 25px rgba(116, 185, 255, 0.3);
   padding: 0.5rem;
   width: 420px;
   overflow: hidden;
+  /* hairline ring for the edge (inset — no layout shift) */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease,
-    width 0.3s ease;
+    width 0.3s ease,
+    background 0.3s ease;
 }
 
-/* Hover "lift" effect */
+/* Hover "lift" (both modes — the bar always carries a glass fill now). In
+   accent mode the resting accent ring (bottom of this sheet, higher
+   specificity) keeps painting while the bar lifts. */
 .glass-tabs-bar:hover {
   transform: translateY(-6px);
-  box-shadow:
-    0 16px 50px rgba(0, 0, 0, 0.15),
-    0 0 35px rgba(116, 185, 255, 0.45);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 }
 
 /* ====== Tabs ====== */
@@ -66,7 +99,7 @@
   flex: 1;
   text-align: center;
   padding: 0.8rem 0;
-  color: #444;
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
@@ -83,7 +116,7 @@
 
 .glass-tabs-tab:hover {
   transform: scale(1.05);
-  color: #000;
+  color: #fff;
 }
 
 .glass-tabs-tab .material-icons {
@@ -100,19 +133,23 @@
 }
 
 .glass-tabs-tab.glass-tabs-active {
-  color: #222;
+  color: #fff;
 }
 
-/* ====== Active Indicator (Desktop) ====== */
+/* ====== Active Indicator (Desktop) ======
+   TRANSPARENT by default (accent mode OFF) — accent mode paints it
+   (bottom of this sheet). The active tab's label still brightens to
+   solid white, so the active state stays visible either way. */
 .glass-tabs-indicator {
   position: absolute;
   bottom: 0;
   height: 4px;
   width: calc(100% / 3);
-  background: linear-gradient(90deg, #74b9ff, #a29bfe);
+  background: transparent;
   border-radius: 4px;
-  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  box-shadow: 0 0 12px rgba(116, 185, 255, 0.6);
+  transition:
+    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    background 0.3s ease;
 }
 
 /* ====== Content Containers ====== */
@@ -122,9 +159,14 @@
   max-width: 80rem;
   padding: 2rem;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.35);
+  /* DARK GLASS (translucent) — was a whitish rgba(255, 255, 255, 0.18):
+     matches the shell's dark glass surfaces; the wallpaper shows through.
+     NO backdrop blur (removed) — the fill carries the look on its own. */
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  /* glow removed — the panels stay flat glass, no colored halo */
+  box-shadow: none;
   display: none;
   opacity: 0;
   transform: translateY(10px);
@@ -145,11 +187,11 @@
 
 .glass-tabs-content h2 {
   margin-bottom: 1rem;
-  color: #222;
+  color: #fff;
 }
 
 .glass-tabs-content p {
-  color: #555;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
 }
 
@@ -177,7 +219,9 @@
     width: 4px;
     height: calc(100% / 3);
     border-radius: 4px;
-    background: linear-gradient(180deg, #74b9ff, #a29bfe);
+    /* transparent default too — the accent-mode rule (higher specificity)
+       wins when the mode is on, on mobile as well. */
+    background: transparent;
     transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   }
 
@@ -199,11 +243,13 @@
 .gmc-card {
   cursor: pointer;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.1);
+  /* DARK GLASS fallback — js/student_results.js paints the same dark glass
+     gradient inline (no backdrop blur) on every card. */
+  background: rgba(10, 14, 20, 0.55);
   border-radius: 20px;
   padding: 20px;
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   transition:
     transform 0.3s ease,
@@ -218,19 +264,19 @@
 .gmc-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #343434;
+  color: #ffffff;
   margin-bottom: 8px;
 }
 
 .gmc-instructor {
   font-size: 0.95rem;
-  color: #6b6b6b;
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 6px;
 }
 
 .gmc-details {
   font-size: 0.85rem;
-  color: #858585;
+  color: rgba(255, 255, 255, 0.65);
   margin-bottom: 10px;
 }
 
@@ -293,6 +339,13 @@
   font-size: 22px;
   color: #fff !important;
   margin-right: 0 !important;
+}
+/* Stay WHITE in EVERY mode — day, night and accent. The accent variant
+   below is required: the global accent icon tint in styles/shell.css
+   (body.ucp-bg-accent .material-icons, !important) has HIGHER specificity
+   than the plain rule above and would otherwise recolor the icon. */
+body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
+  color: #fff !important;
 }
 
 /* tooltip */
@@ -373,12 +426,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(250, 250, 255, 0.85)
-  );
-  border: 1px solid rgba(10, 20, 60, 0.05);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
   transition:
@@ -421,7 +470,7 @@
   border-radius: 12px;
   padding: 14px;
   min-height: 86px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 6px 18px rgba(16, 24, 40, 0.03);
   display: flex;
   flex-direction: column;
@@ -446,51 +495,22 @@
   font-size: 18px;
 }
 
-/* MORE SUBTLE soft gradient backgrounds for stat tiles */
-.gmg-stat-a {
-  background: linear-gradient(
-    135deg,
-    rgba(210, 225, 255, 0.75) 0%,
-    rgba(235, 245, 255, 0.75) 100%
-  );
-}
-
-.gmg-stat-b {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 240, 200, 0.75) 0%,
-    rgba(255, 250, 225, 0.75) 100%
-  );
-}
-
-.gmg-stat-c {
-  background: linear-gradient(
-    135deg,
-    rgba(200, 250, 220, 0.75) 0%,
-    rgba(225, 255, 240, 0.75) 100%
-  );
-}
-
+/* Stat tiles (Grade Pts / Cum. GP / Attempted CH / Earned CH): the old
+   pastel color tints are gone — plain BLACKISH GLASS (translucent), the
+   same family as the panels. */
+.gmg-stat-a,
+.gmg-stat-b,
+.gmg-stat-c,
 .gmg-stat-d {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 210, 210, 0.75) 0%,
-    rgba(255, 235, 235, 0.75) 100%
-  );
+  background: rgba(12, 16, 24, 0.38);
 }
 
-/* subtle glows (reduced) */
-.gmg-glow-a {
-  box-shadow: 0 8px 20px rgba(107, 140, 255, 0.8);
-}
-.gmg-glow-b {
-  box-shadow: 0 8px 20px rgba(255, 189, 119, 0.7);
-}
-.gmg-glow-c {
-  box-shadow: 0 8px 20px rgba(99, 247, 182, 0.6);
-}
+/* glows removed — stat cards keep only their base soft shadow */
+.gmg-glow-a,
+.gmg-glow-b,
+.gmg-glow-c,
 .gmg-glow-d {
-  box-shadow: 0 8px 20px rgba(255, 126, 126, 0.6);
+  box-shadow: none;
 }
 
 /* progress circles */
@@ -508,11 +528,10 @@
   place-items: center;
   position: relative;
   padding: 6px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.6),
-    rgba(250, 250, 255, 0.45)
-  );
+  /* BLACKISH GLASS (translucent) — was a whitish disc; no blur. The ring
+     itself is uncolored (painted white by js/student_results.js). */
+  background: rgba(10, 14, 20, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   border-radius: 999px;
 }
 .gmg-progress svg {
@@ -548,10 +567,10 @@
   padding: 14px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.55),
-    rgba(255, 255, 255, 0.5)
+    rgba(255, 255, 255, 0.28),
+    rgba(255, 255, 255, 0.2)
   );
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: var(--soft-shadow);
 }
 .gmg-course-list {
@@ -590,12 +609,8 @@
   gap: 12px;
   padding: 10px;
   border-radius: 12px;
-  background: linear-gradient(
-    180deg,
-    rgba(250, 250, 255, 0.9),
-    rgba(255, 255, 255, 0.85)
-  );
-  border: 1px solid rgba(10, 20, 60, 0.03);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s;
@@ -715,10 +730,10 @@
 .obe-card {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.64),
-    rgba(250, 252, 255, 0.6)
+    rgba(255, 255, 255, 0.26),
+    rgba(250, 252, 255, 0.2)
   );
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--card-shadow);
@@ -748,15 +763,17 @@
 .obe-search {
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(10, 20, 40, 0.06);
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
   min-width: 200px;
 }
 .obe-btn {
   padding: 10px 12px;
   border-radius: 10px;
-  border: none;
-  background: linear-gradient(90deg, #eef2ff, #f8fbff);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
   cursor: pointer;
   display: inline-flex;
   gap: 8px;
@@ -779,6 +796,11 @@
 }
 .obe-download-link .material-icons {
   font-size: 18px;
+  /* white in every mode — same override for the global accent icon tint */
+  color: #fff !important;
+}
+body.ucp-bg-accent .obe-download-link .material-icons {
+  color: #fff !important;
 }
 .obe-download-link:hover {
   transform: translateY(-3px);
@@ -799,16 +821,12 @@
 .obe-table thead th {
   position: sticky;
   top: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.65),
-    rgba(245, 247, 255, 0.65)
-  );
+  background: rgba(255, 255, 255, 0.2);
   padding: 10px 12px;
   text-align: left;
   font-size: 13px;
   color: var(--muted);
-  border-bottom: 1px solid rgba(10, 20, 40, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 .obe-table tbody tr {
   transition:
@@ -817,11 +835,7 @@
 }
 .obe-table tbody tr:hover {
   transform: translateY(-4px);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(250, 250, 255, 0.95)
-  );
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .obe-plo {
@@ -844,10 +858,10 @@
 .obe-progress-outer {
   width: 220px;
   height: 20px;
-  background: rgba(10, 20, 40, 0.04);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 999px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .obe-progress-inner {
   height: 100%;
@@ -869,12 +883,8 @@
   gap: 8px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(245, 247, 255, 0.9)
-  );
-  border: 1px solid rgba(10, 20, 40, 0.03);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .obe-footer {
@@ -926,4 +936,48 @@
 
 #page_content_inner {
   display: none;
+}
+
+/* ====== Accent mode =====================================================
+   js/shell.js sets body.ucp-bg-accent + --ucp-accent on EVERY page when
+   "Match colors to background" is ON. The tab bar gets a TRANSLUCENT accent
+   fill (the wallpaper still shows through) and the slider takes the accent
+   color. When the mode is OFF, the bar keeps its dark glass base (above)
+   and the slider stays transparent (the active tab's label still brightens
+   to solid white). */
+body.ucp-bg-accent .glass-tabs-bar {
+  /* fallback fill for engines without color-mix */
+  background: rgba(96, 165, 250, 0.16);
+  background: color-mix(in srgb, var(--ucp-accent, #60a5fa) 16%, transparent);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(96, 165, 250, 0.45);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px color-mix(in srgb, var(--ucp-accent, #60a5fa) 45%, transparent);
+}
+body.ucp-bg-accent .glass-tabs-indicator {
+  background: var(--ucp-accent, #60a5fa);
+}
+/* The active tab's LABEL takes the accent — the tab ICONS are already
+   tinted by the global body.ucp-bg-accent .material-icons rule in
+   styles/shell.css. */
+body.ucp-bg-accent .glass-tabs-tab.glass-tabs-active {
+  color: var(--ucp-accent, #fff);
+}
+
+/* Results are intentionally white in both wallpaper modes so the page does
+   not switch to dark text when the portal is in day mode. */
+.glass-tabs-bar,
+.glass-tabs-content,
+.obe-wrap,
+.glass-tabs-bar *,
+.glass-tabs-content *,
+.obe-wrap * {
+  color: #fff !important;
+}
+
+/* Keep the tab dock readable over bright wallpapers and independent of the
+   accent fill used by the page content. */
+.glass-tabs-bar {
+  background: rgba(10, 14, 20, 0.68) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 12px 32px rgba(0, 0, 0, 0.24);
 }
