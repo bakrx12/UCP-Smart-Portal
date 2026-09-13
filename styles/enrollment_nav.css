@@ -1,0 +1,107 @@
+/* =========================================================================
+ * UCP Smart Portal — Enrollment Nav Bar
+ * ---------------------------------------------------------------------------
+ * Shared top navigation for the four enrollment pages (cards / cart /
+ * timetable / available_timetable) — see js/enrollment_nav.js.
+ *
+ * Design (matches the requested available-timetable look):
+ *   - TRANSPARENT bar — no white slab; the dark page surface / wallpaper
+ *     shows through, so the white icons + labels are always visible.
+ *   - Buttons transparent (white 75% text + icon); hover = white 10%.
+ *   - The CURRENT page's button is highlighted in UCP blue (#234a99).
+ *   - The bar is the first child of #page_content, which already clears the
+ *     fixed sidebar (margin-left 17rem) — it never rests behind the sidebar.
+ * ========================================================================= */
+
+.ucp-etnav {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 1rem auto !important;
+  padding: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  /* Sits above any full-page wallpaper/overlay layer (e.g. from the shared
+     night-mode theme) that would otherwise sit on top and silently absorb
+     mouse clicks before they ever reach the buttons below — keyboard
+     Tab+Enter still worked because focus activation skips hit-testing,
+     which is what exposed this. */
+  position: relative !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+}
+
+/* !important throughout: the portal's own page CSS paints links inside the
+   page content with SOLID WHITE backgrounds (the "View …" buttons) and that
+   higher-specificity rule would otherwise win — white text on a white bar,
+   unreadable in night mode. The bar must stay transparent. */
+#page_content .ucp-etnav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 12px;
+  background: rgba(26, 25, 25, 0.75) !important;
+  border: 1px solid transparent !important;
+  color: rgba(255, 255, 255, 0.838) !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  position: relative !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+}
+#page_content .ucp-etnav-btn .material-icons {
+  font-size: 19px;
+  color: currentColor !important;
+}
+#page_content .ucp-etnav-btn:hover {
+  background: rgba(26, 25, 25, 0.75) !important;
+  color: #c0bebe !important;
+}
+#page_content .ucp-etnav-btn.active {
+  background: #234a99 !important; /* UCP blue */
+  border-color: rgba(255, 255, 255, 0.30) !important;
+  color: #fff !important;
+}
+
+/* =========================================================================
+ * Page surface — the portal's content panel becomes a blackish TRANSLUCENT
+ * surface (same treatment as student_societies.css) so the wallpaper shows
+ * through instead of the plain white page. Scoped to the cart +
+ * available-timetable pages (the cards page gets the identical token from
+ * new_enrollment.css).
+ * ========================================================================= */
+body.ucp-etnav-cart #page_content_inner,
+body.ucp-etnav-avail #page_content_inner {
+  background: rgba(10, 14, 20, 0.84) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* A touch cleaner on the cart page — consistent inner padding + a little
+   breathing room (structure unchanged, just tidier). */
+body.ucp-etnav-cart #page_content_inner {
+  padding: 1.25rem;
+}
+
+/* The page title at the top ("Available Timetable" etc.) in UCP blue —
+   the enrollment pages share one design language. */
+body.ucp-etnav #page_content h1 {
+  color: #234a99 !important;
+}
+
+/* =========================================================================
+ * NIGHT MODE — deepen the surfaces, keep the bar legible.
+ * ========================================================================= */
+body.ucp-night.ucp-etnav-cart #page_content_inner,
+body.ucp-night.ucp-etnav-avail #page_content_inner {
+  background: rgba(8, 11, 16, 0.784) !important;
+}
