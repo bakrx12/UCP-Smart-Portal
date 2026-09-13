@@ -136,8 +136,6 @@
 
 ## 🚀 Installation
 
-Offers support for Manifest V3 Chromium browsers (Chrome, Edge, Brave). It isn't on the Chrome Web Store, so you load it unpacked.
-
 ### Chromium Browsers (recommended) 
 
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
@@ -146,6 +144,8 @@ Offers support for Manifest V3 Chromium browsers (Chrome, Edge, Brave). It isn't
 4. Turn on **Developer mode** (top right).
 5. Click **Load unpacked** and select the unzipped extension folder.
 6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
+
+Alternatively, you can download the extension on [Chrome webstore](https://chromewebstore.google.com/detail/ucp-smart-odoo-portal/ebmcimlgnnbkomlabkhijkblmchjifid?hl=en&pli=1)
 
 ### Mozilla FireFox [WIP]
 
