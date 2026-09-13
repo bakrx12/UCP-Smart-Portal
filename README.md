@@ -44,7 +44,7 @@
 
 ## 📰 News
 
-- **[v3.6.0](../../releases/tag/v3.6.0)** · *2026-09-22* [WIP] · **Dashboard widgets, Notifications, & Customization**<br/>
+- **[v3.6.0](../../releases/tag/v3.6.0)** · *2026-09-21* [WIP] · **Dashboard widgets, Notifications, & Customization**<br/>
   At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
 
 - **[v3.5.0](../../releases/tag/v3.5.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
