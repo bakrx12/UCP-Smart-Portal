@@ -159,20 +159,75 @@ Offers support for Manifest V3 Chromium browsers (Chrome, Edge, Brave). It isn't
 5. Open the unzipped extension folder and select `manifest.json`.
 6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
 
-> **Note:** Firefox temporary add-ons are removed when Firefox is restarted, so you'll need to load the extension again after restarting Firefox. :contentReference[oaicite:0]{index=0}
+> **Note:** Firefox temporary add-ons are removed when Firefox is restarted, so you'll need to load the extension again after restarting Firefox.
 
 
 ## 📁 Project Structure
 ```
-ucp-redesign-extension/
-├─ assets/          # images, fonts, static assets
-├─ icons/           # extension icons
-├─ js/              # scripts injected into portal pages
-├─ styles/          # CSS stylesheets (glassmorphism)
-├─ index.html       # base page (dev/testing)
-├─ calendea.html    # calendar view (dev/testing)
-├─ manifest.json    # browser extension manifest (v3)
-└─ vite.svg         # asset (legacy/test)
+UCP-Smart-Portal/
+├── assets/ # Portal assets, backgrounds, logos, and images
+│ ├── bgs/ # Background images and presets
+│ ├── homepage/ # Homepage-related assets
+│ ├── barcode.png # Student barcode asset
+│ ├── ucp_building.png # UCP building image
+│ └── ucp_logo.png # UCP logo
+├── background/ # Background/service-worker functionality
+├── icons/ # Extension icons
+├── js/ # JavaScript modules for portal pages and features
+│ ├── course/ # Course-specific functionality
+│ │ ├── course_gradebook.js
+│ │ ├── course_material.js
+│ │ ├── course_submission.js
+│ │ ├── dockbar.js
+│ │ ├── FileSaver.min.js
+│ │ └── jszip.min.js
+│ ├── academic_calendar.js # Academic calendar integration
+│ ├── enrollment_nav.js # Enrollment navigation
+│ ├── enrollment_timetable.js
+│ ├── homepage.js # Dashboard/homepage functionality
+│ ├── new_enrollment.js # Redesigned enrollment interface
+│ ├── notification_page.js # Notifications and updates
+│ ├── session_expire.js # Session/auto-logout handling
+│ ├── settings_page.js # Extension settings
+│ ├── shell.js # Shared portal shell/navigation
+│ ├── student.js # Shared student functionality
+│ ├── student_attendance.js # Attendance information
+│ ├── student_dashboard.js # Custom academic dashboard
+│ ├── student_datesheet.js # Exam datesheet
+│ ├── student_enrolled.js # Enrolled courses
+│ ├── student_feedback.js # Feedback interface
+│ ├── student_invoices.js # Invoice information
+│ ├── student_profile.js # Student profile
+│ ├── student_results.js # Results and grades
+│ ├── student_societies.js # Societies
+│ └── student_timetable.js # Student timetable
+├── styles/ # CSS styles for redesigned portal pages
+│ ├── course/ # Course-specific styles
+│ ├── enrollment_nav.css
+│ ├── homepage.css
+│ ├── new_enrollment.css
+│ ├── notification_page.css
+│ ├── notification_widget.css
+│ ├── portal_glass.css # Glassmorphic UI styling
+│ ├── settings_page.css
+│ ├── shell.css
+│ ├── student.css
+│ ├── student_attendance.css
+│ ├── student_dashboard.css
+│ ├── student_datesheet.css
+│ ├── student_enrolled.css
+│ ├── student_feedback.css
+│ ├── student_invoices.css
+│ ├── student_profile.css
+│ ├── student_results.css
+│ ├── student_societies.css
+│ └── student_timetable.css
+├── course_enrollment_ui.html # Redesigned course enrollment interface
+├── manifest.json # Browser extension manifest
+├── test.js # Development/testing utilities
+├── README.md # Project documentation
+├── LICENSE.md # Project license
+└── vite.svg # Vite asset
 ```
 
 ## 🧩 How It Works
@@ -182,25 +237,12 @@ The extension matches UCP Odoo portal pages and injects:
 No data leaves your browser; everything runs locally in the page context.
 Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
-## 🚀 Installation (Chrome / Edge)
-1. Download or clone this repo.
-2. Go to `chrome://extensions` (or Edge → Extensions).
-3. Toggle “Developer mode” (top right).
-4. Click “Load unpacked” and select the project folder.
-5. Open the UCP Odoo Student Portal. Refresh to apply styles.
 
 ## 🔧 Development
 - Edit files under `styles/` and `js/`.
 - If you add new assets or scripts, ensure paths are correct in the injection logic and/or `manifest.json`.
 - Keep CSS effects subtle to avoid readability issues (glassmorphism can reduce contrast).
 
-## 💡 Customization
-- Adjust blur/opacity in `styles/*.css`:
-  - `backdrop-filter: blur(10px);`
-  - `background: rgba(255, 255, 255, 0.15);`
-- Tweak shadows and borders for better contrast:
-  - `box-shadow: 0 8px 24px rgba(0,0,0,0.15);`
-  - `border: 1px solid rgba(255,255,255,0.25);`
 
 ## 🗺️ Roadmap
 - Lightweight dark mode optimization 
@@ -209,16 +251,19 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 - Performance profiling on low-end machines
 
 
-## 🤝 Contributing
-PRs welcome! Please:
-1. Open an issue describing the change.
-2. Keep changes scoped and documented.
-3. Test across key pages before submitting.
+## ⚠️ Known issues
+
+This is a `0.2.4` beta, so expect some rough edges. The extension otherwise works as expected.
+
+- **Settings page buttons** are currently broken — clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
+- **Notifications** are currently a **work in progress** and may not function reliably yet.
+- No other known issues at the moment.
+
+<br/>
 
 
-## 🙌 Attributions
-Design - Abdurrehman
+## 🙏 Attributions
+Design - Abdurrehman, AbuBakr Aslam
 Web Scraping - Talha Abid
 Code - Abdullah Zafar, AbuBakr Aslam
-Retouched original, optimized to be lightweight.
 By UCP Students with love for UCP students.
