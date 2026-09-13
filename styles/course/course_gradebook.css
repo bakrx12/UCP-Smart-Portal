@@ -4,7 +4,7 @@
   --ggb-bg-2: #eef9f2;
   --ggb-accent: #2563eb;
   --ggb-radius: 14px;
-  --ggb-glass: rgba(0, 0, 0, 0.338);
+  --ggb-glass: rgba(136, 134, 134, 0.338);
   --ggb-border: rgba(255, 255, 255, 0.7);
   --ggb-muted: #667085;
   --ggb-shadow: 0 12px 40px rgba(10, 18, 45, 0.07);
@@ -17,7 +17,7 @@
 html,
 body {
   height: auto;
-  margin: 0;
+  margin: 0px;
   font-family:
     Inter,
     system-ui,
@@ -30,16 +30,16 @@ body {
 }
 .ggb-wrap {
   width: 100%;
-  max-width: 1100px;
-  margin: 28px auto;
-  padding: 20px;
+  max-width: 1000px;
+  margin: 0px auto;
+  padding: 0px;
   box-sizing: border-box;
 }
 .ggb-card {
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.4),
-    rgba(250, 252, 255, 0.35)
+    rgba(250, 252, 255, 0.099)
   );
   border-radius: var(--ggb-radius);
   border: 1px solid var(--ggb-border);
@@ -57,6 +57,7 @@ body {
   margin-bottom: 14px;
 }
 .ggb-title {
+  color: var(--ggb-accent);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -66,11 +67,12 @@ body {
   color: var(--ggb-accent);
 }
 .ggb-title h1 {
+    color: var(--ggb-accent, transparent-ish) !important;
   font-size: 20px;
   margin: 0;
 }
 .ggb-sub {
-  color: var(--ggb-muted);
+  color: var(--ggb-accent);
   font-size: 13px;
   margin-top: 2px;
 }
@@ -80,7 +82,8 @@ body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: 18px ;
+
 }
 .ggb-sum-card {
   background: linear-gradient(
@@ -105,7 +108,7 @@ body {
 .ggb-sum-value {
   font-size: 18px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--ggb-muted) !important;
 }
 
 .ggb-final-grade {
@@ -198,8 +201,9 @@ body {
   overflow: visible;
 }
 .ggb-circle-bg {
-  stroke: rgba(10, 20, 40, 0.06);
+  stroke: rgba(196, 197, 198, 0.06);
   stroke-width: 10;
+
   fill: none;
 }
 .ggb-circle-fg {
