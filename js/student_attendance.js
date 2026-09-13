@@ -149,18 +149,25 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
 
         /* === Empty-state helper + CSS (re-usable) === */
-        function emptyStateHTML(icon, title, subtitle = '') {
+        /* `extra` renders a second sub-line INSIDE the card (used for the
+           "If you expect to see attendance data…" hint, which used to sit
+           outside the card as a loose sibling). */
+        function emptyStateHTML(icon, title, subtitle = '', extra = '') {
             return `
     <div class="empty-state">
       <span class="material-icons empty-icon">${icon}</span>
       <div class="empty-title">${title}</div>
       ${subtitle ? `<div class="empty-sub">${subtitle}</div>` : ''}
+      ${extra ? `<div class="empty-sub" style="max-width:46ch;">${extra}</div>` : ''}
     </div>
   `;
         }
 
         const _attStyle = document.createElement('style');
         _attStyle.textContent = `
+  /* The standard dark-glass surface (the old white 0.41 tint was the light
+     glass the extension has moved off of — shell.css: "NOT a near-white
+     tint"). Same token family as the page's own .glass cards. */
   #attendance-container-new .empty-state {
     display:flex;
     flex-direction:column;
@@ -168,16 +175,17 @@ chrome.storage.local.get('toggle_power', (result) => {
     justify-content:center;
     gap:8px;
     padding:22px;
-    border-radius:12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(245,248,250,0.85));
-    color: #163c3c;
-    box-shadow: 0 6px 18px rgba(12, 40, 40, 0.06);
+    border-radius:16px;
+    background: rgba(10,14,20,0.55);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: #ffffff;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
     text-align:center;
     margin:12px;
   }
   #attendance-container-new .empty-state .empty-icon {
     font-size:48px;
-    color:#0b6b6b;
+    color:#ffffff;
   }
   #attendance-container-new .empty-state .empty-title{
     font-weight:600;
@@ -185,7 +193,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   #attendance-container-new .empty-state .empty-sub{
     font-size:13px;
-    color:#2f6b6b;
+    color:rgba(255,255,255,0.85);
     opacity:0.95;
   }
   /* make sure original controls don't look broken if data absent */
@@ -199,13 +207,15 @@ chrome.storage.local.get('toggle_power', (result) => {
         const container = document.getElementById('attendance-container-new');
 
         if (!Array.isArray(attendance) || attendance.length === 0) {
-            // Replace the container contents with a friendly empty-state message
-            container.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        ${emptyStateHTML('people_outline', 'No detailed attendance found', 'Detailed attendance records could not be detected on this page.')}
-        <div style="text-align:center;color:#376b6b;font-size:13px;">If you expect to see attendance data, try opening the "Attendance" section on Horizon and then reload this view.</div>
-      </div>
-    `;
+            // Replace the container contents with a friendly empty-state
+            // message. The "If you expect to see attendance data…" hint is a
+            // sub-line INSIDE the card (the empty-state IS the card).
+            container.innerHTML = emptyStateHTML(
+                'people_outline',
+                'No detailed attendance found',
+                'Detailed attendance records could not be detected on this page.',
+                'If you expect to see attendance data, try opening the "Attendance" section on Horizon and then reload this view.'
+            );
             // Do not continue to initialize the dropdown/calendar UI
         } else {
 

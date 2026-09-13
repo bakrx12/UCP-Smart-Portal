@@ -1,39 +1,7 @@
-function addCrownToAdminName() {
-  const admins = ["muhammad abdullah zafar", "talha abid", "abdul rehman"];
-  const div = document.querySelector('aside .uk-text-bold.uk-text-center');
-  const pfp = document.querySelector('aside .thumbnail img')
-
-  // Get the text and split it
-  const text = div.textContent.trim();
-  const firstLetter = text.charAt(0);
-  const rest = text.slice(1);
-
-  const name = text.trim().toLowerCase();
-  const isAdmin = admins.includes(name);
-
-  // Create a span for the first letter + crown
-  if (isAdmin) {
-    div.innerHTML = `
-      <span style="position: relative; display: inline-block;">
-        <span style="position: absolute; top: -1em; left: -0.65em; transform: rotate(-20deg); font-size: 0.9em;">👑</span>
-        <span>${firstLetter}</span>
-      </span>${rest}
-    `;
-
-    switch (name) {
-      case (admins[0]):
-        pfp.setAttribute("src", `${chrome.runtime.getURL("/assets/admins/raz0229.jpg")}`)
-        break;
-      case (admins[1]):
-        pfp.setAttribute("src", `${chrome.runtime.getURL("/assets/admins/talha-abid.jpg")}`)
-        break;
-      case (admins[2]):
-        pfp.setAttribute("src", `${chrome.runtime.getURL("/assets/admins/abdurrehman.jpg")}`)
-        break;
-    }
-  }
-}
-
+// NOTE: An orphaned snippet that referenced an undefined `div` used to sit at the
+// top of this file and threw "div is not defined" on every student page. That
+// abort also prevented the background-image + sidebar setup below from running.
+// It has been removed.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === 'TOGGLE_POWER_CHANGED') {
     console.log('⚡ toggle_power changed:', message.enabled);
@@ -46,7 +14,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
 chrome.storage.local.get('toggle_power', (result) => {
-  console.log('ℕ𝕒 𝕂𝕒𝕜𝕒 ℕ𝕒!')
+  console.log('UCP Smart Portal has started!')
   const enabled = result['toggle_power'];
 
   // Patch 1.2 (Disable extension removal function)
@@ -56,15 +24,49 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   if (enabled) {
+    const DEFAULT_BG = 'assets/bgs/bg.jpg'; // bundled — always exists
+
     function setBodyBackground(url) {
       const body = document.body || document.documentElement;
-      const imageUrl = chrome.runtime.getURL(url);
-      // Apply background properties directly
-      Object.assign(body.style, {
-        backgroundImage: `url("${imageUrl}")`,
-        backgroundAttachment: "fixed", 
-        backgroundRepeat: "no-repeat",
-      });
+      // Custom backgrounds are stored as data: / http(s): URLs and must be used
+      // verbatim; bundled presets are extension paths (wrapped with getURL).
+      // Extension paths are passed WITHOUT a leading slash (the convention
+      // used everywhere else in this extension) so getURL resolves them
+      // cleanly to chrome-extension://<id>/assets/... .
+      let imageUrl;
+      try {
+        imageUrl = /^data:|^https?:/i.test(url)
+          ? url
+          : chrome.runtime.getURL(String(url).replace(/^\/+/, ''));
+      } catch (e) {
+        console.warn('setBodyBackground: could not resolve background url', url, e);
+        imageUrl = chrome.runtime.getURL(DEFAULT_BG);
+      }
+      // Validate that the image actually loads before publishing it as the
+      // wallpaper — a stale saved background (deleted custom file, invalid
+      // data URL, bad path) would otherwise leave the page with NO background.
+      // On failure, fall back to the bundled default wallpaper.
+      const apply = (finalUrl) => {
+        // Expose the wallpaper as a CSS variable. styles/shell.css renders it
+        // via a fixed body::before layer (the sole background) so it can be
+        // grayed out (night mode) and/or blurred (blur toggle) without
+        // touching page content. The body itself stays background-less.
+        try {
+          body.style.setProperty('--ucp-bg-image', `url("${finalUrl}")`);
+          body.style.setProperty('--ucp-bg-url', finalUrl);
+        } catch (e) {}
+      };
+      const probe = new Image();
+      // Publish the cached wallpaper immediately. Validation remains async so
+      // a bad saved URL can still fall back without delaying first paint.
+      apply(imageUrl);
+      probe.onload = () => apply(imageUrl);
+      probe.onerror = () => {
+        console.warn('setBodyBackground: background failed to load, using default', imageUrl);
+        const fallback = chrome.runtime.getURL(DEFAULT_BG);
+        if (fallback !== imageUrl) apply(fallback);
+      };
+      probe.src = imageUrl;
     }
 
     function disableAutoLogout() {
@@ -73,7 +75,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         clearInterval(i);
     }
 
-    addCrownToAdminName();
 
 
     chrome.storage.local.get('background-wallpaper-path', (result) => {
@@ -86,8 +87,10 @@ chrome.storage.local.get('toggle_power', (result) => {
       }
     });
 
+    // Stay Active is ON by default: a missing value means "stay on".
     chrome.storage.local.get('toggle_stay', (result) => {
-      const stayActive = result['toggle_stay'];
+      const v = result['toggle_stay'];
+      const stayActive = (v === undefined || v === null) ? true : !!v;
       if (stayActive)
         disableAutoLogout();
 
@@ -102,7 +105,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
       } else if (area === 'local' && changes['toggle_stay']) {
         console.log('toggle stay changed')
-        const stayActive = changes['toggle_stay'].newValue;
+        const v = changes['toggle_stay'].newValue;
+        const stayActive = (v === undefined || v === null) ? true : !!v;
         if (stayActive)
           disableAutoLogout();
 
@@ -141,7 +145,8 @@ chrome.storage.local.get('toggle_power', (result) => {
 `);
     }
     // Open the sidebar for smaller view ports
-    document.querySelector('#menuButton').addEventListener('click', ()=>{
+    const menuButton = document.querySelector('#menuButton');
+    if (menuButton) menuButton.addEventListener('click', ()=>{
       const sidebar = document.querySelector('body.header_full aside#sidebar_main ')
       if (sidebar) {
           console.log('Side bar clicked')

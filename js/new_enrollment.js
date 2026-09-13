@@ -485,7 +485,7 @@ chrome.storage.local.get('toggle_power', async (result) => {
         const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
 
         let tableHTML = '<table class="timetable"><thead><tr><th>Time</th>';
-        days.forEach(day => tableHTML += `<th style="background: rgba(255,255,255,0.7) !important; color: #000 !important;">${day}</th>`);
+        days.forEach(day => tableHTML += `<th style="background: rgba(255,255,255,0.10) !important; color: #fff !important;">${day}</th>`);
         tableHTML += '</tr></thead><tbody>';
 
         times.forEach(time => {
@@ -605,7 +605,7 @@ chrome.storage.local.get('toggle_power', async (result) => {
                                     <span class="material-icons" style="font-size: 14px; color: var(--primary) !important;">school</span>
                                     ${course.type}
                                 </span>
-                                ${course.hasCoreq ? `<span class="badge coreq"><span class="material-icons" style="font-size: 14px;">link</span>Co-req: ${course.coreq.substring(0, 24)}</span>` : ''}
+                                ${course.hasCoreq ? `<span class="mini-card mini-card--coreq"><span class="material-icons">link</span>Co-req: ${course.coreq.substring(0, 24)}</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -618,6 +618,14 @@ chrome.storage.local.get('toggle_power', async (result) => {
                                         Section ${section.sectionName}
                                     </div>
                                     <span class="status-badge ${section.sectionEnrolled ? 'enrolled' : section.status.toLowerCase()}">${section.sectionEnrolled ? 'Enrolled' : section.status}</span>
+                                </div>
+                                <!-- mini-cards (like the timetable's badge chips): the
+                                     section code + a Clash chip when the section
+                                     conflicts with the current schedule. The
+                                     Co-req mini-card sits in the course header. -->
+                                <div class="section-chips">
+                                    <span class="mini-card"><span class="material-icons">groups</span>Section ${section.sectionName}</span>
+                                    ${section.hasConflict ? `<span class="mini-card mini-card--clash"><span class="material-icons">block</span>Clash</span>` : ''}
                                 </div>
                                 <div class="schedule">
                                     ${section.classSchedule.map(slot => `<div class="schedule-item"><span class="material-icons">schedule</span>${slot.day} ${slot.startTime}-${slot.endTime}</div>`).join('')}
@@ -877,19 +885,35 @@ chrome.storage.local.get('toggle_power', async (result) => {
         });
     }
 
+    // Keep the portal's Enroll buttons INSIDE their section card (old UI).
+    // No-op when the portal already renders the button inside the .md-card.
+    function containEnrollButtons() {
+        const root = document.querySelector('#page_content_inner');
+        if (!root) return;
+        root.querySelectorAll('button[name]').forEach((btn) => {
+            if (btn.closest('.md-card')) return;
+            const secDiv = btn.closest('div[id^="section_"]');
+            if (!secDiv) return;
+            const m = secDiv.id.match(/^section_.+_([A-Za-z0-9-]+)$/);
+            if (!m) return;
+            const sectionName = m[1];
+            for (const card of root.querySelectorAll('.md-card')) {
+                const nameEl = card.querySelector('span[style*="font-size:18px"]');
+                if (nameEl && nameEl.textContent.trim() === sectionName) {
+                    const content = card.querySelector('.md-card-content') || card;
+                    content.appendChild(btn);
+                    break;
+                }
+            }
+        });
+    }
+    containEnrollButtons();
+
     // Inject HTML
     container.insertAdjacentHTML('beforeBegin', `
         <div class="container">
             <div class="header">
                 <h1>📚 Course Enrollment</h1>
-                <div class="toggle-wrapper">
-                    <span style="color: #6c6c6cff;" id="offLabel">OLD UI</span>
-                    <label class="toggle">
-                        <input checked type="checkbox" id="toggleSwitch">
-                        <span class="slider"></span>
-                    </label>
-                    <span style="color: #6c6c6cff;" id="onLabel">NEW UI</span>
-                </div>
             </div>
             <div class="main-content">
                 <div class="courses-section">
@@ -948,16 +972,27 @@ chrome.storage.local.get('toggle_power', async (result) => {
 
     // Bootstrap
     toEnroll = extractCoursesFromDOM();
-    const toggle = document.getElementById("toggleSwitch");
-    document.querySelector('#page_content_inner').style.display = 'none';
 
-    toggle.addEventListener("change", function () {
-        if (toggle.checked) {
-            document.querySelector('.main-content').style.display = 'grid';
-            document.querySelector('#page_content_inner').style.display = 'none';
-        } else {
+    // New/Old UI is chosen in the extension's Settings page (not on this
+    // page anymore). Default = OLD portal cards; the switch applies live via
+    // the onChanged listener below, so flipping it in Settings switches this
+    // page instantly without a reload.
+    const ENROLL_UI_KEY = 'ucp_enrollment_ui_new';
+    function applyEnrollMode(isNewUI) {
+        if (!isNewUI) {
             document.querySelector('.main-content').style.display = 'none';
             document.querySelector('#page_content_inner').style.display = 'block';
+        } else {
+            document.querySelector('.main-content').style.display = 'grid';
+            document.querySelector('#page_content_inner').style.display = 'none';
+        }
+    }
+    chrome.storage.local.get(ENROLL_UI_KEY, (r) => {
+        applyEnrollMode(!!(r && r[ENROLL_UI_KEY]));
+    });
+    chrome.storage.onChanged.addListener((changes, area) => {
+        if (area === 'local' && changes[ENROLL_UI_KEY]) {
+            applyEnrollMode(!!changes[ENROLL_UI_KEY].newValue);
         }
     });
 

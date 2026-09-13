@@ -121,24 +121,6 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   /***************************************************************************
-   * PASTEL GLASS GRADIENTS (stable by term)
-   ***************************************************************************/
-  function termGradient(term) {
-    const pastelGradients = [
-      "linear-gradient(135deg, rgba(255,228,225,0.75), rgba(255,182,193,0.75))",
-      "linear-gradient(135deg, rgba(240,248,255,0.75), rgba(224,255,255,0.75))",
-      "linear-gradient(135deg, rgba(255,240,245,0.75), rgba(255,228,255,0.75))",
-      "linear-gradient(135deg, rgba(230,245,255,0.75), rgba(210,240,255,0.75))",
-      "linear-gradient(135deg, rgba(235,245,230,0.75), rgba(225,255,240,0.75))",
-      "linear-gradient(135deg, rgba(245,235,255,0.75), rgba(235,225,255,0.75))",
-      "linear-gradient(135deg, rgba(216,240,255,0.75), rgba(189,224,255,0.75))",
-      "linear-gradient(135deg, rgba(255,239,213,0.75), rgba(255,218,185,0.75))"
-    ];
-    const idx = hash(String(term || '')) % pastelGradients.length;
-    return pastelGradients[idx];
-  }
-
-  /***************************************************************************
    * STATUS CLASS (for pill styling)
    ***************************************************************************/
   function statusClass(s) {
@@ -149,8 +131,8 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   /***************************************************************************
-   * Render a single invoice card (glassmorphic pastel look)
-   * - Paid invoices: slightly dimmed but still interactive (Copy ID works)
+   * Render a single invoice card (clean translucent glass)
+   * - Paid invoices: dimmed but still interactive (Copy ID works)
    ***************************************************************************/
   function renderInvoiceCard(inv) {
     const invDate = safe(inv, 'invoiceDate', '');
@@ -174,10 +156,6 @@ chrome.storage.local.get('toggle_power', (result) => {
       card.classList.add("ig-paid");
     }
 
-    // Set gradient via CSS variable used by your CSS
-    const grad = termGradient(term);
-    card.style.setProperty('--invoice-grad', grad);
-
     // Small dimming for paid (still readable and interactive)
     if (isPaid) {
       card.style.opacity = '0.88';
@@ -190,11 +168,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     card.style.position = 'relative';
 
-    // overlay element (glass)
-    const overlay = `<div class="ig-glass-overlay" aria-hidden></div>`;
-
     card.innerHTML = `
-      ${overlay}
       <div class="ig-top">
         <div>
           <div class="ig-badge">${escapeHtml(challanType)}</div>
@@ -284,17 +258,12 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   parentContainer.insertAdjacentHTML('beforebegin', `
-    <div class="ig-bg-blobs" aria-hidden>
-      <div class="ig-blob ig-b1"></div>
-      <div class="ig-blob ig-b2"></div>
-    </div>
-
     <div class="ig-wrap">
       <div class="ig-header">
         <div class="ig-title">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#eef2ff,#f6fff0);border:1px solid rgba(255,255,255,0.6)">
-              <span class="material-icons" style="color:var(--accent);font-size:26px">receipt_long</span>
+            <div style="width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25)">
+              <span class="material-icons" style="font-size:26px">receipt_long</span>
             </div>
           </div>
           <div>

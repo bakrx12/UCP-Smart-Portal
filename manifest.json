@@ -3,24 +3,22 @@
 
   "manifest_version": 3,
   "name": "UCP Smart Portal",
-  "version": "2.3.6",
+  "version": "0.2.41",
   "description": "Modern UI/UX with built-in additional LMS features designed for UCP Portal",
-
-  "action": {
-    "default_popup": "popup/index.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    },
-    "default_title": "UCP Smart Portal"
-  },
 
   "content_scripts": [
     {
+      "matches": ["https://horizon.ucp.edu.pk/student*", "https://horizon.ucp.edu.pk/join*", "https://horizon.ucp.edu.pk/election*"],
+      "js": ["js/settings_page.js"],
+      "run_at": "document_start"
+    },
+    {
       "matches": ["https://horizon.ucp.edu.pk/student/enrollment/cards*"],
       "js": ["js/new_enrollment.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/enrollment/timetable*"],
+      "js": ["js/enrollment_timetable.js"]
     },
     {
       "matches": ["https://horizon.ucp.edu.pk/student/qa/feedback*"],
@@ -33,6 +31,18 @@
     {
       "matches": ["https://horizon.ucp.edu.pk/student*", "https://horizon.ucp.edu.pk/join*", "https://horizon.ucp.edu.pk/election*"],
       "js": ["js/student.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student*", "https://horizon.ucp.edu.pk/join*", "https://horizon.ucp.edu.pk/election*"],
+      "js": ["js/shell.js", "js/notification_page.js", "js/academic_calendar.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/enrollment/cards*", "https://horizon.ucp.edu.pk/student/enrollment/cart*", "https://horizon.ucp.edu.pk/student/enrollment/timetable*", "https://horizon.ucp.edu.pk/student/enrollment/available_timetable*"],
+      "js": ["js/enrollment_nav.js"]
+    },
+    {
+      "matches": ["https://horizon.ucp.edu.pk/student/profile*"],
+      "js": ["js/student_profile.js"]
     },
     {
       "matches": ["https://horizon.ucp.edu.pk/student/dashboard*"],
@@ -95,7 +105,7 @@
     "service_worker": "background/script.js"
   },
 
-  "permissions": ["storage", "scripting", "tabs"],
+  "permissions": ["storage", "scripting", "tabs", "unlimitedStorage", "notifications", "alarms"],
   "icons": {
           "16": "icons/icon16.png",
           "32": "icons/icon32.png",
@@ -104,11 +114,12 @@
   },
         
   "host_permissions": [
-    "https://horizon.ucp.edu.pk/*"
+    "https://horizon.ucp.edu.pk/*",
+    "https://ucp.edu.pk/*"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["assets/*", "assets/bgs/*"],
+      "resources": ["assets/*", "assets/bgs/*", "styles/settings_page.css", "styles/notification_page.css", "styles/notification_widget.css"],
       "matches": ["<all_urls>"]
     }
   ]

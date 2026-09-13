@@ -95,7 +95,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
         const tooltip = $("#ucp-ds-tooltip");
 
-        if (!exams.length) { $("#ucp-ds-grid").innerHTML = "<div style='text-align:center;color:#64748b; padding: 4rem; font-size: x-large;'>No date sheet available</div>"; }
+        if (!exams.length) { $("#ucp-ds-grid").innerHTML = "<div style='text-align:center;color:rgba(255,255,255,0.55); padding: 4rem; font-size: x-large;'>No date sheet available</div>"; }
         else {
             // Calculate min/max month/year using the sorted exams array
             const firstExamDate = exams[0].start;

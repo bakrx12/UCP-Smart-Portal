@@ -10,14 +10,14 @@ const isRamadan2026 = new Date() <= new Date("2026-03-19T23:59:59");
 const body = document.querySelector("body.bg");
 
 if (isRamadan2026) {
-  body.style.background = `url("${chrome.runtime.getURL("/assets/homepage/bg-ramadan.jpg")}") no-repeat center center fixed`;
+  body.style.background = `url("${chrome.runtime.getURL("assets/homepage/bg-ramadan.jpg")}") no-repeat center center fixed`;
   body.style.backgroundSize = "cover";
   body.style.minHeight = "100vh";
   body.style.setProperty("--bg-overlay-transparency", "0.0");
 
   injectRamadanLanterns();
 } else if (isWinter) {
-  body.style.background = `url("${chrome.runtime.getURL("/assets/homepage/bg-winter.jpg")}") no-repeat center center fixed`;
+  body.style.background = `url("${chrome.runtime.getURL("assets/homepage/bg-winter.jpg")}") no-repeat center center fixed`;
   body.style.backgroundSize = "cover";
   body.style.minHeight = "100vh";
 
@@ -366,30 +366,11 @@ async function createNewsSection() {
   document.body.appendChild(el);
 }
 
-function createFeedbackLink() {
-  const feedbackLink = document.createElement("a");
-  feedbackLink.className = "feedback-link";
-  feedbackLink.href = "https://www.instagram.com/raz0229";
-  feedbackLink.target = "_blank";
-
-  feedbackLink.innerHTML = `
-    <svg class="feedback-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-      <path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/>
-    </svg>
-    Give Feedback
-  `;
-
-  document.body.appendChild(feedbackLink);
-}
-
 // Initialize
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     createNewsSection();
-    createFeedbackLink();
   });
 } else {
   createNewsSection();
-  createFeedbackLink();
 }

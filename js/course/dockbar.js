@@ -11,26 +11,26 @@ chrome.storage.local.get('toggle_power', (result) => {
       <div class="liquidGlass-shine"></div>
       <div class="liquidGlass-text">
         <div class="dock">
-          <a href="#" title="Announcements">
-            <img src="${chrome.runtime.getURL("assets/news.png")}" alt="Announcements" />
+          <a href="#" data-dock-key="info" title="Announcements">
+            <span class="material-icons" aria-hidden="true">campaign</span>
           </a>
-          <a href="#" title="Course Outline">
-            <img src="${chrome.runtime.getURL("assets/outline.png")}" alt="Course Outline" />
+          <a href="#" data-dock-key="outline" title="Course Outline">
+            <span class="material-icons" aria-hidden="true">account_tree</span>
           </a>
-          <a href="#" title="Course Material">
-            <img src="${chrome.runtime.getURL("assets/material.png")}" alt="Course Material" />
+          <a href="#" data-dock-key="material" title="Course Material">
+            <span class="material-icons" aria-hidden="true">menu_book</span>
           </a>
-          <a href="#" title="Course Assessment">
-            <img src="${chrome.runtime.getURL("assets/assesment.png")}" alt="Course Assessment" />
+          <a href="#" data-dock-key="assessment" title="Course Assessment">
+            <span class="material-icons" aria-hidden="true">assignment</span>
           </a>
-          <a href="#" title="Submission">
-            <img src="${chrome.runtime.getURL("assets/submission.png")}" alt="Submission" />
+          <a href="#" data-dock-key="submission" title="Submission">
+            <span class="material-icons" aria-hidden="true">upload_file</span>
           </a>
-          <a href="#" title="Gradebook">
-            <img src="${chrome.runtime.getURL("assets/gradebook.png")}" alt="Gradebook" />
+          <a href="#" data-dock-key="gradebook" title="Gradebook">
+            <span class="material-icons" aria-hidden="true">grade</span>
           </a>
-          <a href="https://horizon.ucp.edu.pk/student/attendance" title="Attendance">
-            <img src="${chrome.runtime.getURL("assets/attendance.png")}" alt="Attendance" />
+          <a href="https://horizon.ucp.edu.pk/student/attendance" data-dock-key="attendance" title="Attendance">
+            <span class="material-icons" aria-hidden="true">fact_check</span>
           </a>
         </div>
       </div>
@@ -61,61 +61,45 @@ chrome.storage.local.get('toggle_power', (result) => {
     tooltip.className = 'dock-tooltip';
     document.body.appendChild(tooltip);
 
-    document.querySelectorAll('.dock a img').forEach(img => {
-      img.addEventListener('mouseenter', e => {
-        const alt = img.getAttribute('alt');
-        tooltip.textContent = alt;
+    document.querySelectorAll('.dock a .material-icons').forEach(icon => {
+      icon.addEventListener('mouseenter', e => {
+        const label = icon.parentElement.getAttribute('title');
+        tooltip.textContent = label;
         tooltip.style.display = 'block';
         tooltip.style.opacity = '1';
         tooltip.style.left = e.pageX + 'px';
         tooltip.style.top = (e.pageY - 40) + 'px';
-        img.style.transform = 'scale(1.2)'; // enlarge on hover
       });
 
-      img.addEventListener('mousemove', e => {
+      icon.addEventListener('mousemove', e => {
         tooltip.style.left = e.pageX + 'px';
         tooltip.style.top = (e.pageY - 40) + 'px';
       });
 
-      img.addEventListener('mouseleave', () => {
+      icon.addEventListener('mouseleave', () => {
         tooltip.style.display = 'none';
         tooltip.style.opacity = '0';
-        img.style.transform = 'scale(1)'; // reset size
       });
     });
 
 
     // Select an item based on the URL
     // Keyword → Dock alt text mapping
-    const dockMap = {
-      info: "Announcements",
-      outline: "Course Outline",
-      material: "Course Material",
-      assessment: "Course Assessment",
-      submission: "Submission",
-      gradebook: "Gradebook",
-      attendance: "Attendance"
-    };
-
     // Get current URL in lowercase
     const currentURL = window.location.href.toLowerCase();
 
-    // Find which keyword matches
-    let selectedAlt = null;
-    for (const [keyword, altText] of Object.entries(dockMap)) {
-      if (currentURL.includes(keyword)) {
-        selectedAlt = altText;
+    let selectedKey = null;
+    for (const key of ["info", "outline", "material", "assessment", "submission", "gradebook", "attendance"]) {
+      if (currentURL.includes(key)) {
+        selectedKey = key;
         break;
       }
     }
 
-    // Highlight the matching dock item
-    if (selectedAlt) {
-      const selectedImg = Array.from(document.querySelectorAll('.dock a img'))
-        .find(img => img.alt === selectedAlt);
-      if (selectedImg && selectedImg.parentElement) {
-        selectedImg.parentElement.classList.add('selected');
-      }
+    if (selectedKey) {
+      document
+        .querySelector(`.wrapper .dock .dock a[data-dock-key="${selectedKey}"]`)
+        ?.classList.add('selected');
     }
 
     // Setup correct hrefs for each dock item:

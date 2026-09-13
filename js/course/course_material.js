@@ -56,14 +56,14 @@ parentDiv.insertAdjacentHTML('beforebegin',
       <div class="course-card">
     <div class="course-header">
       <div class="course-name" id="courseName">
-      <span class="material-icons" style="margin-right: 1rem; font-size: 30px !important; color: #2563eb !important;">school</span>
+      <span class="material-icons course-title-icon">school</span>
       <span>${courseInfo.courseName} • Course Material</span>
       </div>
       <div class="course-code" id="courseCode">${courseInfo.courseCode}</div>
     </div>
 
     <button id="cm-downloadBtn" class="cm-button">
-      <span class="material-icons cm-icon" style="color: #fff !important;">arrow_downward</span>
+      <span class="material-icons cm-icon">arrow_downward</span>
         Download All
     </button>
 
@@ -84,7 +84,7 @@ parentDiv.insertAdjacentHTML('beforebegin',
 )
 
 const body = document.getElementById('materialBody');
-courseMaterial.forEach(item => {
+(courseMaterial || []).forEach(item => {
   const row = document.createElement('tr');
   row.innerHTML = `
         <td>${item.srNo}</td>
@@ -98,7 +98,7 @@ courseMaterial.forEach(item => {
 
 const btn = document.getElementById("cm-downloadBtn");
 if (!courseMaterial || courseMaterial.length === 0) {
-  btn.disabled = true;
+  btn.remove();
 }
 
 btn.addEventListener("click", async () => {

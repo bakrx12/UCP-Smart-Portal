@@ -202,7 +202,8 @@ chrome.storage.local.get('toggle_power', (result) => {
 <!-- Term header -->
 <div class="gmg-term-card gmg-fade-in" id="gmg-termCard">
 <div class="gmg-term-left">
-<div class="gmg-nav-btn" id="gmg-prevBtn" title="Previous term" role="button"><span class="material-icons">chevron_left</span></div>
+<!-- NO role="button": the portal's aarsol bundle swallows clicks on that markup -->
+<div class="gmg-nav-btn" id="gmg-prevBtn" title="Previous term"><span class="material-icons">chevron_left</span></div>
 <div>
 <div class="gmg-term-title" id="gmg-termName">Term</div>
 <div class="gmg-term-sub" id="gmg-termSubtitle">—</div>
@@ -214,7 +215,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
 
 <div style="display:flex;align-items:center;gap:12px">
-<div class="gmg-nav-btn" id="gmg-nextBtn" title="Next term" role="button"><span class="material-icons">chevron_right</span></div>
+<div class="gmg-nav-btn" id="gmg-nextBtn" title="Next term"><span class="material-icons">chevron_right</span></div>
 </div>
 </div>
 
@@ -303,23 +304,13 @@ chrome.storage.local.get('toggle_power', (result) => {
 
 
     // Color the courses
-    // Define some distinct gradient backgrounds
-    const gradients = [
-      "linear-gradient(135deg, rgba(255,99,132,0.2), rgba(255,159,64,0.25))",
-      "linear-gradient(135deg, rgba(54,162,235,0.2), rgba(153,102,255,0.25))",
-      "linear-gradient(135deg, rgba(75,192,192,0.2), rgba(255,206,86,0.25))",
-      "linear-gradient(135deg, rgba(201,90,255,0.2), rgba(255,90,160,0.25))",
-      "linear-gradient(135deg, rgba(0,242,254,0.2), rgba(67,233,123,0.25))",
-      "linear-gradient(135deg, rgba(255,0,132,0.2), rgba(255,206,86,0.25))",
-      "linear-gradient(135deg, rgba(72,219,251,0.2), rgba(255,159,243,0.25))",
-      "linear-gradient(135deg, rgba(253,200,48,0.2), rgba(243,115,53,0.25))"
-    ]
+    // DARK GLASS (translucent, NO backdrop blur) — matches the dark glass
+    // panels (styles/student_results.css); the fill is strong enough to
+    // carry the blackish-glass look without a blur.
+    const DARK_GLASS = "linear-gradient(135deg, rgba(10, 14, 20, 0.72), rgba(13, 18, 28, 0.52))";
     // Apply to each card
-    document.querySelectorAll(".gmc-card").forEach((card, index) => {
-      const gradient = gradients[index % gradients.length];
-      card.style.background = gradient;
-      card.style.backdropFilter = "blur(15px)";
-      card.style.webkitBackdropFilter = "blur(15px)";
+    document.querySelectorAll(".gmc-card").forEach((card) => {
+      card.style.background = DARK_GLASS;
     });
 
 
@@ -348,6 +339,11 @@ chrome.storage.local.get('toggle_power', (result) => {
         updateIndicator(index);
 
         glassContents.forEach(c => c.classList.remove('glass-tabs-active'));
+        // The OBE panel does NOT use the .glass-tabs-content class (it is
+        // .obe-wrap) — hide it explicitly, or the "PLO Attainment — Summary"
+        // card would stay visible on the Active/Previous tabs too.
+        const obePanel = document.getElementById('glass-tabs-obe-result');
+        if (obePanel) obePanel.classList.remove('glass-tabs-active');
         document.getElementById(tab.dataset.tab).classList.add('glass-tabs-active');
       });
     });
@@ -509,21 +505,15 @@ chrome.storage.local.get('toggle_power', (result) => {
       const circ = 2 * Math.PI * r;
       const offset = circ * (1 - pct / 100);
 
-      // color rule
-      let color = '#16a34a'; // green
-      if (v <= 2.0) color = '#ef4444';
-      else if (v <= 3.0) color = '#f59e0b';
+      // UNCOLORED ring (was green/orange/red → blue): a white ring on the
+      // blackish glass disc — "remove the color" from the progress circles.
+      const RING = 'rgba(255, 255, 255, 0.9)';
+      const TRACK = 'rgba(255, 255, 255, 0.12)';
 
       const svg = `
         <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden>
-          <defs>
-            <linearGradient id="gmg-g-${label}" x1="0%" x2="100%">
-              <stop offset="0%" stop-color="${color}" stop-opacity="0.95"/>
-              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.95"/>
-            </linearGradient>
-          </defs>
-          <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${stroke}" stroke="rgba(15,23,42,0.06)" fill="none" />
-          <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${stroke}" stroke="url(#gmg-g-${label})" stroke-linecap="round" fill="none"
+          <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${stroke}" stroke="${TRACK}" fill="none" />
+          <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${stroke}" stroke="${RING}" stroke-linecap="round" fill="none"
             stroke-dasharray="${circ}" stroke-dashoffset="${circ}" style="transition:stroke-dashoffset .9s cubic-bezier(.2,.9,.25,1), stroke .3s" />
         </svg>
       `;
@@ -546,8 +536,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
       });
 
-      // set color highlight for outer container
-      container.style.filter = 'drop-shadow(0 6px 18px rgba(59,130,246,0.06))';
+      // (the old blue drop-shadow "highlight" on the container is gone —
+      // uncolored, per the design pass)
     }
 
     // interactions

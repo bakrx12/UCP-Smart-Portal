@@ -54,8 +54,8 @@ chrome.storage.local.get('toggle_power', (result) => {
     const headerTemplate = `
   <div class="course-header">
     <div class="course-name" id="courseName">
-      <span class="material-icons" style="margin-right: 1rem; font-size: 30px !important; color: #2563eb !important;">school</span>
-      <span>Course • Enrolled</span>
+      <span class="material-icons" style="margin-right: 2rem; font-size: 30px !important; color: #ffffff44 !important;">school</span>
+
     </div>
     <div class="course-code" id="courseCode">Click on any course for more info</div>
   </div>
@@ -94,20 +94,19 @@ chrome.storage.local.get('toggle_power', (result) => {
       // Inline styles used so this works without external CSS; adjust to your stylesheet as needed
       emptyCard.setAttribute('style', `
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     align-items: center;
-    padding: 1rem;
-    border: 1px dashed #e5e7eb;
-    border-radius: 8px;
-    color: #6b7280;
-    background: #fafafa78;
+    padding: 2rem;
+    border: 1px dashed rgba(255,255,255,0.4);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0);
     margin-bottom: 1rem;
   `);
       emptyCard.setAttribute('role', 'status');
       emptyCard.setAttribute('aria-live', 'polite');
 
       emptyCard.innerHTML = `
-    <span class="material-icons" aria-hidden="true" style="font-size:36px; color:#9ca3af;">info</span>
+    <span class="material-icons" aria-hidden="true" style="font-size:36px; color:rgba(255,255,255,0.8);">info</span>
     <div>
       <div style="font-weight:600; margin-bottom:4px;">No courses found</div>
       <div style="font-size:0.9rem;">We couldn't find any courses to display. Try refreshing the page or check your enrollment.</div>
