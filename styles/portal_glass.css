@@ -1,0 +1,154 @@
+/* =========================================================================
+ * Portal-native pages with no dedicated extension UI:
+ *   /student/vis
+ *   /student/request/letter, /student/request/personal_info,
+ *   /student/request/library_clearance, /student/request/general
+ *   /student/transcript
+ *   /student/enrollment/cards, /student/enrollment/schedule
+ *
+ * The university's own markup (cards, tables, forms) shows through, so these
+ * rules glassify those surfaces the same way as student_complaints.css — but
+ * with the extension's dark translucent token rgba(10,14,20,0.55) instead of
+ * a white tint: blackish, semi-transparent, so the wallpaper stays visible
+ * through the page content (same treatment as societies / invoices /
+ * datesheet / enrolled). Readable in day and night mode without changing
+ * the portal's structure.
+ * ========================================================================= */
+
+#page_content .md-card,
+#page_content .uk-card,
+/* .uk-card-default / .uk-panel are the UIkit theme classes the portal puts on
+   the same card elements (e.g. the enrollment cart's bottom section) — UIkit
+   paints them SOLID WHITE. Same translucent surface as above so a card can't
+   fall back to white through a theme class. .scrum_task is the portal's task
+   grid (e.g. "scrum_task critical") just below the Self Enrollment section —
+   painted solid white too, so it gets the same treatment. */
+#page_content .uk-card-default,
+#page_content .uk-panel,
+#page_content .scrum_task {
+  background: rgba(10, 14, 20, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  color: #fff;
+}
+
+/* Page-scoped text — the enrollment schedule's Name / Term / Start Date /
+   End Date fields (and similar labels/tables on these pages) are NOT always
+   wrapped in a .md-card, so pin them to white at the page level too. */
+#page_content label,
+#page_content .uk-form-label,
+#page_content .uk-label,
+#page_content .md-label,
+#page_content dt { color: #ffffff !important; }
+#page_content th { color: #ffffff !important; background: rgba(255, 255, 255, 0.10) !important; }
+#page_content td,
+#page_content dd { color: rgba(255, 255, 255, 0.92) !important; }
+#page_content h1,
+#page_content h2,
+#page_content h3,
+#page_content h4,
+#page_content h5 { color: #ffffff; }
+
+/* headings / body text on the dark surfaces */
+#page_content .md-card h1,
+#page_content .md-card h2,
+#page_content .md-card h3,
+#page_content .md-card h4,
+#page_content .md-card h5,
+#page_content .md-card p,
+#page_content .md-card a,
+#page_content .md-card li {
+  color: #fff;
+}
+
+/* tables */
+#page_content .md-card table th {
+  background: #234a99 !important;
+  color: #fff !important;
+}
+#page_content .md-card table td {
+  color: rgba(255, 255, 255, 0.92);
+}
+#page_content .md-card table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* The enrollment cart's bottom section — "Self Enrollment (Advanced)" table +
+   allowed-limit info: the portal paints the TABLE and its inner wrappers
+   (rows / cells, the card content body, the section toolbar) SOLID WHITE, and
+   those elements are NOT the .md-card surface itself, so the rule above never
+   reaches them. Make them transparent so the translucent card / page surface
+   shows through (wallpaper visible), matching the rest of the page. */
+#page_content .md-card-content,
+#page_content .uk-card-body,
+#page_content .md-card-toolbar,
+#page_content table,
+#page_content tbody,
+#page_content thead,
+#page_content tr,
+#page_content td {
+  background: transparent !important;
+}
+
+/* The scrum-task grid's INNER cells: the surface rule above glassifies the
+   .scrum_task widget itself, but the portal also paints its inner grid
+   cells / rows solid white, hiding the (dark) grid text behind them. Clear
+   those slabs and pin the text white so the information reads over the
+   translucent surface — wallpaper visible, like the rest of the page. */
+#page_content .scrum_task * {
+  background: transparent !important;
+  color: #fff !important;
+}
+
+/* form labels + fields */
+#page_content .md-card .uk-form-label,
+#page_content .md-card label {
+  color: rgba(255, 255, 255, 0.85);
+}
+#page_content .md-card input[type="text"],
+#page_content .md-card input[type="email"],
+#page_content .md-card input[type="tel"],
+#page_content .md-card input[type="number"],
+#page_content .md-card input[type="date"],
+#page_content .md-card input[type="password"],
+#page_content .md-card input:not([type]),
+#page_content .md-card textarea,
+#page_content .md-card select {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.30) !important;
+}
+#page_content .md-card textarea::placeholder,
+#page_content .md-card input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* status-style badges that the portal renders with light backgrounds */
+#page_content .md-card .uk-badge,
+#page_content .md-card .label {
+  color: #fff;
+}
+
+/* Buttons the portal renders light — invert to glass + white text */
+#page_content .md-card button,
+#page_content .md-card .uk-button,
+#page_content .md-card input[type="submit"],
+#page_content .md-card input[type="button"] {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.30) !important;
+  color: #fff !important;
+}
+#page_content .md-card button:hover,
+#page_content .md-card .uk-button:hover,
+#page_content .md-card input[type="submit"]:hover {
+  background: rgba(255, 255, 255, 0.20) !important;
+  color: #fff !important;
+}
+
+/* Night mode, deepen the surface a touch */
+body.ucp-night #page_content .md-card,
+body.ucp-night #page_content .uk-card,
+body.ucp-night #page_content .scrum_task {
+  background: rgba(8, 11, 16, 0.533) !important;
+}
