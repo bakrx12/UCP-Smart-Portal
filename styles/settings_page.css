@@ -1,0 +1,542 @@
+/* =========================================================================
+ * Settings PAGE — styles for the standalone Settings page
+ * (js/settings_page.js). Loaded on demand via a <link> when the page renders
+ * (it lives in the portal content area, like the other pages). The shared
+ * .ucp-shell-card / page-frame rules stay in styles/shell.css.
+ * ========================================================================= */
+
+/* ----- Wallpaper guarantee (self-sufficient layer) ------------------------
+   The wallpaper normally comes from styles/shell.css (body::before +
+   --ucp-bg-image), which the background service worker injects per tab via
+   chrome.scripting.insertCSS. In tabs where that injection never happened
+   (tab opened before the extension loaded, extension reloaded without a page
+   reload) the layer is absent — the saved background never paints, so the
+   Settings page shows no background and picking / uploading one appears to
+   do nothing. This sheet is always loaded when the Settings page renders, so
+   the layer rules are mirrored here (identical to shell.css / student.css —
+   harmless duplicates if the SW copy is also present) to guarantee the
+   wallpaper renders behind this page. */
+body {
+  background: none !important;
+}
+#page_content,
+.page_content {
+  /* Keep the content column background-less so the wallpaper shows through
+     (same rule student.css applies when the SW injects it). */
+  background: transparent !important;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: -1;
+  /* !important: the portal also styles body::before (and other wrappers) with
+     its own backgrounds — the wallpaper must win when it is set. When the
+     variable is unset this paints `none`, which is the extension's intent
+     (the body stays background-less; see student.css). */
+  background-image: var(--ucp-bg-image, none) !important;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transition: filter 0.35s ease;
+}
+body.ucp-night::before { filter: grayscale(0.75) brightness(0.3) contrast(1.05); }
+/* Blur strength is MANUAL (the slider in the Background card sets
+   --ucp-blur-px on <body); 10px is the old fixed default fallback. */
+body.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) saturate(0.9) brightness(0.88); }
+body.ucp-night.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) grayscale(0.75) brightness(0.26) contrast(1.05); }
+/* Night mode REMOVES the wallpaper (the user's choice — "gets rid of the
+   background"): the fixed layer paints a flat dark ground instead of the
+   image, and the body gets the same dark background as a guarantee when the
+   layer is missing (stale tab). The existing veil + white-text rules (below
+   and in shell.css) do the rest of the night look — no design changes. */
+/* Night Mode (deep) removes the wallpaper — see shell.css. Dark Mode keeps
+   it (dimmed + veiled). */
+body.ucp-night-deep { background: #0a0f18 !important; }
+body.ucp-night-deep::before { background: #0a0f18 !important; }
+/* Night-mode dark veil (identical to the one in shell.css). */
+body.ucp-night::after {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: -1;
+  background: rgba(3, 6, 12, 0.55);
+  pointer-events: none;
+}
+
+/* ----- Settings rows ---------------------------------------------------- */
+.ucp-shell-settings { display: flex; flex-direction: column; }
+.ucp-shell-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.ucp-shell-setting-block { display: block; }
+.ucp-shell-setting-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.ucp-shell-setting-info .material-icons { font-size: 28px; color: #93c5fd; }
+.ucp-shell-setting-label { font-weight: 700; font-size: 1rem; }
+.ucp-shell-setting-desc { font-size: 0.82rem; color: rgba(255, 255, 255, 0.6); margin-top: 2px; }
+
+/* Switches use ONLY transparent / white (no accent colors): the OFF track
+   is transparent with a white border; ON = a brighter white track + solid
+   white border, the white thumb slides right. */
+.ucp-shell-switch {
+  position: relative; flex: 0 0 auto;
+  width: 56px; height: 31px; border-radius: 999px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.ucp-shell-switch-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 25px; height: 25px; border-radius: 50%;
+  background: #fff; transition: left 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.ucp-shell-switch.on {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #fff;
+}
+.ucp-shell-switch.on .ucp-shell-switch-thumb { left: 28px; }
+
+/* ----- Background picker + upload --------------------------------------- */
+.ucp-shell-bg-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px; margin-top: 16px;
+}
+/* Dark base (day mode): a near-white tile would be invisible over a light
+   wallpaper and would swallow a thumbnail that fails to load. */
+.ucp-shell-bg-tile {
+  position: relative; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden;
+  border: 2px solid transparent; cursor: pointer; background: rgba(10, 14, 20, 0.45);
+}
+.ucp-shell-bg-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* A tile whose image failed to load — labeled so the option stays pickable. */
+.ucp-shell-bg-tile-name {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; letter-spacing: 1px; color: rgba(255, 255, 255, 0.65);
+}
+.ucp-shell-bg-active { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.4); }
+.ucp-shell-bg-custom::after {
+  content: 'CUSTOM'; position: absolute; left: 0; right: 0; bottom: 0;
+  font-size: 0.6rem; text-align: center; background: rgba(0, 0, 0, 0.6);
+  padding: 2px 0; letter-spacing: 1px;
+}
+/* Card header row: the title (left) + an action control on the right for the
+   Background card (justify space-between pushes it right). The Dashboard card
+   uses .ucp-shell-card-head-start so its reset sits right after the title. */
+.ucp-shell-card-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin-bottom: 16px;
+}
+.ucp-shell-card-head-start { justify-content: flex-start; }
+
+/* Upload trigger is a plain <div tabindex="0"> (the picker is opened
+   programmatically by its click handler). It must NOT carry role="button" —
+   the portal's aarsol bundle swallows clicks on [role="button"] markup before
+   any listener sees the event. */
+.ucp-shell-upload {
+  display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
+  padding: 9px 14px; border-radius: 10px; cursor: pointer;
+  background: rgba(96, 165, 250, 0.12); border: 1px dashed rgba(96, 165, 250, 0.4);
+  font-size: 0.88rem; font-weight: 600; color: #dbeafe;
+  transition: background 0.2s;
+}
+.ucp-shell-upload:hover { background: rgba(96, 165, 250, 0.2); }
+.ucp-shell-upload:active { transform: scale(0.99); }
+.ucp-shell-upload .material-icons { font-size: 20px; }
+
+/* Upload / background status line (confirms a pick or upload applied). */
+.ucp-shell-bg-status {
+  margin-top: 8px; min-height: 1.1em;
+  font-size: 0.8rem; color: #93c5fd;
+}
+.ucp-shell-bg-status.ucp-shell-bg-status-error { color: #fca5a5; }
+
+/* Stale extension context — notice shown inside the grid instead of tiles. */
+.ucp-shell-bg-dead {
+  margin-top: 4px; padding: 12px 14px; border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.35);
+  color: #fde68a; font-size: 0.85rem;
+}
+
+/* ----- Background controls (merged into the Background card, below the
+   gallery): the manual blur slider and the accent-color toggle (ON by
+   default). */
+.ucp-shell-bg-controls { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.ucp-shell-bg-blur-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.ucp-shell-bg-ctl-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.88rem; font-weight: 600;
+}
+.ucp-shell-bg-ctl-label .material-icons { font-size: 18px; }
+.ucp-shell-bg-blur-value {
+  font-size: 0.8rem; font-variant-numeric: tabular-nums;
+  background: rgba(10, 14, 20, 0.5); border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px; padding: 3px 9px;
+}
+.ucp-shell-bg-blur input[type="range"] {
+  /* position/z-index/pointer-events: defense against any portal layer that
+     might sit over the content column and swallow the control's pointer
+     events (the "slider won't move" report). touch-action: none keeps a
+     touch drag from scrolling the page. The filled track is a hard-stop
+     gradient up to --blur-fill (JS sets it to value/10*100%); the thumb is a
+     white circle ringed with the accent blue. */
+  position: relative; z-index: 1; pointer-events: auto;
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 18px; margin: 4px 0;
+  background: transparent; cursor: pointer; touch-action: none;
+}
+.ucp-shell-bg-blur input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa var(--blur-fill, 0%), rgba(255, 255, 255, 0.18) var(--blur-fill, 0%));
+}
+.ucp-shell-bg-blur input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; margin-top: -6px; border-radius: 50%;
+  background: #fff; border: 2px solid #60a5fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.ucp-shell-bg-blur input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.15); }
+.ucp-shell-bg-blur input[type="range"]::-moz-range-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa var(--blur-fill, 0%), rgba(255, 255, 255, 0.18) var(--blur-fill, 0%));
+}
+.ucp-shell-bg-blur input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid #60a5fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); cursor: pointer;
+}
+.ucp-shell-bg-accent { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.ucp-shell-bg-accent-info { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ucp-shell-bg-accent-info > .material-icons { font-size: 24px; color: #93c5fd; }
+.ucp-shell-bg-accent-info .ucp-shell-setting-label { font-size: 0.95rem; }
+.ucp-shell-bg-accent-info .ucp-shell-setting-desc { font-size: 0.78rem; }
+
+/* Theme toggles (Dark Mode / Night Mode) — merged into the Theme &
+   Background card below the accent row. Same layout as the accent sub-block;
+   they are INSTANT switches (no pending Save/Discard pair). */
+.ucp-shell-theme-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.ucp-shell-theme-row-info { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ucp-shell-theme-row-info > .material-icons { font-size: 24px; color: #93c5fd; }
+.ucp-shell-theme-row-info .ucp-shell-setting-label { font-size: 0.95rem; }
+.ucp-shell-theme-row-info .ucp-shell-setting-desc { font-size: 0.78rem; }
+
+/* ----- Credits ------------------------------------------------------------
+   The title is the extension name and links to the repo. Names link to their
+   socials where one exists in the extension's code (rendered by
+   renderCredits() in js/settings_page.js); the rest stay plain text. */
+.ucp-shell-credits-card {
+  text-align: center; padding: 16px 20px; margin-top: 2px;
+  background: rgba(10, 14, 20, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+.ucp-shell-credits-title {
+  display: inline-block;
+  font-size: 1rem; font-weight: 700; letter-spacing: 0.04em;
+  color: #eaf1ff; text-decoration: none; margin-bottom: 8px;
+}
+.ucp-shell-credits-link:hover { color: var(--ucp-accent, #93c5fd); text-decoration: underline; }
+.ucp-shell-credits-names {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px;
+  font-size: 0.95rem; font-weight: 600; color: #eaf1ff;
+}
+.ucp-credits-name { text-decoration: none; color: #eaf1ff; }
+.ucp-credits-name[href]:hover { color: var(--ucp-accent, #93c5fd); text-decoration: underline; }
+.ucp-shell-credits-names .ucp-credits-name:not(:last-child)::after {
+  content: '·'; margin-left: 10px; color: rgba(255, 255, 255, 0.35); font-weight: 400;
+}
+
+/* ----- Pending changes ("Save changes" / "Discard") ----------------------
+   Each changeable setting has a hidden action pair, right-aligned next to it,
+   that appears only while that setting's preview is unsaved. A dirty row gets
+   a SUBTLE highlight: an accent-tinted border + a faint ring (no glow, no
+   background flood). */
+.ucp-pending-actions {
+  display: none; align-items: center; gap: 8px;
+  margin-left: auto; /* pushes the pair right, ahead of the control */
+}
+.ucp-pending-actions.ucp-pending-show { display: inline-flex; }
+.ucp-pending-btn {
+  display: inline-flex; align-items: center;
+  padding: 5px 10px; border-radius: 8px;
+  font-size: 0.74rem; font-weight: 600; white-space: nowrap;
+  cursor: pointer; user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #dbeafe; transition: background 0.18s, border-color 0.18s;
+}
+.ucp-pending-btn:hover { background: rgba(255, 255, 255, 0.16); }
+.ucp-pending-save {
+  color: #0b1220; background: var(--ucp-accent, #60a5fa); border-color: transparent;
+}
+.ucp-pending-save:hover { filter: brightness(1.1); background: var(--ucp-accent, #60a5fa); }
+.is-dirty.ucp-shell-card,
+.is-dirty.ucp-shell-bg-blur,
+.is-dirty.ucp-shell-bg-accent,
+.is-dirty.ucp-shell-storage-opt {
+  border-color: rgba(96, 165, 250, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.10);
+}
+
+/* ----- Storage & Cache ------------------------------------------------- */
+.ucp-shell-storage-block { margin-top: 14px; }
+.ucp-shell-storage-subhead {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.85rem; font-weight: 700; color: #eaf1ff; margin-bottom: 8px;
+}
+.ucp-shell-storage-subhead .material-icons { font-size: 18px; }
+.ucp-shell-storage-subhead .ucp-shell-refresh { margin-left: auto; }
+.ucp-shell-refresh {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 0.76rem; font-weight: 600;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #dbeafe; transition: background 0.18s;
+}
+.ucp-shell-refresh:hover { background: rgba(255, 255, 255, 0.16); }
+.ucp-shell-refresh .material-icons { font-size: 16px; }
+/* "Open cache folder" — copies the extension's data path (a content script can't
+   launch File Explorer, so the path is copied for pasting). Same look as Refresh. */
+.ucp-shell-open-folder {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  padding: 6px 11px; border-radius: 8px; cursor: pointer; user-select: none;
+  font-size: 0.78rem; font-weight: 600;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #dbeafe; transition: background 0.18s;
+}
+.ucp-shell-open-folder:hover { background: rgba(255, 255, 255, 0.14); }
+.ucp-shell-open-folder .material-icons { font-size: 16px; }
+/* Meter: a thin progress bar + rows of label/value. The fill's width is
+   --pct (set by JS). */
+.ucp-shell-meter { display: flex; flex-direction: column; gap: 7px; }
+.ucp-shell-meter-track {
+  height: 7px; border-radius: 999px; overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+.ucp-shell-meter-fill {
+  height: 100%; width: var(--pct, 0); border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa, #93c5fd);
+  transition: width 0.4s ease;
+}
+.ucp-shell-meter-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: 0.8rem; color: rgba(255, 255, 255, 0.62);
+}
+.ucp-shell-meter-row b { font-weight: 700; color: #eaf1ff; font-variant-numeric: tabular-nums; }
+.ucp-shell-meter-total b { color: #fff; }
+/* Segmented background-size control (div-based radios). */
+.ucp-shell-storage-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.ucp-shell-seg {
+  display: inline-flex; padding: 3px; border-radius: 10px; flex: 0 0 auto;
+  background: rgba(10, 14, 20, 0.5); border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.ucp-shell-seg-opt {
+  padding: 6px 14px; border-radius: 8px; cursor: pointer; user-select: none;
+  font-size: 0.8rem; font-weight: 600; color: rgba(255, 255, 255, 0.6);
+  transition: background 0.15s, color 0.15s;
+}
+.ucp-shell-seg-opt:hover { color: #fff; }
+.ucp-shell-seg-opt.is-on { background: rgba(96, 165, 250, 0.28); color: #fff; }
+/* Clear-cache action + its note/status. */
+.ucp-shell-storage-clear { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+.ucp-shell-clear-btn {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  padding: 10px 14px; border-radius: 10px; cursor: pointer;
+  background: rgba(252, 165, 165, 0.12); border: 1px solid rgba(252, 165, 165, 0.4);
+  color: #fecaca; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+}
+.ucp-shell-clear-btn:hover { background: rgba(252, 165, 165, 0.22); }
+.ucp-shell-clear-btn .material-icons { font-size: 18px; }
+.ucp-shell-storage-note { font-size: 0.76rem; color: rgba(255, 255, 255, 0.5); line-height: 1.4; }
+.ucp-shell-storage-status { margin-top: 8px; min-height: 1.1em; font-size: 0.8rem; color: #93c5fd; }
+
+/* ----- Dashboard items picker (per-card show/hide + reset) ------------- */
+.ucp-dash-items { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.ucp-dash-items-group-title {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5); font-weight: 700; margin-bottom: 8px;
+}
+.ucp-dash-items-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px;
+}
+.ucp-dash-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 11px; border-radius: 10px; cursor: pointer; user-select: none;
+  background: rgba(10, 14, 20, 0.4); border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.86rem; color: #eaf1ff;
+  transition: background 0.18s, border-color 0.18s;
+}
+.ucp-dash-item:hover { background: rgba(10, 14, 20, 0.62); border-color: rgba(255, 255, 255, 0.22); }
+/* The checkbox indicator is a drawn box (a real <input> would be swallowed by
+   the portal's click handler). .is-on fills it + reveals a checkmark. */
+.ucp-dash-item-box {
+  flex: 0 0 auto; width: 18px; height: 18px; border-radius: 5px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.ucp-dash-item-box::after {
+  content: ''; width: 9px; height: 5px;
+  border-left: 2px solid #0b1020; border-bottom: 2px solid #0b1020;
+  transform: rotate(-45deg) translate(0, -1px);
+  opacity: 0; transition: opacity 0.12s;
+}
+.ucp-dash-item.is-on { background: rgba(96, 165, 250, 0.14); border-color: rgba(96, 165, 250, 0.5); }
+.ucp-dash-item.is-on .ucp-dash-item-box { background: #60a5fa; border-color: #60a5fa; }
+.ucp-dash-item.is-on .ucp-dash-item-box::after { opacity: 1; }
+/* Notification widget group — the default-tab selector: the heading
+   ("Notification & Update Default Tab") on top, the segmented tab options
+   BELOW it (stacked, left-aligned; wraps on narrow screens). */
+.ucp-notif-default-row {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 10px; margin-top: 10px;
+}
+.ucp-notif-default-label {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5); font-weight: 700;
+}
+.ucp-notif-default-seg { flex-wrap: wrap; justify-content: flex-start; }
+
+/* Notification & push block card — two toggle rows + the other-devices info
+   row. Inner rows reuse .ucp-shell-setting-row's flex layout, with their own
+   padding + hairline dividers (the card carries no row padding). */
+.ucp-shell-push-inrow { padding: 12px 0; }
+.ucp-shell-push-inrow + .ucp-shell-push-inrow { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+/* "Add other devices for push notification" — info row (NOT a control): the
+   phone-pairing flow (QR / topic) lands here once the approach is set. */
+.ucp-shell-devices-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.ucp-shell-devices-row .material-icons { font-size: 24px; color: rgba(147, 197, 253, 0.6); }
+.ucp-shell-devices-row .ucp-shell-setting-label { font-size: 0.92rem; font-weight: 600; }
+.ucp-shell-devices-main { flex: 1 1 auto; min-width: 0; }
+.ucp-shell-devices-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; flex-wrap: wrap; }
+/* ntfy pairing buttons — same small-pill language as the pending Save/Discard. */
+.ucp-shell-devices-btn {
+  display: inline-flex; align-items: center;
+  padding: 5px 11px; border-radius: 8px;
+  font-size: 0.74rem; font-weight: 600; white-space: nowrap;
+  cursor: pointer; user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #dbeafe; transition: background 0.18s, border-color 0.18s;
+}
+.ucp-shell-devices-btn:hover { background: rgba(255, 255, 255, 0.16); }
+.ucp-shell-devices-btn-remove { color: #fecaca; border-color: rgba(248, 113, 113, 0.35); background: rgba(248, 113, 113, 0.10); }
+.ucp-shell-devices-btn-remove:hover { background: rgba(248, 113, 113, 0.20); }
+/* The QR panel (visible once a topic exists). QR on the left, the topic URL
+   + pairing steps on the right; the URL is ALWAYS visible as text — the QR
+   image is a convenience (the portal's CSP can block api.qrserver.com). */
+.ucp-shell-devices-panel {
+  display: flex; gap: 18px; align-items: flex-start;
+  padding: 14px; margin: 0 0 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+.ucp-shell-devices-panel[hidden] { display: none; }
+.ucp-shell-devices-qr {
+  flex: 0 0 auto; width: 160px; height: 160px;
+  border-radius: 10px; background: #fff; padding: 6px;
+}
+.ucp-shell-devices-panel-col { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.ucp-shell-devices-url {
+  font-size: 0.82rem; font-weight: 600; color: #bfdbfe;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+  background: rgba(11, 18, 32, 0.55); border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 7px 10px; border-radius: 8px;
+}
+.ucp-shell-devices-hint { font-size: 0.78rem; line-height: 1.55; color: rgba(255, 255, 255, 0.72); }
+.ucp-shell-devices-hint b { color: #eaf1ff; }
+.ucp-shell-devices-hint-dim { color: rgba(255, 255, 255, 0.45); font-size: 0.72rem; }
+/* Discord Webhook (Advanced) row — label left, url input + Send test middle,
+   the pending Save/Discard pair right. */
+.ucp-shell-discord-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px 0; border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.ucp-shell-discord-row .ucp-shell-setting-info { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; max-width: 300px; }
+.ucp-shell-discord-row .ucp-shell-setting-info .material-icons { font-size: 22px; color: rgba(147, 197, 253, 0.6); }
+.ucp-shell-discord-ctl { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; min-width: 220px; }
+.ucp-shell-discord-input {
+  flex: 1 1 auto; min-width: 0;
+  padding: 6px 10px; border-radius: 8px;
+  font-size: 0.78rem; color: #eaf1ff;
+  background: rgba(11, 18, 32, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  outline: none; transition: border-color 0.18s;
+}
+.ucp-shell-discord-input:focus { border-color: rgba(147, 197, 253, 0.8); }
+.ucp-shell-discord-input::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+.ucp-shell-notif-behavior-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .ucp-shell-notif-behavior-opt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Notification master toggle OFF — the card body (behaviour / devices /
+   Discord) is dimmed and inert. The master switch itself lives in the card
+   HEAD, outside #ucp-shell-notifBody, so it stays reachable to turn it
+   back on. */
+.ucp-shell-notif-off #ucp-shell-notifBody {
+  opacity: 0.4;
+  filter: grayscale(0.35);
+  pointer-events: none;
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+
+/* Reset (a plain <div tabindex="0"> in the card header, right after the
+   title — no role="button", the portal's click interceptor swallows that
+   markup). */
+.ucp-dash-items-reset {
+  display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
+  padding: 9px 14px; border-radius: 10px; cursor: pointer;
+  background: rgba(252, 165, 165, 0.12); border: 1px solid rgba(252, 165, 165, 0.4);
+  color: #fecaca; font-size: 0.85rem; font-weight: 600;
+  transition: background 0.2s;
+}
+.ucp-dash-items-reset:hover { background: rgba(252, 165, 165, 0.22); }
+.ucp-dash-items-reset .material-icons { font-size: 18px; }
+/* Confirmation line shown after "Reset to default" (visible even when every
+   item was already on, i.e. no box visibly changed). */
+.ucp-shell-dash-status { margin-top: 10px; min-height: 1.1em; font-size: 0.8rem; color: #93c5fd; }
+
+/* =========================================================================
+ * MODE OVERRIDES — icon colors
+ * ========================================================================= */
+/* Night mode: this page's icons are strictly WHITE. The portal's own
+   !important icon tint (.material-icons in student.css — #ffffff7e) would
+   otherwise leave them gray; the #ucp-shell-root id + !important beats that
+   portal rule and the page's own blue tints. (Mirrored in styles/shell.css
+   for tabs where the SW-injected copy is present too.) */
+body.ucp-night #ucp-shell-root .material-icons { color: #fff !important; }
+
+/* Accent mode (ON by default — set by js/shell.js on every page and by
+   js/settings_page.js as --ucp-accent + body.ucp-bg-accent): this page's
+   icons and headings take the current background's accent color. Placed
+   AFTER the night rule so the user's explicit accent choice wins when both
+   modes are on. (Global icon/button/sidebar accent rules: styles/shell.css.) */
+body.ucp-bg-accent #ucp-shell-root .material-icons { color: var(--ucp-accent, #fff) !important; }
+body.ucp-bg-accent #ucp-shell-root .ucp-shell-page-title,
+body.ucp-bg-accent #ucp-shell-root .ucp-shell-setting-label,
+body.ucp-bg-accent #ucp-shell-root .ucp-shell-bg-ctl-label { color: var(--ucp-accent, #fff); }
+
+/* Accent mode also tints the SIDEBAR (menu icons + label text + the header
+   text) — only while body.ucp-bg-accent is set. The portal paints the label
+   and icon spans with its own colors, so the spans are targeted directly with
+   !important. The portal's red active item is exempt (its highlight must
+   stay visible, like in day/night mode). */
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .material-icons,
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .menu_title,
+body.ucp-bg-accent #sidebar_main .sidebar_main_header * { color: var(--ucp-accent, #fff) !important; }
