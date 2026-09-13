@@ -102,10 +102,43 @@
       color: var(--accent);
     }
 
-    .course-code {
-      font-size: 1.1rem;
-      color: var(--muted);
+    /* 1D: compact course code / section / instructor card (info + outline pages).
+       The FULL code lives ONLY here (the header no longer shows it) — the first
+       row, in monospace so the dashes/segments read cleanly. */
+    .course-code-card {
+      display: flex;
+            align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 5px;
+      justify-content: center;
+      margin: 0 auto 28px;
+      max-width: 440px;
     }
+    .ccm-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      background: rgba(8, 12, 18, 0.68) !important;
+      border: 0.10px solid var(--accent, #d7dae2) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    }
+    .ccm-label {
+            align-items: center;
+      font-size: 0.78rem;
+      justify-content: center;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--muted, #64748b);
+    }
+
+    /* The full code spans the whole card width (first row) */
+    .ccm-row-full {
+      width: 85%;
+      justify-content: center;
+    }
+
 
 
 
