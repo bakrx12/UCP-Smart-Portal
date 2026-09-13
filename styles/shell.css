@@ -1,0 +1,350 @@
+/* =========================================================================
+ * UCP Smart Portal — Shell
+ *  - body::before renders the wallpaper (--ucp-bg-image); removed in Night
+ *    Mode (body.ucp-night-deep — a flat dark ground instead) and blurred
+ *    when the blur slider is on. Dark Mode (body.ucp-night) keeps the
+ *    wallpaper and only dims it.
+ *  - Sidebar entries sized to match the portal's own menu items.
+ *  - Full-page Notification / Settings overlays (solid, semi-transparent bg —
+ *    no backdrop blur).
+ * All UI classes are namespaced ucp-shell-*.
+ * ========================================================================= */
+
+/* ----- Background layer ------------------------------------------------- */
+/* The portal's own CSS paints a background on <body>; that background is
+   rendered ABOVE our z-index:-1 wallpaper layer and hides it (the page then
+   shows the portal's white/light background instead of the wallpaper).
+   Kill the body background so body::before is the only visible background. */
+body {
+  background: none !important;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: -1;
+  background-image: var(--ucp-bg-image, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transition: filter 0.35s ease;
+}
+body.ucp-night::before { filter: grayscale(0.75) brightness(0.3) contrast(1.05); }
+/* Blur strength is MANUAL now: the Settings Background card has a slider
+   (0–10 px) that sets --ucp-blur-px on <body>; the class enables the filter.
+   The 10px fallback is the old fixed default (and the legacy-toggle value). */
+body.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) saturate(0.9) brightness(0.88); }
+body.ucp-night.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) grayscale(0.75) brightness(0.26) contrast(1.05); }
+/* NIGHT MODE (deep, ucp_night_mode_deep / body.ucp-night-deep) REMOVES the
+   wallpaper — it is separate from Dark Mode, which keeps the wallpaper and
+   only dims it: the fixed layer paints a flat dark ground instead of the
+   image, and the body gets the same dark background as a guarantee (the
+   layer is z-index:-1, so the body background would otherwise show through
+   its filter edge-fade). The wallpaper picker still works — the image is
+   simply not painted while Night Mode is on. */
+body.ucp-night-deep { background: #0a0f18 !important; }
+body.ucp-night-deep::before { background: #0a0f18 !important; }
+/* Extra dark veil so night mode reads as near-black over the portal's own
+   light surfaces (cards, tables, headers). */
+body.ucp-night::after {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: -1;
+  background: rgba(3, 6, 12, 0.55);
+  pointer-events: none;
+}
+
+body.ucp-shell-open { overflow: hidden; }
+
+/* ----- Sidebar nav entries (match .menu_section ul li a) --------------- */
+/* Font + color are intentionally NOT set here: the entries inherit the
+   portal's own menu font and text color (the same rules that style the
+   Dashboard/Profile/Timetable items), so they always look identical to the
+   other sidebar items. (Night mode pins them white — see below.) */
+.ucp-shell-nav { list-style: none; }
+.ucp-shell-nav a {
+  border-radius: 12px;
+  margin: 5px 10px;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast, all 0.3s ease);
+}
+.ucp-shell-nav a:hover { background: rgba(255, 255, 255, 0.1) !important; transform: translateX(5px); }
+/* Icon font-size is intentionally NOT set: the entries use the portal's own
+   .menu_icon markup, so the portal's menu CSS sizes the icon exactly like
+   every other sidebar item (identical font, size, weight and color). */
+.ucp-shell-nav a:hover .material-icons { transform: scale(1.2); }
+/* (The sidebar "Notification" entry was removed on request — the section
+   lives on the dashboard only — so its unread pill style went with it. The
+   count still badges the dashboard section head via .ucp-notif-badge in
+   styles/notification_widget.css.) */
+
+/* Day mode: the portal leaves #sidebar_main fully transparent, so white
+   (or accent-colored) text and icons sit directly on the wallpaper and can
+   disappear. Give the sidebar a dark translucent veil on every page.
+   COLOR/CONTRAST-AWARE: js/shell.js samples the current wallpaper and sets
+   --ucp-sidebar-bg on <body> — a translucent dark tint of the image (its
+   hue survives at 30%), with the opacity scaled by the image's brightness
+   (bright wallpaper → up to ~0.64 veil, dark wallpaper → ~0.30) so the
+   light text always has contrast while the wallpaper still shows through.
+   The fallback is the old fixed glass token (first paint, before the
+   sample lands, or a tainted/skipped sample). Night mode uses its own
+   darker glass instead. */
+body:not(.ucp-night) #sidebar_main {
+  background: var(--ucp-sidebar-bg, rgba(10, 14, 20, 0.29)) !important;
+}
+
+/* Legibility: a drop shadow behind every sidebar label / header text / icon
+   so the text stays readable over ANY wallpaper (labels are painted white or
+   accent-colored, and wallpapers vary from bright to dark). CONTRAST-AWARE:
+   js/shell.js sets --ucp-sidebar-shadow from the text's own color — a dark
+   shadow for light text (day-mode white, or a light accent) and a light
+   shadow for dark text — so the shadow always contrasts the letters
+   themselves. The double layer (tight + soft) reads as a crisp outline.
+   Applies in night mode too (harmless over the already-dark veil). */
+#sidebar_main .menu_title,
+#sidebar_main .sidebar_main_header *,
+#sidebar_main .material-icons {
+  /* subtle by design (see js/shell.js contrastShadow): low opacity, tight
+     soft layer. Fallback = the dark shadow (white text). */
+  text-shadow: var(--ucp-sidebar-shadow, 0 1px 2px rgba(0, 0, 0, 0.7), 0 1px 5px rgba(0, 0, 0, 0.3));
+}
+
+/* ----- Page frame (Settings / Notification pages) -----------------------
+   These are now real PAGES inside the portal's content area — like the
+   dashboard / profile / invoices pages: the sidebar stays visible on the
+   left, the wallpaper shows through, and the content sits in the normal
+   #page_content flow (no fixed full-screen overlay). */
+#ucp-shell-root {
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#ucp-shell-root[hidden] { display: none; }
+
+.ucp-shell-page {
+  min-height: 60vh;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 6px 6px 70px;
+  box-sizing: border-box;
+}
+.ucp-shell-page-header {
+  display: flex; align-items: center; gap: 18px;
+  margin-bottom: 22px;
+}
+.ucp-shell-page-header .ucp-shell-page-title { flex: 1; }
+.ucp-shell-header-actions { display: inline-flex; align-items: center; gap: 10px; }
+/* (The pages' Back buttons were removed on request — leaving a page is via
+   the sidebar entries, the Escape key, or the browser Back button.) */
+.ucp-shell-page-title { margin: 0; font-size: 1.7rem; font-weight: 700; letter-spacing: 0.4px; }
+
+/* ----- Cards ------------------------------------------------------------
+   Dark TRANSLUCENT glass (the extension's standard surface token), NOT a
+   near-white tint: the pages sit over the wallpaper in DAY mode too, so a
+   white 0.05 card was effectively invisible (white text on a light
+   wallpaper). 0.55 keeps the wallpaper visible through the card (~45%) while
+   making the options/content readable in both day and night. */
+.ucp-shell-card {
+  background: rgba(10, 14, 20, 0.814);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Note: the Notification and Settings pages are standalone pages now —
+   their styles live in styles/notification_page.css and
+   styles/settings_page.css (loaded via <link> by the page scripts). Only
+   the shared frame / card rules above remain in this file. */
+
+/* =========================================================================
+ * DARK MODE — whole page
+ * Darken the portal's glass surfaces (re-set the :root variables so every
+ * .glass / #sidebar_main / #top_bar darkens) and keep the sidebar legible.
+ * The wallpaper is KEPT (dimmed + veiled above); the separate Night Mode
+ * (body.ucp-night-deep) is what removes it — see the body::before rule.
+ * (Night Mode implies these styles: body.ucp-night is applied whenever
+ * either mode is on.)
+ * ========================================================================= */
+body.ucp-night {
+  --primary-glass: rgba(15, 20, 26, 0.72) !important;
+  --secondary-glass: rgba(18, 22, 28, 0.82) !important;
+  --light-glass: rgba(10, 14, 18, 0.74) !important;
+  --dark-glass: rgba(8, 11, 15, 0.84) !important;
+  --border-glass: 1px solid rgba(255, 255, 255, 0.10) !important;
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.55) !important;
+  color: #fff !important;
+}
+body.ucp-night #page_content,
+body.ucp-night .page_content,
+body.ucp-night .md-card,
+body.ucp-night .md-card .md-card-content,
+body.ucp-night .glass { color: #fff; }
+body.ucp-night h1, body.ucp-night h2, body.ucp-night h3,
+body.ucp-night h4, body.ucp-night h5, body.ucp-night p { color: #fff; }
+body.ucp-night .material-icons { color: #ffffffa3; }
+/* Night mode: the shell pages' (Settings / Notification) icons are strictly
+   WHITE. The portal's own !important icon tint (.material-icons in
+   student.css — #ffffff7e) would otherwise leave them gray; the
+   #ucp-shell-root id + !important beats that portal rule. The same rule is
+   mirrored in the pages' own stylesheets — which are guaranteed to load —
+   so it holds even in tabs where this file's SW injection is missing. */
+body.ucp-night #ucp-shell-root .material-icons { color: #fff !important; }
+
+/* Night mode: sidebar header text strictly white.
+   (The profile picture is left UNTOUCHED — it keeps its normal colors in
+   every mode, so it never becomes invisible.) */
+body.ucp-night .uk-text-bold.uk-text-center { color: #fff !important; }
+body.ucp-night .sidebar_main_header { color: #fff !important; }
+body.ucp-night .sidebar_main_header * { color: #fff !important; }
+
+/* Night mode: the dashboard student card is a white ID card — the global
+   white-text rule would make its dark ink invisible (white on white), so
+   pin the back-side text to the SAME black ink the card uses in day mode.
+   (Black, not blue — the card looks identical in every mode.) */
+body.ucp-night .back-card,
+body.ucp-night .back-card * { color: #000000 !important; }
+
+/* Night mode: every sidebar item + its icon is strictly white — the shell
+   entries' TEXT included (same as their icons). The #sidebar_main id gives
+   these enough specificity to beat the portal's own menu-color rules.
+   The OPEN page (li.current_section) is exempt on purpose: the portal's own
+   red active-item styling must show at night, exactly like it does in day
+   mode (the injected Logout item keeps its inline #fff regardless).
+   NOTE: `a *` is required — the portal paints the LABEL SPANS
+   (.menu_title / .menu_icon i) with its own UCP dark blue, which a rule on
+   the bare <a> alone cannot override (the span's own rule wins). */
+body.ucp-night #sidebar_main .menu_section ul li:not(.current_section) a,
+body.ucp-night #sidebar_main .menu_section ul li:not(.current_section) a * { color: #fff !important; }
+body.ucp-night #sidebar_main .menu_section ul li:not(.current_section) a .material-icons { color: #fff !important; }
+body.ucp-night #sidebar_main .menu_section ul li.ucp-shell-nav--notif a,
+body.ucp-night #sidebar_main .menu_section ul li.ucp-shell-nav--settings a { color: #fff !important; }
+body.ucp-night #sidebar_main .menu_section ul li.ucp-shell-nav--notif a .material-icons,
+body.ucp-night #sidebar_main .menu_section ul li.ucp-shell-nav--settings a .material-icons { color: #fff !important; }
+/* Night mode: the OPEN (selected) item keeps its portal-red active styling,
+   exactly like day mode. shell.js copies the portal's own active red into
+   --ucp-active-red (read from the page's computed styles), so if the portal
+   paints the active state only on the expanded sub-items, the top-level
+   selected item matches the same red. When the variable is unset the rule
+   falls back to the inherited color (no visual change). */
+body.ucp-night #sidebar_main .menu_section ul li.current_section > a,
+body.ucp-night #sidebar_main .menu_section ul li.current_section > a * {
+  color: var(--ucp-active-red, currentColor) !important;
+}
+
+/* Night mode: deepen the shell cards a touch (the page surface behind them
+   is already dark — keeps the glass from washing out). */
+body.ucp-night .ucp-shell-card {
+  background: rgba(8, 11, 16, 0.62);
+}
+
+/* =========================================================================
+ * ACCENT COLOR — global (default ON). When body.ucp-bg-accent is set (by
+ * js/shell.js on every page), icons, the sidebar text and the shell
+ * buttons take the current background's accent color (--ucp-accent, set on
+ * <body>). Placed AFTER the night-mode rules so the accent — an explicit
+ * user choice — wins over the night-mode white when both are on.
+ * ========================================================================= */
+/* Every material icon on the page (dashboard classes/empty states, the
+   portal's own icons, the shell pages' icons). */
+body.ucp-bg-accent .material-icons { color: var(--ucp-accent, #fff) !important; }
+/* Sidebar menu labels + header text (the portal paints these spans with its
+   own colors, so the spans are targeted directly). */
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .menu_title,
+body.ucp-bg-accent #sidebar_main .sidebar_main_header * { color: var(--ucp-accent, #fff) !important; }
+/* Portal sidebar rules can give the icon element its own day-mode color.
+    Reapply the accent to the complete link subtree so labels and icons stay
+    in sync outside night mode too. */
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a,
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a *,
+body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .material-icons {
+   color: var(--ucp-accent, #fff) !important;
+}
+/* Night mode + accent: the accent still wins over the night-mode white. */
+body.ucp-night.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a,
+body.ucp-night.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a *,
+body.ucp-night.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .material-icons {
+  color: var(--ucp-accent, #fff) !important;
+}
+/* Shell page buttons (Settings: upload · Notification: scan). */
+body.ucp-bg-accent .ucp-shell-btn,
+body.ucp-bg-accent .ucp-shell-upload {
+  color: var(--ucp-accent, #fff);
+  border-color: var(--ucp-accent, #fff);
+}
+/* Dashboard "Open Gradebook" pill — takes the accent color as its own. */
+body.ucp-bg-accent .gmc-status {
+  background: var(--ucp-accent, #4393e9) !important;
+  color: #fff !important;
+}
+body.ucp-bg-accent .gmc-status:hover { filter: brightness(0.92); }
+
+/* =========================================================================
+ * "Signed in as" — replaces the sidebar's profile picture (see
+ * js/shell.js injectSignedInAs). Inserted INSIDE .sidebar_main_header, so it
+ * inherits the header's text color for free: the wallpaper's ACCENT color when
+ * accent mode is on (the .sidebar_main_header * accent rule above), and the
+ * normal contrast-aware white + shadow when it's off. No color is set here on
+ * purpose. Block + centered so it lines up with the centered header text. */
+#sidebar_main .sidebar_main_header .ucp-signed-in {
+  display: block;
+  margin-top: 44px; /* nudge it down a little from the header's top edge */
+  line-height: 0.8;
+  white-space: nowrap;
+}
+
+/* =========================================================================
+ * ABOUT EXTENSION — bottom of the sidebar (see js/shell.js). A small, quiet
+ * block: version + the project links + the tagline. Clicking it (anything
+ * but a real link) opens Settings scrolled to the credits card. Colours are
+ * low-opacity white so it sits under the portal's own sidebar styling in
+ * both day and night; the accent rule below tints the links when accent
+ * mode is on (same treatment as the menu labels). */
+#sidebar_main .ucp-sidebar-credits {
+  margin: 18px 10px 12px;
+  padding: 12px 6px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+#sidebar_main .ucp-sidebar-credits-title {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.88);
+}
+#sidebar_main .ucp-sidebar-credits-version {
+  margin-top: 3px;
+  font-size: 0.72rem; font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+#sidebar_main .ucp-sidebar-credits-links {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 8px;
+}
+#sidebar_main .ucp-sidebar-credits-links a {
+  font-size: 0.72rem; font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+#sidebar_main .ucp-sidebar-credits-links a:hover { color: rgba(255, 255, 255, 0.95); }
+#sidebar_main .ucp-sidebar-credits-links a.ucp-sidebar-credits-soon {
+  cursor: default;
+  color: rgba(255, 255, 255, 0.32);
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.30);
+}
+#sidebar_main .ucp-sidebar-credits-links a.ucp-sidebar-credits-soon:hover { color: rgba(255, 255, 255, 0.32); }
+#sidebar_main .ucp-sidebar-credits-tag {
+  margin-top: 9px;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.40);
+}
+/* Accent mode: the links take the background's accent colour. */
+body.ucp-bg-accent #sidebar_main .ucp-sidebar-credits-links a { color: var(--ucp-accent, #4a4949); opacity: 0.75; }
+body.ucp-bg-accent #sidebar_main .ucp-sidebar-credits-links a:hover { opacity: 1; }
+body.ucp-bg-accent #sidebar_main .ucp-sidebar-credits-links a.ucp-sidebar-credits-soon { color: rgba(255, 255, 255, 0.32); opacity: 1; }
