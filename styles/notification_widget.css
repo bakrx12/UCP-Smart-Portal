@@ -1,0 +1,411 @@
+/* =========================================================================
+ * Notification WIDGET — the embeddable Course Updates / UCP Notification
+ * widget (tabs, scan bar, feed, placeholder). Shared by BOTH:
+ *   - the standalone Notification page (js/notification_page.js), and
+ *   - the Dashboard "Notification & Updates" section (js/student_dashboard.js)
+ * Loaded on demand via a <link> by the widget's render()/embed() — never by
+ * the service worker — so it is guaranteed present wherever the widget shows.
+ * The page-frame + wallpaper rules stay in styles/notification_page.css.
+ *
+ * NOTE: the shared dark-glass surface (.ucp-shell-card) comes from
+ * styles/shell.css (injected on the dashboard). All rules below are the
+ * widget's own pieces, namespaced ucp-shell-*.
+ * ========================================================================= */
+
+/* ----- Tabs ------------------------------------------------------------- */
+.ucp-shell-notif-head { padding: 10px; }
+/* Dark tints (not near-white): the content sits over the wallpaper in day
+   mode too — a white 0.05 surface is invisible there. Sits inside the dark
+   glass .ucp-shell-card, so keep it a subtle depth step, not a new slab. */
+.ucp-shell-tabs {
+  position: relative; display: flex;
+  background: rgba(10, 14, 20, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px; padding: 5px;
+}
+.ucp-shell-tab {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 8px; font-size: 0.9rem; font-weight: 600;
+  color: rgba(255, 255, 255, 0.7); border-radius: 9px; cursor: pointer;
+  transition: color 0.2s; z-index: 1;
+}
+.ucp-shell-tab .material-icons { font-size: 19px; }
+.ucp-shell-tab-active { color: #fff; }
+/* Hidden by the Settings "Notification widget · tabs" toggles (JS adds the
+   class); hidden tabs take no space, so the remaining tabs reflow to fill. */
+.ucp-shell-tab-hidden { display: none; }
+.ucp-shell-tab-indicator {
+  position: absolute; top: 5px; left: 5px;
+  /* One tab slot of the VISIBLE tabs (tabs + indicator share .ucp-shell-tabs
+     padding:5px): inner width = 100% - 10px, so one slot = (100% - 10px) / N,
+     where N = the visible-tab count. JS sets --n on #ucp-shell-tabs when a
+     tab is hidden (default 5). setShellView slides by translateX(index*100%),
+     so this must equal exactly one visible tab. */
+  width: calc((100% - 10px) / var(--n, 5)); height: calc(100% - 10px);
+  background: rgba(96, 165, 250, 0.22);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 9px;
+  transition: transform 0.28s cubic-bezier(0.16, 0.84, 0.3, 1);
+  z-index: 0;
+}
+.ucp-shell-tabpanel { display: none; }
+.ucp-shell-tabpanel.ucp-shell-tab-active { display: block; animation: ucpShellFade 0.25s ease; }
+@keyframes ucpShellFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ----- Course updates (scan bar + feed) -------------------------------- */
+/* align-items: stretch — every control in the bar (Scan now left, the type
+   filter centered, Mark-all-as-read, the Notifications block right) matches
+   the tallest one, the two-line "Scan now" button, so the whole row reads
+   as one height. */
+.ucp-shell-scan-bar { display: flex; align-items: stretch; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+/* Type filter: centered between Scan now (left) and the Notifications block
+   (right). margin:auto on both sides splits the free space — with the push
+   block's margin-left:auto the filter lands in the bar's middle. */
+.ucp-shell-scan-filter { margin: 0 auto; flex: 0 1 auto; }
+.ucp-shell-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff; border-radius: 10px; padding: 10px 16px;
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.ucp-shell-btn .material-icons { font-size: 18px; }
+.ucp-shell-btn:hover { background: rgba(255, 255, 255, 0.18); }
+.ucp-shell-btn:active { transform: scale(0.98); }
+.ucp-shell-btn-primary { background: rgba(96, 165, 250, 0.22); border-color: rgba(96, 165, 250, 0.4); }
+.ucp-shell-btn-primary:hover { background: rgba(96, 165, 250, 0.32); }
+.ucp-shell-scan-status { font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); }
+
+.ucp-shell-feed { display: flex; flex-direction: column; gap: 10px; }
+.ucp-shell-feed-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(10, 14, 20, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px; padding: 13px;
+  text-decoration: none; color: #fff;
+  transition: background 0.2s, transform 0.15s;
+}
+.ucp-shell-feed-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(3px); }
+.ucp-shell-feed-icon { font-size: 1.25rem; line-height: 1.4; }
+.ucp-shell-feed-main { min-width: 0; }
+.ucp-shell-feed-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; }
+/* Sub-line under a feed title (the UCP news subtitle). The title's margin
+   already separates them, so no top margin — just a quieter, smaller body. */
+.ucp-shell-feed-sub { font-size: 0.78rem; color: rgba(255, 255, 255, 0.6); line-height: 1.45; }
+.ucp-shell-feed-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ucp-shell-feed-meta span {
+  font-size: 0.74rem; background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px; padding: 2px 9px; color: rgba(255, 255, 255, 0.85);
+}
+.ucp-shell-feed-grade { background: rgba(74, 222, 128, 0.18) !important; color: #bbf7d0 !important; font-weight: 700; }
+/* Date chip on Portal News cards (an optional announcement timestamp). */
+.ucp-shell-feed-date {
+  font-size: 0.74rem; background: rgba(96, 165, 250, 0.14);
+  border-radius: 20px; padding: 2px 9px; color: rgba(255, 255, 255, 0.8);
+}
+/* Author chip on UCP Feed cards (best-effort from the listing; neutral tone). */
+.ucp-shell-feed-author {
+  font-size: 0.74rem; background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px; padding: 2px 9px; color: rgba(255, 255, 255, 0.72);
+  font-weight: 600;
+}
+/* Portal News cards reuse the feed-item layout with a subtle accent edge so
+   they read as a distinct "news" stream within the same feed container. */
+.ucp-shell-news-item { border-left: 3px solid rgba(96, 165, 250, 0.5); }
+.ucp-shell-news-item .ucp-shell-feed-icon { font-size: 1.1rem; }
+/* UCP News (ucp-today) cards reuse the feed-item layout with a distinct amber
+   accent edge so they read as an external "news" stream. The excerpt wraps
+   (no truncation) since these are real headlines, and the date is a chip. */
+.ucp-shell-ucptoday-item { border-left: 3px solid rgba(251, 191, 36, 0.55); }
+.ucp-shell-ucptoday-item .ucp-shell-feed-sub {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* "Load more" bar — centered below the feed, shown only when more remain. */
+.ucp-shell-loadmore-bar { display: flex; justify-content: center; margin-top: 14px; }
+.ucp-shell-loadmore-btn { font-size: 0.85rem; padding: 9px 18px; }
+.ucp-shell-loadmore-btn .material-icons { font-size: 17px; }
+/* Empty / loading / error state — a DARK-GLASS card (same depth-step family
+   as the tabs bar above), so an empty feed reads as a card, not void. */
+.ucp-shell-feed-state {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: rgba(255, 255, 255, 0.7); font-size: 0.92rem; text-align: center; padding: 28px 12px;
+  background: rgba(10, 14, 20, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+.ucp-shell-feed-state .material-icons { font-size: 42px; opacity: 0.85; }
+
+/* ----- UCP Notification placeholder ------------------------------------ */
+.ucp-shell-ucp-placeholder {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 8px; padding: 30px 12px;
+}
+.ucp-shell-ucp-badge {
+  width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(96, 165, 250, 0.16); border: 1px solid rgba(96, 165, 250, 0.3);
+}
+.ucp-shell-ucp-badge .material-icons { font-size: 36px; color: #93c5fd; }
+.ucp-shell-ucp-placeholder h4 { margin: 6px 0 0; font-size: 1.1rem; }
+.ucp-shell-ucp-placeholder p { margin: 0; font-size: 0.88rem; color: rgba(255, 255, 255, 0.65); }
+.ucp-shell-soon { font-size: 0.76rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #fbbf24; margin-top: 4px; }
+.ucp-shell-ucp-sample { width: 100%; max-width: 520px; margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.ucp-shell-sample-row {
+  display: flex; gap: 10px; align-items: center; text-align: left;
+  background: rgba(10, 14, 20, 0.40); border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px; padding: 11px 13px;
+}
+.ucp-shell-sample-row .material-icons { font-size: 20px; color: rgba(255, 255, 255, 0.7); }
+.ucp-shell-sample-row .s-title { font-size: 0.88rem; font-weight: 600; }
+.ucp-shell-sample-row .s-sub { font-size: 0.76rem; color: rgba(255, 255, 255, 0.55); }
+
+/* ----- Academic Calendar (mini-card + chronological list) -------------- */
+.ucp-shell-acad-mini { margin-bottom: 14px; }
+.ucp-acad-mini-card {
+  display: flex; flex-direction: column; gap: 4px;
+  background: rgba(96, 165, 250, 0.12);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 12px; padding: 12px 14px;
+}
+.ucp-acad-mini-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(147, 197, 253, 0.85);
+}
+.ucp-acad-mini-name {
+  font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ucp-acad-mini-date {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.82rem; color: rgba(255, 255, 255, 0.82);
+}
+.ucp-acad-mini-date .material-icons { font-size: 16px; }
+.ucp-acad-mini-when { color: rgba(255, 255, 255, 0.58); }
+/* The Next-up mini-card now docks the two-line "Refresh" button on the RIGHT;
+   the milestone info (label / name / date) becomes a left column that
+   stretches and truncates. */
+.ucp-acad-mini-card.ucp-acad-mini-with-refresh { flex-direction: row; align-items: center; gap: 12px; }
+.ucp-acad-mini-card.ucp-acad-mini-with-refresh .ucp-acad-mini-info {
+  flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px;
+}
+.ucp-acad-mini-card.ucp-acad-mini-with-refresh .ucp-shell-refresh-btn { flex: 0 0 auto; }
+/* Compact loading/error placeholder for the mini's left column (the big
+   feed-state icon is too tall to sit beside the button). */
+.ucp-acad-mini-state {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.85rem; color: rgba(255, 255, 255, 0.72);
+}
+.ucp-acad-mini-state .material-icons { font-size: 20px; opacity: 0.85; }
+.ucp-acad-mini-state.is-error { color: rgba(248, 113, 113, 0.9); }
+
+/* Two-line action button (icon + a title, with a running-status line UNDER the
+   title). Used by the Refresh calendar (docked inside the Next-up mini-card),
+   the Course Updates "Scan now" button, and the Portal News "Refresh" — so a
+   live state ("Checking 3/12 courses for updates", "Updated just now",
+   "From cache") sits INSIDE the button instead of beside it. */
+.ucp-shell-refresh-btn { gap: 9px; }
+.ucp-shell-refresh-col {
+  display: inline-flex; flex-direction: column; align-items: flex-start;
+  line-height: 1.25; text-align: left;
+}
+.ucp-shell-refresh-title { font-size: 0.88rem; font-weight: 600; }
+.ucp-shell-refresh-status {
+  font-size: 0.72rem; font-weight: 500; color: rgba(255, 255, 255, 0.65);
+  min-height: 1em; white-space: nowrap;
+}
+
+.ucp-acad-list { display: flex; flex-direction: column; gap: 8px; }
+/* A 3-column row (Title | Date | Week). Title stretches; Date and Week are
+   fixed-width so the column-header row and every row line up. Date is
+   LEFT-aligned (was right-aligned before) with a gap before Week. */
+.ucp-acad-head,
+.ucp-acad-row {
+  display: flex; align-items: center; gap: 14px;
+}
+.ucp-acad-head { padding: 0 13px 6px; margin-bottom: 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.ucp-acad-head > span {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.ucp-acad-row {
+  background: rgba(10, 14, 20, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px; padding: 11px 13px;
+  transition: background 0.2s;
+}
+.ucp-acad-row:hover { background: rgba(255, 255, 255, 0.08); }
+/* Title (stretches) */
+.ucp-acad-col-title,
+.ucp-acad-row-name {
+  flex: 1 1 auto; min-width: 0;
+}
+.ucp-acad-row-name {
+  font-size: 0.88rem; font-weight: 600; color: rgba(255, 255, 255, 0.92);
+  line-height: 1.3; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Date + Day (fixed width, RIGHT-aligned). The block keeps its spot on the LEFT
+   side of the row (before the Week column) — the text is right-aligned, the
+   position is not. Date holds the calendar date, Day the weekday (short). */
+.ucp-acad-col-date,
+.ucp-acad-row-date { flex: 0 0 auto; min-width: 96px; }
+.ucp-acad-row-date {
+  font-size: 0.78rem; font-weight: 500; color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap; text-align: right;
+}
+.ucp-acad-col-day,
+.ucp-acad-row-day { flex: 0 0 auto; min-width: 34px; text-align: right; }
+.ucp-acad-row-day {
+  font-size: 0.7rem; font-weight: 600; color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+/* Week (fixed width, muted; a subtle pill only when it has a value) */
+.ucp-acad-col-week,
+.ucp-acad-week { flex: 0 0 auto; min-width: 56px; text-align: left; }
+.ucp-acad-week.is-set {
+  font-size: 0.7rem; font-weight: 700;
+  background: rgba(255, 255, 255, 0.08); border-radius: 20px;
+  padding: 2px 8px; color: rgba(255, 255, 255, 0.85);
+}
+/* Holidays interleave with milestones chronologically; a warm accent edge
+   + date tint keeps them visually distinct from the milestone rows. */
+.ucp-acad-row.ucp-acad-holiday { border-left: 3px solid rgba(251, 191, 36, 0.55); }
+.ucp-acad-row.ucp-acad-holiday .ucp-acad-row-date { color: rgba(253, 230, 138, 0.9); }
+.ucp-acad-row.ucp-acad-holiday .ucp-acad-row-day { color: rgba(253, 230, 138, 0.6); }
+/* Ongoing-term past activities: the single most-recent one stays greyed in
+   place; the older ones are hidden until the toggle expands the term. */
+.ucp-acad-row.is-past { opacity: 0.45; }
+.ucp-acad-term:not(.is-expanded) .ucp-acad-row.is-hidden-past { display: none; }
+.ucp-acad-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px; color: #fff; font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.ucp-acad-toggle:hover { background: rgba(255, 255, 255, 0.16); }
+.ucp-acad-toggle .material-icons { font-size: 18px; }
+/* The feed is split into one block per TERM (Summer 2026, Fall 2026, …), each
+   headed by the term name and ordered by nearest upcoming date. The term head's
+   bottom rule reads as a section divider between terms. */
+.ucp-acad-term + .ucp-acad-term { margin-top: 8px; }
+.ucp-acad-term-head {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: #93c5fd;
+  margin-bottom: 10px; padding-bottom: 7px;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.25);
+}
+.ucp-acad-term-head .material-icons { font-size: 18px; }
+
+/* ----- Course-updates scan-bar controls (filter / Instant Push / read) ---- */
+/* Type filter — a compact segmented control beside "Scan now" (All /
+   Submissions / Content / Grades). Div-based radios (the portal swallows
+   native form-control clicks), sized for the scan bar; same look as the
+   Settings page's .ucp-shell-seg. */
+.ucp-wseg {
+  display: inline-flex; align-items: stretch; padding: 3px; border-radius: 10px; flex: 0 0 auto;
+  background: rgba(10, 14, 20, 0.5); border: 1px solid rgba(255, 255, 255, 0.14);
+}
+/* Options fill the block's height (stretch — the block matches the Scan now
+   button's height via the scan bar), text centered in each option. */
+.ucp-wseg-opt {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 13px; border-radius: 7px; cursor: pointer; user-select: none;
+  font-size: 0.8rem; font-weight: 600; color: rgba(255, 255, 255, 0.6);
+  transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.ucp-wseg-opt:hover { color: #fff; }
+.ucp-wseg-opt.is-on { background: rgba(96, 165, 250, 0.28); color: #fff; }
+
+/* Notifications (quick on/off) — a three-line label (title / ON-OFF state /
+   running status) beside a small switch, mirroring the two-line
+   Refresh-button layout. The status line is the control's feedback channel
+   (permission blocked, "Background checks on…"). The TITLE is a link: it
+   opens Settings scrolled to the Notifications card (the mode choice);
+   the switch beside it is the quick on/off. */
+/* Sized to the Scan now button (same padding / radius / label + status
+   sizing as .ucp-shell-btn + .ucp-shell-refresh-*), and stretched to its
+   height by the scan bar. margin-left:auto pins the block to the RIGHT end
+   of the bar (after Scan now / the type filter / Mark all as read). */
+.ucp-push {
+  display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto;
+  margin-left: auto;
+  background: rgba(10, 14, 20, 0.5); border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px; padding: 10px 16px;
+}
+.ucp-push-col { display: flex; flex-direction: column; line-height: 1.25; text-align: left; }
+.ucp-push-title { font-size: 0.88rem; font-weight: 600; color: #fff; }
+/* The label is the Settings link (not the switch): pointer + a hover nudge.
+   A span, not an <a> — the portal's aarsol bundle swallows link clicks on
+   injected markup in some contexts, so the JS handler opens the shell. */
+.ucp-push-link { cursor: pointer; transition: color 0.15s; }
+.ucp-push-link:hover { color: var(--ucp-accent, #93c5fd); }
+/* ON/OFF state line — muted when off, lit when on. */
+.ucp-push-state {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.42);
+  min-height: 1em;
+}
+.ucp-push-state.is-on { color: var(--ucp-accent, #86efac); }
+.ucp-push-status {
+  font-size: 0.72rem; font-weight: 500; color: rgba(255, 255, 255, 0.65);
+  min-height: 1em; white-space: nowrap; max-width: 280px;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.ucp-push-status.is-error { color: #fca5a5; }
+.ucp-push-switch {
+  position: relative; flex: 0 0 auto;
+  width: 40px; height: 22px; border-radius: 999px;
+  background: transparent; border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.ucp-push-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: left 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.ucp-push-switch.on { background: rgba(96, 165, 250, 0.35); border-color: rgba(147, 197, 253, 0.9); }
+.ucp-push-switch.on .ucp-push-thumb { left: 20px; }
+
+/* "Mark all as read" — appears in the scan bar only while items are unread.
+   No size overrides: it is the standard .ucp-shell-btn (Scan now's own
+   class) and the scan bar stretches it to the same height. */
+.ucp-wmark { flex: 0 0 auto; }
+
+/* Unread-count pill. Sits on the Course Updates tab and on the dashboard's
+   "Notification & Updates" section head (#my-notifications) — both dark
+   contexts, so one style serves both. The [hidden] override matters because
+   the class sets display (which would otherwise beat the UA hidden rule). */
+.ucp-notif-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 999px; background: rgba(96, 165, 250, 0.92); color: #fff;
+  font-size: 0.64rem; font-weight: 700; line-height: 1; flex: 0 0 auto;
+}
+.ucp-notif-badge[hidden] { display: none; }
+#my-notifications .ucp-notif-badge { margin-left: 8px; vertical-align: middle; }
+
+/* Unread feed items — a blue dot at the start of the card + a brighter edge,
+   so a new course update stands out in the feed. */
+.ucp-shell-feed-item.is-unread { border-color: rgba(96, 165, 250, 0.45); }
+.ucp-shell-feed-item.is-unread::before {
+  content: ''; flex: 0 0 auto; align-self: center;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
+}
+
+/* =========================================================================
+ * MODE OVERRIDES — icon colors (scoped to the widget root).
+ * The widget is wrapped in .ucp-notif-widget (js/notification_page.js) so
+ * these hold on BOTH the standalone page and the dashboard embed. Placed
+ * AFTER any base rules so the user's explicit accent choice wins. (The
+ * standalone page additionally carries #ucp-shell-root-scoped copies in
+ * styles/notification_page.css — same values, harmless.)
+ * ========================================================================= */
+body.ucp-night .ucp-notif-widget .material-icons { color: #fff !important; }
+body.ucp-bg-accent .ucp-notif-widget .material-icons { color: var(--ucp-accent, #fff) !important; }
+body.ucp-bg-accent .ucp-notif-widget .ucp-shell-tab-active,
+body.ucp-bg-accent .ucp-notif-widget .ucp-shell-feed-title,
+body.ucp-bg-accent .ucp-notif-widget .s-title { color: var(--ucp-accent, #fff); }
