@@ -136,9 +136,9 @@
 </tr>
   </tr>
   <tr>
-    <td> <img width="1479" height="968" alt="image" src="https://github.com/user-attachments/assets/fa4cc8b1-0da0-4e76-ac72-862cd5129a8d" />
+    <td> <img width="1478" height="912" alt="image" src="https://github.com/user-attachments/assets/3261629d-8f50-4014-94b8-29331e4ffa78" />
       Result & Exam page showing active courses </td>
-    <td> <img width="1478" height="912" alt="image" src="https://github.com/user-attachments/assets/983faaec-6aeb-4ac1-be05-a6d4a66faa06" />
+    <td> <img width="1534" height="871" alt="image" src="https://github.com/user-attachments/assets/0a898701-d287-4706-a70f-3bcbdaaa6fbf" />
     Background Notification for course updates </td>
 </tr>
 
