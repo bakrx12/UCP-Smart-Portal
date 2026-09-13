@@ -264,4 +264,5 @@ This is a `3.6.0` beta, so expect some rough edges. The extension otherwise work
 -  Design - Abdurrehman, AbuBakr Aslam
 -  Web Scraping - Talha Abid
 -  Code - Abdullah Zafar, AbuBakr Aslam
+</br>
 By UCP Students with love for UCP students.
