@@ -3,7 +3,7 @@
 
   "manifest_version": 3,
   "name": "UCP Smart Portal",
-  "version": "0.2.41",
+  "version": "3.5.41",
   "description": "Modern UI/UX with built-in additional LMS features designed for UCP Portal",
 
   "content_scripts": [
