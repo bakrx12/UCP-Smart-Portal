@@ -95,7 +95,7 @@
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1586" height="802" alt="image" src="https://github.com/user-attachments/assets/a459ef05-01d4-42e5-93e8-673132ad7af5" />
+    <td> <img width="1398" height="834" alt="AFTER" src="https://github.com/user-attachments/assets/3e6e3d6c-cbf2-41bf-b8a8-1ecc636e83bc" />
     UCP Smart Portal's Student Dashboard </td>
   </tr>
   <tr>
@@ -103,7 +103,7 @@
     Default UCP Portal's Student Timetable
    </td>
     <td> <img width="1538" height="987" alt="image" src="https://github.com/user-attachments/assets/4fb9af05-3d01-44b5-8327-865ac6afa05c" />
-    Redesigned Student Timetable with additional features  </td>
+    Redesigned Student Timetable w/ additional features  </td>
 </tr>
 
   </tr>
@@ -130,13 +130,14 @@
   <tr>
     <td> <img width="1304" height="858" alt="image" src="https://github.com/user-attachments/assets/1d915fdd-2d5f-4599-a180-6b768c59be37" />
       Dashboard featuring Academic Calendar & much more </td>
-    <td> <img width="1479" height="968" alt="image" src="https://github.com/user-attachments/assets/fa4cc8b1-0da0-4e76-ac72-862cd5129a8d" />
-      Result & Exam page showing active courses </td>
+        <td> <img width="1392" height="935" alt="image" src="https://github.com/user-attachments/assets/e33ded8a-19e2-4b17-9277-e57875bc8676" />
+    Setting Background customization </td>
+
 </tr>
   </tr>
   <tr>
-    <td> <img width="1392" height="935" alt="image" src="https://github.com/user-attachments/assets/e33ded8a-19e2-4b17-9277-e57875bc8676" />
-    Setting Background customization </td>
+    <td> <img width="1479" height="968" alt="image" src="https://github.com/user-attachments/assets/fa4cc8b1-0da0-4e76-ac72-862cd5129a8d" />
+      Result & Exam page showing active courses </td>
     <td> <img width="1534" height="871" alt="image" src="https://github.com/user-attachments/assets/b0b458b0-97eb-4897-bf9a-e235cc169746" />
     Background Notification for course updates </td>
 </tr>
