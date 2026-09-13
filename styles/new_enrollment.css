@@ -1,7 +1,9 @@
 :root {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --glass-shadow: rgba(0, 0, 0, 0.08);
+            /* Dark translucent surface (same token as societies / invoices /
+               datesheet / enrolled) — blackish but NOT opaque, so the
+               wallpaper stays visible through the page content. No blur. */
+            --glass-bg: rgba(10, 14, 20, 0.55);
+            --glass-shadow: rgba(0, 0, 0, 0.35);
             --primary: #2563eb;
             --primary-light: #3b82f6;
             --success: #10b981;
@@ -27,16 +29,18 @@
 
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
+            /* transparent so the extension wallpaper (body::before) shows
+               through instead of the old pastel gradient */
+            background: transparent;
             min-height: 100vh;
-            color: var(--text-primary);
-            padding: 2rem;
+            color: #fff;
+            /* no top padding — the portal already spaces the content */
+            padding: 0 2rem 2rem;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -58,7 +62,7 @@
         }
 
         .header p {
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.72);
             font-size: 1.125rem;
         }
 
@@ -141,7 +145,6 @@
 
         .course-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             padding: 1.5rem;
@@ -170,7 +173,7 @@
         .course-title h3 {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #fff;
             margin-bottom: 0.25rem;
         }
 
@@ -186,16 +189,16 @@
             align-items: center;
             gap: 0.25rem;
             padding: 0.25rem 0.75rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
+            background: rgba(59, 130, 246, 0.18);
+            color: #93c5fd;
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 500;
         }
 
         .badge.coreq {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.18);
+            color: #c4b5fd;
         }
 
         .sections {
@@ -205,7 +208,8 @@
         }
 
         .section {
-            background: rgba(255, 255, 255, 0.5);
+            /* dark tile on the dark card (same treatment as the societies tiles) */
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 1rem;
             border: 2px solid transparent;
@@ -232,9 +236,51 @@
         .section-name {
             font-weight: 600;
             font-size: 1rem;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        /* Mini-cards — small badge chips inside the section card, styled like
+           the timetable's .ucp-tt-mini-badge chips (Section / Clash / Co-req). */
+        .section-chips {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .mini-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.26rem 0.7rem;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 50px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+        }
+
+        .mini-card .material-icons {
+            font-size: 14px;
+        }
+
+        .mini-card--clash {
+            background: rgba(239, 68, 68, 0.16);
+            border-color: rgba(239, 68, 68, 0.45);
+            color: #fca5a5;
+        }
+
+        .mini-card--coreq {
+            background: rgba(139, 92, 246, 0.16);
+            border-color: rgba(139, 92, 246, 0.45);
+            color: #c4b5fd;
         }
 
         .status-badge {
@@ -266,20 +312,24 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 0.75rem;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             font-size: 0.875rem;
+            color: #fff;
             font-family: 'JetBrains Mono', monospace;
         }
 
         .schedule-item .material-icons {
             font-size: 16px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .enroll-btn {
-            width: 100%;
-            padding: 0.75rem;
+            /* Left-aligned, sized to its label — not a full-width bar
+               ("align enroll a bit left, not all"). */
+            width: fit-content;
+            min-width: 140px;
+            padding: 0.95rem;
             background: var(--primary);
             color: white;
             border: none;
@@ -292,7 +342,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.9rem;
         }
 
         .enroll-btn:hover:not(:disabled) {
@@ -306,19 +356,21 @@
         }
 
         .enrolled-section {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             padding: 1.5rem;
             box-shadow: 0 8px 32px var(--glass-shadow);
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             animation: fadeInUp 0.6s ease-out backwards;
             animation-delay: 0.2s;
         }
 
         .main-content {
-            display: grid;
+            /* hidden by default — the OLD portal UI is the default. Settings →
+               New Enrollment UI (js/new_enrollment.js applyEnrollMode) flips
+               this to `grid` when the new UI is selected. */
+            display: none;
             grid-template-columns: 1fr 3fr;
             gap: 1rem;
             align-items: start;
@@ -398,7 +450,6 @@
 
         .timetable-section {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             padding: 1.5rem;
@@ -448,7 +499,8 @@
         }
 
         .timetable th {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.10);
+            color: #fff;
             padding: 0.75rem;
             text-align: center;
             font-weight: 600;
@@ -471,14 +523,16 @@
             text-align: center;
             min-width: 100px;
             height: 80px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             position: relative;
         }
 
         .timetable td:first-child {
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.7);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
             position: sticky;
             left: 0;
             z-index: 5;
@@ -947,7 +1001,7 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .course-select {
@@ -1090,64 +1144,56 @@
             }
         }
 
-        .toggle-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #3b82f6;
-    font-weight: bold;
-    letter-spacing: 1px;
-    justify-content: center;
+  /* =========================================================================
+   * OLD (portal) enrollment UI — shown when Settings → New Enrollment UI is
+   * OFF (the default). The Enroll button is kept inside its section card
+   * with a rounded shape.
+   * ========================================================================= */
+  /* The (nested) #page_content_inner wrappers: NO glass treatment — plain
+     transparent, no border / rounding / floating shadow. The id selector
+     matches every wrapper the portal renders (it repeats the same id), so
+     both levels lose the panel look at once. The innermost element holding
+     the actual enrollment information keeps its own styling — untouched. */
+  #page_content_inner {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 1rem;
   }
 
-  /* Glassmorphic track */
-  .toggle {
-    position: relative;
-    width: 65px;
-    height: 32px;
+  /* The portal's Enroll buttons: rounded and clearly INSIDE the card */
+  #page_content_inner .md-card button,
+  #page_content_inner .md-card input[type="button"],
+  #page_content_inner .md-card input[type="submit"],
+  #page_content_inner .md-card .uk-button {
+    border-radius: 11px !important;
+    margin: 14px 0 2px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
 
-  .toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  /* The accordion group headers ("Regular courses", "Fall 2026 (Advanced)")
+     are white text (page-scoped white headings) on the portal's own LIGHT
+     header background → white-on-white and unreadable. Give the header a
+     blackish TRANSLUCENT surface (same token as the card) so the white text
+     reads, while the wallpaper still shows through (not 100% solid). */
+
+
+
+      .md-card-toolbar {
+    background: rgba(33, 33, 33, 0.142) !important;
+
   }
 
-  .slider {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    border-radius: 999px;
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow:
-      0 4px 15px rgba(0,0,0,0.1),
-      inset 0 0 10px rgba(255,255,255,0.2);
-    transition: 0.3s;
-  }
-
-  /* Glassmorphic knob */
-  .slider::before {
-    content: "";
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    top: 4px;
-    border-radius: 50%;
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow:
-      0 4px 10px rgba(0,0,0,0.15),
-      inset 0 0 5px rgba(255,255,255,0.8);
-    transition: 0.3s;
-  }
-
-  input:checked + .slider::before {
-    transform: translateX(34px);
-  }
-
-  input:checked + .slider {
-    background: rgb(27, 220, 20);
+  /* Everything else on the old cards page gets some transparency too —
+     only the TEXT is left untouched. The portal renders the accordion
+     containers / panels (.card, .uk-accordion-content) with solid white
+     backgrounds; give them the same blackish translucent token. (The
+     section .md-cards and the buttons are already translucent via
+     portal_glass.css.) */
+  #page_content_inner .card,
+  #page_content_inner .uk-card,
+  #page_content_inner .uk-accordion,
+  #page_content_inner .uk-accordion-content {
+    background: transparent!important;
   }
