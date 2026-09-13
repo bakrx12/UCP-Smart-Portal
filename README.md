@@ -123,12 +123,10 @@ PRs welcome! Please:
 2. Keep changes scoped and documented.
 3. Test across key pages before submitting.
 
-## 📄 License
-Private repository. If you want to use or adapt this, contact the maintainer for permission.
 
-## 🙌 Credits
-### Design - Abdurrehman
-### Web Scraping - Talha Abid
-### Code - Abdullah Zafar, AbuBakr Aslam
+## 🙌 Attributions
+Design - Abdurrehman
+Web Scraping - Talha Abid
+Code - Abdullah Zafar, AbuBakr Aslam
 Retouched original, optimized to be lightweight.
 By UCP Students with love for UCP students.
