@@ -96,8 +96,7 @@
     Default UCP Portal's Student Dashboard
  </td>
     <td> <img width="1662" height="987" alt="image" src="https://github.com/user-attachments/assets/1d4a894a-4386-44d0-94fb-1e60e0a72bae" />
-" />
-    Smart UCP Portal's Student Dashboard </td>
+    UCP Smart Portal's Student Dashboard </td>
   </tr>
   <tr>
     <td> <img width="1750" height="943" alt="image" src="https://github.com/user-attachments/assets/683f06f8-e2c0-4208-9262-ac23263a8c79" />
@@ -105,7 +104,7 @@
    </td>
     <td> <img width="1538" height="987" alt="image" src="https://github.com/user-attachments/assets/4fb9af05-3d01-44b5-8327-865ac6afa05c" />
   />
-    Redesigned Student Timetable  </td>
+    Redesigned Student Timetable with additional features  </td>
 </tr>
 
 
@@ -135,6 +134,14 @@
    </td>
     <td> <img width="1456" height="982" alt="image" src="https://github.com/user-attachments/assets/c5db00d8-2e24-49d5-be37-e8115022310b" />
 </tr>
+  </tr>
+  <tr>
+    <td> <img width="1600" height="641" alt="image" src="https://github.com/user-attachments/assets/8c674f7c-5200-4140-a499-7d489e6cc4c0" />
+   </td>
+    <td> <img width="1190" height="985" alt="image" src="https://github.com/user-attachments/assets/9b37b652-5982-4a59-a363-dabf270e18bb" />
+</tr>
+
+
   
 </table>
 
