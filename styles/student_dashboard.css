@@ -2,7 +2,7 @@
 
 /* ===== GLASSMORPHIC BASE STYLING ===== */
 :root {
-  --primary-glass: rgba(255, 255, 255, 0.2);
+  --primary-glass: rgba(126, 125, 125, 0.919);
   --secondary-glass: rgba(27, 67, 153, 0.233);
   --light-glass: rgba(0, 0, 0, 0.466);
   --dark-glass: rgba(0, 0, 0, 0.2);
@@ -18,6 +18,9 @@
   --card-h: 450px;
 }
 
+
+
+
 /* ===== DASHBOARD CARDS ===== */
 .md-card {
   background: var(--light-glass) !important;
@@ -26,13 +29,29 @@
   box-shadow: var(--shadow-glass);
   overflow: hidden;
   transition: var(--transition-slow);
-  transform: translateY(12);
-  margin: 1rem;
+  transform: translateY(-60px);
+  margin: 0 1rem 1rem;
+}
+
+.md-card::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.8), 
+    transparent
+  );
 }
 
 .md-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(-60px);
+  /* 1Z: lighter hover shadow — the container doesn't lift (base is already
+     at -60px), so only a softer shadow is added on hover. */
+  box-shadow: 0 12px 34px 0 rgba(0, 0, 0, 0.4);
 }
 
 .md-card-content {
@@ -115,34 +134,76 @@ div.user_heading_avatar div.thumbnail {
   padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition-fast);
-  height: 100%;
+  height: 90%;
 }
 
 .user_heading_content:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-5px);
+  transform: translateY(-15px);
 }
 
 /* ===== BUTTONS ===== */
 .md-btn {
   border-radius: 12px !important;
   transition: var(--transition-fast) !important;
+  display: flex;
+  flex-direction: column;
   border: none !important;
   font-weight: 500 !important;
 }
 
 .md-btn-primary {
-  background: var(--primary-glass) !important;
+  margin-bottom: 14px;
 }
 
-.md-btn-primary:hover {
-  background: rgba(17, 43, 79, 0.9) !important;
-  transform: translateY(-3px);
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.6);
+.gmc-instructor-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.72rem;
+  color: #ffffff8f;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gmc-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+
+.gmc-meta-item {
+  min-width: 0;
+  padding: 8px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.gmc-meta-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.68rem;
+  color: #ffffff8f;
+  line-height: 1.1;
+}
+
+.gmc-meta-value {
+  display: block;
+  overflow: hidden;
+  color: #fffffff2;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .md-btn-danger {
   background: var(--secondary-glass) !important;
+  align-self: flex-start;
+  margin-top: auto;
 }
 
 .md-btn-danger:hover {
@@ -153,9 +214,9 @@ div.user_heading_avatar div.thumbnail {
 
 /* ===== NOTIFICATIONS & ALERTS ===== */
 .uk-badge {
-  border-radius: 50% !important;
+  border-radius: 0% !important;
   min-width: 20px;
-  height: 20px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,7 +252,7 @@ thead th {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -279,23 +340,56 @@ thead th {
 }
 
 #academics-module {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr) minmax(0, 1fr);
+  align-items: start;
   gap: 1.5rem;
+  width: 100%;
+}
+
+#attendance-chart {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+}
+
+#academic-flexbox {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+}
+
+#classesCard {
+  grid-column: 3;
+  grid-row: 1;
+  width: 100%;
+}
+
+@media (max-width: 1250px) {
+  #academics-module {
+    grid-template-columns: 1fr;
+  }
+
+  #attendance-chart,
+  #academic-flexbox,
+  #classesCard {
+    grid-column: 1;
+    grid-row: auto;
+    width: min(500px, 70%);
+    justify-self: center;
+  }
 }
 
 /* UCP Student Card */
 
 #card {
-  perspective: 1000px;
+  perspective: 900px;
 }
 
 .card-inner {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 80%;
   transform-style: preserve-3d;
 }
 
@@ -329,15 +423,16 @@ thead th {
 /* ----- Card ----- */
 .card {
   position: relative;
-  width: var(--card-w);
-  height: var(--card-h);
+  width: 310px;
+  height: 470px;
   background: #fff;
   border-radius: 16px !important;
   overflow: hidden;
   border: 1px solid #e5e7eb !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  margin: 2rem;
-  margin-right: 4rem;
+  margin: 6rem;
+  margin-top: -10rem;
+  margin-right: 1.3rem;
 }
 
 .card-back {
@@ -500,22 +595,45 @@ thead th {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center; /* center the stats column against the ID card */
 }
 
+/* CGPA / Earned / Total / Inprogress Cr now sit in their own cards, stacked
+   in a column beside the ID card. */
 #academic-flexbox #stats {
-  text-align: end;
-  margin: 2rem 0;
-  align-content: center;
-  border-left: 1px solid rgb(244, 239, 239);
-  padding-left: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0rem 0;
+  width: fit-content;
 }
 
+/* Each academic stat is its own blackish-glass card, matching the portal's
+   dark card surfaces (wallpaper shows through). Fixed width keeps the column
+   slim — no stretching to fill the row. */
 #academic-flexbox #stats .entry {
-  margin-top: 1.5rem;
+  width: 130px;
+  box-sizing: border-box;
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 9px 11px;
+  text-align: right;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+#academic-flexbox #stats .entry:hover {
+  /* 1Z: no vertical lift — only a soft shadow on hover. */
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
 }
 
 #my-academics {
-  margin: 1rem;
+  /* margin: 0 — the .gmc-section-head row owns all the spacing. A 1rem
+     margin here inset the Academics underline relative to the Courses one,
+     so the two heading bars ended up different widths and the chevron
+     buttons didn't line up. */
+  margin: 0;
   color: rgb(220, 220, 220) !important;
 }
 #my-courses {
@@ -524,24 +642,29 @@ thead th {
 
 .cgpa .value {
   color: rgb(35 74 153);
-  font-size: xxx-large;
+  font-size: xx-large;
 }
 .credits .value {
   color: crimson;
-  font-size: xx-large;
+  font-size: x-large;
 }
 .total-credits .value {
   color: rgb(20, 220, 57);
-  font-size: xx-large;
+  font-size: x-large;
 }
 .inprogress-credits .value {
   color: rgb(20, 160, 220);
-  font-size: xx-large;
+  font-size: x-large;
+}
+/* Term Week stat — a warm accent to set it apart from the credit values. */
+.term-week .value {
+  color: #ffb74d;
+  font-size: large;
 }
 
 .entry .value {
   font-weight: 600;
-  line-height: 3rem;
+  line-height: 2rem;
 }
 .entry .ph {
   color: rgb(216, 216, 216);
@@ -557,28 +680,96 @@ thead th {
   width: 500px;
   height: 38rem;
   overflow-y: scroll;
-  padding: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0;
   cursor: pointer;
+  /* Blackish glass (the extension's standard dark surface token) so the
+     wallpaper still shows through — same family as the md-card / classes /
+     courses surfaces. */
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+}
+
+.attendance-card::-webkit-scrollbar,
+.classes-card::-webkit-scrollbar {
+  display: none;
 }
 
 .attendance-card-title {
+  margin: 0 0 16px;
+  padding: 1rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.899) !important;
-  margin-bottom: 25px;
-  font-weight: 600;
+  color: white !important;
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
+  background: rgba(42, 142, 249, 0.799);
+  font-size: 1.5rem;
+  font-weight: 900 !important;
+}
+
+body.ucp-bg-accent .attendance-card-title {
+  background: var(--ucp-accent, rgba(42, 142, 249, 0.799)) !important;
+}
+
+.attendance-card > .attendance-bar-container,
+.attendance-card > .attendance-card-empty {
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 /* Chart Layout */
 .attendance-bar-container {
-  margin: 15px 0;
+  margin: 20px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
 }
 
-.attendance-label {
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #ffffff;
+.attendance-subject-head {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.attendance-subject-chip,
+.attendance-credit-chip {
+  min-width: 1;
+  padding: 6px 9px;
+  background: rgba(8, 12, 18, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.attendance-subject-chip {
+  flex: 0 1 auto;
+  width: fit-content;
+  max-width: 50ch;
+}
+
+.attendance-credit-chip {
+  margin-left: auto;
+}
+
+.attendance-subject-name {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attendance-credit {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .attendance-bar {
@@ -601,17 +792,17 @@ thead th {
 
 /* Safe attendance */
 .attendance-fill-safe {
-  background: linear-gradient(90deg, #00b09b, #50c93d);
+  background: #50c93d;
 }
 
 /* Low attendance (<85%) */
 .attendance-fill-low {
-  background: linear-gradient(90deg, #ffef41, #ffb12b);
+  background: #ffb12b;
 }
 
 /* Low attendance (<75%) */
 .attendance-fill-critical {
-  background: linear-gradient(90deg, #ff416c, #ff2b44);
+  background: #ff2b44;
 }
 
 /* COURSES CARDS CONTAINER */
@@ -620,60 +811,252 @@ thead th {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
   width: 100%;
-  max-width: 1200px;
+  max-width: none;
+  margin: 0;
+}
+
+#course-overview-card {
+  grid-column: 1 / -1;
+}
+
+.course-overview-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.course-overview-section {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(8, 12, 18, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.course-overview-section:hover {
+  /* 1Z: no vertical lift — only a soft shadow on hover. */
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.course-overview-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.course-overview-heading .material-icons {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.course-overview-submissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.course-overview-submission {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  background: rgba(243, 45, 78, 0.28);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+}
+
+.course-overview-submission .material-icons {
+  font-size: 15px;
+}
+
+.course-overview-empty,
+.course-overview-milestone {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.75rem;
+}
+
+.course-overview-week {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.course-overview-progress {
+  height: 8px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.course-overview-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #4393e9;
+  transition: width 0.4s ease;
+}
+
+.course-overview-milestone {
+  margin-top: 6px;
+}
+
+.course-overview-next-value {
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 58px;
+  margin-top: 7px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.course-overview-list::-webkit-scrollbar {
+  display: none;
+}
+
+.course-overview-list-item {
+  display: block;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The grades section renders its list directly (no <details> collapse), so
+   the list is always visible. The heading + list reuse the shared
+   .course-overview-heading / .course-overview-list rules. */
+.course-overview-grades .course-overview-list { min-width: 0; }
+
+@media (max-width: 700px) {
+  .course-overview-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1100px) {
+  .course-overview-card {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
 }
 
 .gmc-card {
   cursor: pointer;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  /* Blackish glass. The JS paints a matching gradient inline over this —
+     this is the fallback (first paint / JS-off). */
+  background: rgba(10, 14, 20, 0.55);
   border-radius: 20px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
 }
+/* Submission pill — same pill shape as the "Open Gradebook" button
+   (.gmc-status), but a transparent blackish-glass fill + accent text, docked
+   STRICTLY on the RIGHT of the bottom .gmc-actions row (margin-left:auto pushes
+   it to the card's right edge; "Open Gradebook" stays on the left).
+   Hovering reveals the pending-submission list in .gmc-tooltip. */
+.gmc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
 .gmc-badge {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 15px;
+  /* Strictly right-align the pill: order:1 places it after "Open Gradebook" in
+     the flex row, and margin-left:auto pushes it to the card's right edge.
+     (A hidden/empty badge drops out of flow, leaving Open Gradebook on the left.) */
+  order: 1;
+  margin-left: auto;
 
-  min-width: 55px;
-  padding: 8px 12px;
-
-  border-radius: 50%;
-  text-align: center;
-
-  background: rgba(243, 45, 78, 0.85);
-  color: #ffffff;
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  /* Transparent blackish glass — matches the card surface so it reads as part
+     of the card. The count + label are set to the accent color (see below). */
+  background: rgba(10, 14, 20, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--ucp-accent, #60a5fa);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.45s ease;
 }
 
 .gmc-badge .count {
-  font-size: 15px;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.1;
+  color: var(--ucp-accent, #60a5fa);
 }
 
 .gmc-badge .label {
-  font-size: 8px;
+  font-size: 0.72rem;
   font-weight: 500;
   opacity: 0.85;
-  margin-top: 2px;
   letter-spacing: 0.3px;
-  text-transform: uppercase;
+  color: var(--ucp-accent, #60a5fa);
 }
 
-.gmc-badge.loading {
-  background: rgba(243, 45, 78, 0.45);
+.gmc-badge.checking {
+  background: rgba(10, 14, 20, 0.35);
+}
+/* 1B: "Checking…" — while a course's submission count is still being fetched,
+   the badge reads "Checking" + animated dots (… → . → .. → ... → .). The dots
+   live in a ::after on the count so a static "…" still shows if the content
+   animation is unsupported. */
+.gmc-badge.checking .count { font-weight: 600; }
+.gmc-badge.checking .count::after {
+  content: "…";
+  display: inline-block;
+  min-width: 1.1em;
+  margin-left: 3px;
+  animation: gmcCheckingDots 1.2s steps(1, end) infinite;
+}
+@keyframes gmcCheckingDots {
+  0% { content: "."; }
+  33% { content: ".."; }
+  66% { content: "..."; }
+  100% { content: "."; }
 }
 
 .gmc-badge:hover {
   cursor: pointer;
-  background: rgba(215, 40, 69, 0.85);
+  background: rgba(10, 14, 20, 0.7);
+}
+
+/* "No active submissions" state: fade the badge out (opacity → 0) before the
+   JS flips it to display:none. pointer-events:none stops any tooltip/click from
+   firing on a badge that is fading away. */
+.gmc-badge.is-empty {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .gmc-card {
@@ -681,33 +1064,124 @@ thead th {
 }
 
 .gmc-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+  /* 1Z: no vertical lift — only a soft shadow on hover. */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.44);
 }
 
 .gmc-title {
-  font-size: 1.1rem;
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 1.05rem;
   font-weight: 600;
   color: #fffffff2;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .gmc-instructor {
-  font-size: 0.95rem;
+  position: relative;
+  margin-top: auto;
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
   color: #dbdbdbd8;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 
-.gmc-details {
-  font-size: 0.85rem;
-  color: #ffffff8f;
-  margin-bottom: 10px;
+.gmc-instructor-name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.gmc-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
+  margin: 0 0 10px;
+}
+
+.gmc-meta-item {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 42%;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.gmc-course-type {
+  margin-left: auto;
+}
+
+/* The instructor name is revealed on hover of this (right-aligned) chip, so
+   anchor its tooltip to the chip's RIGHT edge and let it grow leftward — a
+   long name would otherwise spill past the card's right edge. */
+.gmc-course-type::after {
+  left: auto;
+  right: 0;
+  text-align: right;
+}
+
+.gmc-meta-value {
+  display: block;
+  overflow: hidden;
+  color: #fffffff2;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gmc-meta-item::after,
+.gmc-instructor::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% + 7px);
+  left: 0;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(10, 14, 20, 0.95);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+}
+
+.gmc-meta-item:hover::after,
+.gmc-instructor:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Open Gradebook pill — stays on the LEFT of the bottom .gmc-actions row
+   (no margin-left:auto); the submission badge is pushed to the right via
+   its own margin-left:auto. When the badge is hidden (count 0) Open Gradebook
+   simply fills the row on the left. */
 .gmc-status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.8rem;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 15px;
   background: linear-gradient(135deg, #4393e9, #5f94fd);
   color: #ffffff;
@@ -719,24 +1193,76 @@ thead th {
 .gmc-status:hover {
   background: linear-gradient(135deg, #4040fb, #435fe9);
 }
- /* Today's Classes */
-        .classes-card {
-      height: 90%;
-      max-width:max-content;
-      min-width: 500px;
+ /* Today's Classes — the container is sized to match the Attendance card
+    (500px × 38rem) so the two cards read as a pair. */
+    .classes-card {
+      width: 500px;
+      height: 38rem;
+      overflow-y: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       color: #fff;
-      background: rgba(255, 255, 255, 0.41);
+      /* Blackish glass (was a whitish tint) — wallpaper shows through. */
+      background: rgba(10, 14, 20, 0.55);
       border-radius: 16px;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     #classesCard {
       flex: 1 1 0;
-      justify-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     #classes-card-content {
       padding: 0 24px 24px 24px;
+    }
+
+    .classes-mini-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .classes-mini-card {
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(8, 12, 18, 0.48);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .classes-mini-course {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      font-weight: 600;
+    }
+
+    .classes-mini-course > span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .classes-mini-times {
+      display: flex;
+      gap: 8px;
+      margin-top: 9px;
+      padding-left: 25px;
+    }
+
+    .classes-mini-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 7px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.8rem;
     }
 
     .classes-card-title {
@@ -749,6 +1275,10 @@ thead th {
       padding: 1rem;
       border-top-left-radius: 16px;
       background: rgba(42, 142, 249, 0.799)
+    }
+
+    body.ucp-bg-accent .classes-card-title {
+      background: var(--ucp-accent, rgba(42, 142, 249, 0.799)) !important;
     }
 
 
@@ -769,10 +1299,12 @@ thead th {
     }
 
     .classes-card-table td {
-      color: #001a66;
+      /* The card behind the table is blackish glass now, so the dark-blue ink
+         it used to sit on white is gone — white stays legible. */
+      color: rgba(255, 255, 255, 0.92);
     }
     .classes-card-table th {
-      color: #001a66 !important;
+      color: #fff !important;
       background: none !important;
     }
 
@@ -797,6 +1329,7 @@ thead th {
       font-size: 1.2rem;
       padding: 20px;
       opacity: 0.95;
+      color: #ffffff !important;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -840,17 +1373,25 @@ thead th {
   display: none !important;
 }
 
+/* Pending-submission popover shown on badge hover. Blackish TRANSPARENT glass
+   (was a solid grey gradient) so it reads as a floating layer over the card;
+   the border + header follow the accent color. Same footprint as before
+   (min 350 / max 420). */
 .gmc-tooltip {
   position: absolute;
   z-index: 99999;
   min-width: 350px;
   max-width: 420px;
-  background: linear-gradient(180deg, #b9b9b9, #535353);
+  background: rgba(10, 14, 20, 0.94);
   color: #e7f5f5;
   border-radius: 12px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
   padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  /* Accent-tinted border — a plain accent-blue fallback first, then the
+     user's chosen accent (color-mix) wins where supported. */
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border: 1px solid color-mix(in srgb, var(--ucp-accent, #60a5fa) 45%, transparent);
+  backdrop-filter: blur(6px);
   font-family: "Afacad Flux", system-ui;
 }
 
@@ -866,6 +1407,11 @@ thead th {
   align-items: center;
   margin-bottom: 10px;
   opacity: 0.95;
+}
+/* Header follows the accent color (mirrors the container border). */
+.gmc-tooltip .tt-header span {
+  color: var(--ucp-accent, #60a5fa);
+  font-weight: 600;
 }
 
 .gmc-tooltip .submission-row {
@@ -914,6 +1460,8 @@ thead th {
   padding: 10px 6px;
 }
 
+/* Same blackish-glass treatment as the "Classes Today" / courses cards, so
+   an empty state (e.g. no courses found) reads as one of the page's cards. */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -921,21 +1469,19 @@ thead th {
   justify-content: center;
   gap: 8px;
   padding: 18px;
-  border-radius: 12px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.7),
-    rgba(245, 248, 250, 0.6)
-  );
-  color: #dedede;
-  box-shadow: 0 6px 18px rgba(12, 40, 40, 0.06);
+  border-radius: 16px;
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffffb6;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  text-shadow: 2 2px 5px rgba(0, 0, 0, 0.403);
   text-align: center;
   margin: 12px 0;
 }
 .empty-state .empty-icon {
   font-size: 48px;
   line-height: 1;
-  color: #dedede;
+  color: #ffffff9b;
 }
 .empty-state .empty-title {
   font-weight: 600;
@@ -943,7 +1489,7 @@ thead th {
 }
 .empty-state .empty-sub {
   font-size: 13px;
-  color: #dedede;
+  color: rgba(255, 255, 255, 0.635);
   opacity: 0.95;
 }
 /* small adjustments for table-free appearance */
@@ -951,4 +1497,982 @@ thead th {
 .courses-card-empty,
 .attendance-card-empty {
   margin: 8px 0;
+}
+
+/* ===== SECTION EXPAND / COLLAPSE (Academics + Courses) =====
+   A circular chevron button sits on the RIGHT of the heading row, bottom-
+   aligned with the heading's underline. Clicking it hides the section's
+   content (display:none) and rotates the icon; the state persists in
+   chrome.storage (ucp_dashboard_sections). */
+.gmc-section-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  margin-bottom: 25px;
+}
+/* The h3's own 25px bottom margin moves to the row so the button and the
+   underline share the same baseline. */
+.gmc-section-head .heading_a {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+.gmc-collapse-btn {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  margin-bottom: -15px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: #fff; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.gmc-collapse-btn:hover { background: rgba(255, 255, 255, 0.2); }
+.gmc-collapse-btn:active { transform: scale(0.94); }
+.gmc-collapse-btn .material-icons {
+  margin-right: 2px;
+  font-size: 30px;
+  transition: transform 0.25s ease;
+}
+.gmc-collapse-btn.collapsed .material-icons { transform: rotate(180deg); }
+
+/* ===== ACADEMICS / COURSES HEADING BARS — width alignment =====
+   The Academics heading row is inserted OUTSIDE .md-card-content (the JS
+   uses beforeBegin, which puts it as a sibling of the padded content,
+   directly under .md-card), while the Courses row is inserted INSIDE the
+   25px-padded content. Without matching side insets the two bars have
+   different widths and their chevron buttons sit at different offsets.
+   25px = .md-card-content's padding. */
+.md-card > .gmc-section-head {
+  margin-top: 30px;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+/* Notification & Updates section — inserted INSIDE the padded content (a
+   sibling of the Courses container, directly below it), so it already shares
+   the content's 25px side insets and its .gmc-section-head needs no extra
+   margins (unlike the outside Academics bar above). A top gap keeps its
+   heading from sitting flush against the course cards above it. */
+#gmc-notifications-block { margin-top: 30px; }
+
+/* Academics desktop arrangement: student card first, then Attendance Summary,
+   then Classes Today. Academic stats sit horizontally above the ID card. */
+#academics-module {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+#academic-flexbox {
+  order: 1;
+  display: flex;
+  flex: 0 1 500px;
+  flex-direction: column;
+  align-items: center;
+  width: 500px;
+}
+
+#academic-flexbox #stats {
+  order: -1;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+#academic-flexbox #stats .entry {
+  width: 92px;
+  padding: 7px 6px;
+  text-align: center;
+}
+
+#attendance-chart {
+  order: 2;
+  flex: 0 1 500px;
+  width: 500px;
+}
+
+#classesCard {
+  order: 3;
+  flex: 0 1 500px;
+  width: 500px;
+}
+
+@media (max-width: 1600px) {
+  #academics-module {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 500px));
+  }
+
+  #academic-flexbox {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  #attendance-chart {
+    grid-column: 2;
+    width: 100%;
+  }
+
+  #classesCard {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(500px, 100%);
+  }
+}
+
+/* Academic stats belong directly below the Academics heading. Flatten the
+   wrapper so the ID card, attendance panel, and classes panel share the row
+   below the stat mini-cards. */
+#academics-module {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+#academic-flexbox {
+  display: contents;
+}
+
+#academic-flexbox #stats {
+  order: 1;
+  display: flex;
+  flex: 1 0 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 24px;
+  margin: 0 0 4px;
+}
+
+#academic-flexbox #stats .entry {
+  display: flex;
+  flex: 0 0 130px;
+  flex-direction: column;
+  width: 130px;
+  height: 76px;
+  min-height: 76px;
+  align-self: flex-start;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(8, 12, 18, 0.58);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  text-align: left;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+#academic-flexbox #stats .entry:hover {
+  /* 1Z: no vertical lift — only a soft shadow on hover. */
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+#academic-flexbox #stats .term-week {
+  margin-left: 0;
+}
+
+#academic-flexbox #stats .stat-icon {
+  display: block;
+  margin-bottom: 2px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 18px;
+}
+
+#academic-flexbox #stats .ph {
+  order: initial;
+  margin-top: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#academic-flexbox #stats .stat-heading {
+  display: flex;
+  order: 1;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+#academic-flexbox #stats .value {
+  order: 2;
+  line-height: 1.5rem;
+  margin-top: 4px;
+  font-size: 1rem !important;
+}
+
+#academic-flexbox #stats .stat-icon {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+#academic-flexbox #stats .academic-next-class-stat {
+  flex-basis: 160px;
+  width: 160px;
+  height: 76px;
+  min-height: 76px;
+}
+
+#academic-flexbox #stats .academic-term-progress-stat {
+  flex-basis: 190px;
+  width: 190px;
+  height: 76px;
+  min-height: 76px;
+  margin-left: auto;
+}
+
+#academic-flexbox #stats .term-progress-week {
+  margin-left: auto;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.academic-term-progress-track {
+  width: 100%;
+  height: 5px;
+  margin-top: auto;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.academic-term-progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.72);
+  transition: width 0.3s ease;
+}
+
+body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
+  color: var(--ucp-accent, #fff) !important;
+}
+
+#academic-flexbox #stats .academic-next-class-stat .ph,
+#academic-flexbox #stats .academic-next-class-stat .value,
+#academic-flexbox #stats .entry .ph,
+#academic-flexbox #stats .entry .value,
+#academic-flexbox #stats .entry .stat-icon {
+  color: #fff !important;
+}
+
+/* Final compact sizing override. The portal's card rules can stretch flex
+   children, so constrain the academic cards after all inherited styles. */
+#academics-module #academic-flexbox #stats .entry {
+  flex: 0 0 auto !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  width: fit-content !important;
+  min-width: 90px;
+  max-width: 190px;
+  overflow: hidden;
+  padding: 6px !important;
+}
+
+#academics-module #academic-flexbox #stats .academic-next-class-stat {
+  flex-basis: auto !important;
+  width: fit-content !important;
+}
+
+#academics-module #academic-flexbox #stats .academic-term-progress-stat {
+  flex-basis: auto !important;
+  width: fit-content !important;
+}
+
+#academics-module #academic-flexbox #stats .stat-heading {
+  font-size: 0.68rem;
+  line-height: 1rem;
+}
+
+#academics-module #academic-flexbox #stats .stat-icon {
+  font-size: 15px;
+}
+
+#academics-module #academic-flexbox #stats .value {
+  margin-top: 4px;
+  font-size: 0.9rem !important;
+  line-height: 1rem;
+}
+
+#academic-flexbox > #card,
+#attendance-chart,
+#classesCard,
+#academic-next-class-card {
+  order: 2;
+}
+
+@media (max-width: 900px) {
+  #academic-flexbox #stats {
+    flex-wrap: wrap;
+  }
+
+  #academic-next-class-card {
+    width: min(500px, 100%);
+  }
+}
+
+/* =========================================================================
+   FINAL LAYOUT — appended last so it wins the cascade over the many
+   partially-superseded rules above. One coherent set:
+     · Task 3 : loading splash (masks the original portal dashboard).
+     · Task 1a: academic stat mini-cards match the course mini-cards (same
+                glass fill/border/shadow/radius); more gap between the
+                icon/label and the value.
+     · Task 1b: Term Progress card's header aligns at the top like the others.
+     · Task 1c: course cards are content-fit (no longer stretched to the row
+                end).
+     · Task 4a: one-shot card flip on first load.
+     · Task 4b: the UCP student card is the same size as the Attendance /
+                Classes cards and sits on the LEFT; those sit to the right.
+   ========================================================================= */
+
+/* ---- Task 3 : loading splash ------------------------------------------
+   #ucp-dash-loader is added by js/student_dashboard.js the moment the script
+   runs and removed (faded) once the extension's dashboard is in the DOM. The
+   near-opaque dark sheet hides the original portal dashboard during the gap. */
+.ucp-dash-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: rgba(10, 14, 20, 0.94);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  text-align: center;
+  font-family: "Afacad Flux", system-ui, sans-serif;
+  transition: opacity 0.5s ease;
+}
+.ucp-dash-loader.ucp-dash-loader-hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.ucp-dash-loader-spinner {
+  width: 54px;
+  height: 54px;
+  border: 4px solid rgba(255, 255, 255, 0.16);
+  border-top-color: #4393e9;
+  border-radius: 50%;
+  animation: ucp-dash-spin 0.9s linear infinite;
+}
+.ucp-dash-loader-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.ucp-dash-loader-sub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+@keyframes ucp-dash-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Academic stat mini-cards: shared look + LEFT / RIGHT split ---------
+   The JS paints the exact CARD_GLASS gradient inline; this only adds the
+   matching border / radius (no box-shadow on the container). The four numeric
+   cards (CGPA / Earned / Total / Inprogress) sit on the LEFT; Term Progress
+   and Next Class are pushed to the RIGHT — the same split the Courses
+   overview strip uses (left group + auto gap + right group). */
+#academics-module #academic-flexbox #stats {
+  justify-content: flex-start;
+  gap: 12px;
+}
+#academics-module #academic-flexbox #stats .entry {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow: none;
+}
+#academics-module #academic-flexbox #stats .entry .stat-heading {
+  margin-bottom: 0;
+}
+#academics-module #academic-flexbox #stats .entry .value {
+  margin-top: 10px;
+  line-height: 1.4rem;
+}
+#academics-module #academic-flexbox #stats .entry .stat-icon {
+  font-size: 18px;
+}
+/* Push the Term Progress / Next Class pair to the right edge (auto gap).
+   A definite width (overriding the fit-content sizing) so the value row and
+   the bar inside it have a concrete width to fill — otherwise the 100% track
+   collapses to 0 in a fit-content card. */
+#academics-module #academic-flexbox #stats .academic-term-progress-stat {
+  margin-left: auto;
+  flex-basis: 190px !important;
+  width: 190px !important;
+  max-width: 190px !important;
+}
+
+/* ---- Term Progress card ------------------------------------------------
+   Same 2-row structure as the other mini-cards (icon+title heading, then a
+   value row) so its icon/title align identically to the rest. The current
+   week is a small badge in the heading row; the value row holds the bar. */
+#academics-module #academic-flexbox #stats .academic-term-progress-stat .stat-heading {
+  width: 100%;
+}
+#academics-module #academic-flexbox #stats .academic-term-progress-stat .term-week-badge {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #ffd9a0;
+  background: rgba(255, 183, 77, 0.14);
+  border: 1px solid rgba(255, 183, 77, 0.3);
+}
+#academics-module #academic-flexbox #stats .academic-term-progress-stat .value.academic-term-progress-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 14px;
+  min-height: 1.4rem;
+}
+#academics-module #academic-flexbox #stats .academic-term-progress-stat .academic-term-progress-track {
+  width: 100%;
+  margin-top: 0;
+}
+
+/* ---- Course cards: back to the original uniform grid --------------------
+   The per-course .gmc-card tiles keep the auto-fit grid (each fills an equal
+   column). Only the overview strip is content-fit — not the course cards. */
+
+/* ---- Course-overview strip: content-fit, split left / right -------------
+   Term Progress was removed. "Submissions Left" + "Next Assessment" hug their
+   content on the left; "Latest Grade Updates" is pushed to the right, with a
+   gap between the two groups. */
+.course-overview-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+.course-overview-card .course-overview-section {
+  width: fit-content;
+  max-width: 100%;
+}
+.course-overview-card .course-overview-assessments .course-overview-list,
+.course-overview-card .course-overview-grades .course-overview-list {
+  max-width: 300px;
+}
+.course-overview-card .course-overview-grades {
+  margin-left: auto;
+}
+
+/* ---- Manual "Refresh courses" button ------------------------------------
+   1B: styled to look EXACTLY like the course-overview mini-cards (same glass
+   fill, border, radius, box-shadow, and heading icon+label) so it reads as a
+   peer widget in the same row. width:fit-content (like the mini-cards) sizes it
+   to "Refresh" + its status line. The icon spins on click (JS toggles
+   .is-spinning); the status line shows "Refreshing…" → "Updated just now". */
+.gmc-courses-refresh-btn {
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  /* Pushed to the right side of the courses strip (the button is the strip's
+     last child; the left widgets hug their content). */
+  margin-left: auto;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(8, 12, 18, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.gmc-courses-refresh-btn:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+.gmc-courses-refresh-btn:active {
+  background: rgba(8, 12, 18, 0.7);
+}
+.gmc-courses-refresh-btn .material-icons {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.gmc-courses-refresh-col {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.25;
+  text-align: left;
+}
+.gmc-courses-refresh-title {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+.gmc-courses-refresh-status {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  min-height: 1em;
+  white-space: nowrap;
+}
+.gmc-courses-refresh-btn .material-icons.is-spinning {
+  animation: gmc-refresh-spin 0.9s linear infinite;
+}
+@keyframes gmc-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+#academics-module #card.card-load-anim .card-inner {
+  animation: flipTwice 1.4s ease-in-out;
+}
+
+#academics-module #academic-flexbox #stats .academic-next-class-stat {
+  min-width: 190px;
+}
+
+
+#academics-module #card .card {
+  margin: 0 1.35rem;
+  zoom: 1.13;
+}
+
+.attendance-card .attendance-bar-container {
+  margin: 6px 0;
+  padding: 8px 10px;
+}
+.attendance-card .attendance-subject-head {
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.attendance-card .attendance-subject-chip,
+.attendance-card .attendance-credit-chip {
+  padding: 4px 7px;
+  font-size: 12px;
+  border-radius: 7px;
+}
+.attendance-card .attendance-bar {
+  height: 14px;
+  border-radius: 7px;
+}
+/* The % label inside the bar: line-height tracked the old 20px bar — keep it
+   centred in the slimmer 14px bar. */
+.attendance-card .attendance-fill {
+  line-height: 14px;
+  font-size: 11px;
+}
+/* Inset each entry from the card sides so it's a touch narrower than the full
+   card width and clears the side scrollbar. (The old .attendance-card >
+   .attendance-bar-container side margins no longer apply now that the rows
+   live inside the .attendance-card-scroll body.) */
+.attendance-card-scroll {
+  padding: 0 18px 18px;
+}
+
+/* ---- Attendance / Classes cards: header on top, scroll body below --------
+   The header is a STATIC bar at the top (rounded top corners); only the body
+   below it scrolls, so the side scrollbar sits BELOW the headline instead of
+   spanning up over it. Each card becomes a flex column (overflow:hidden, so the
+   16px corners clip everything); the .*-card-scroll body takes the remaining
+   height and owns the scrollbar. The base rules still set overflow-y:scroll on
+   the card itself — overflow:hidden here wins by source order, and the card no
+   longer scrolls because the inner body does. */
+.attendance-card,
+.classes-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.attendance-card-scroll,
+.classes-card-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+  -ms-overflow-style: auto;
+}
+.attendance-card-scroll::-webkit-scrollbar,
+.classes-card-scroll::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+  background: transparent;
+}
+.attendance-card-scroll::-webkit-scrollbar-track,
+.classes-card-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.attendance-card-scroll::-webkit-scrollbar-thumb,
+.classes-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+}
+.attendance-card-scroll::-webkit-scrollbar-thumb:hover,
+.classes-card-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ---- Next Class: commencement detail shown INSIDE the card on hover ------
+   While a term is still upcoming the card shows "Fall 2026 in 22 days" but no
+   calendar date. On hover the card reveals the exact commencement date + days
+   left. JS injects .next-class-tooltip only in this state (see
+   getNextClassState / updateCourseOverview), so it's absent during an active
+   term. Rather than a box floating above the card, the detail is an overlay
+   that FILLS the card (inset:0) and fades in over it: it never escapes the
+   fixed 64px entry (overflow:hidden stays) and never pushes the layout below.
+   pointer-events:none keeps it from disturbing the card's :hover state. */
+#academics-module #academic-flexbox #stats .academic-next-class-stat {
+  position: relative;
+}
+#academics-module #academic-flexbox #stats .academic-next-class-stat .next-class-tooltip {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: rgba(10, 14, 20, 0.97);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+#academics-module #academic-flexbox #stats .academic-next-class-stat:hover .next-class-tooltip {
+  opacity: 1;
+}
+.next-class-tooltip .nct-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.next-class-tooltip .nct-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.cgpa-predicted-tag {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fcd34d;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* ---- Credits Info card: in-progress revealed on hover (overlay) --------
+   Same inset-overlay pattern as .next-class-tooltip above: the tip fills the
+   card and fades in on :hover. Only present in the DOM when in-progress data
+   exists (JS injects it conditionally), so it's a no-op otherwise. */
+#academics-module #academic-flexbox #stats .credits-info {
+  position: relative;
+}
+#academics-module #academic-flexbox #stats .credits-info .credits-info-tooltip {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: rgba(10, 14, 20, 0.97);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+#academics-module #academic-flexbox #stats .credits-info:hover .credits-info-tooltip {
+  opacity: 1;
+}
+.credits-info-tooltip .cit-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.credits-info-tooltip .cit-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+}
+
+/* ---- Make-Up Class section (Course Overview): hover reveal (overlay) ------
+   Same inset-overlay pattern as .next-class-tooltip / .credits-info-tooltip:
+   the tip fills the section and fades in on :hover. Only present in the DOM
+   when a make-up class was found (JS injects it conditionally), so it's a
+   no-op otherwise. The section is position:relative + overflow:hidden so the
+   inset:0 overlay is clipped to the section (rounded corners inherited) and
+   never escapes. The overlay is a DIRECT child of the section — not inside the
+   scrollable .course-overview-list — so it is not clipped by that list. */
+.course-overview-card .course-overview-makeup {
+  position: relative;
+  overflow: hidden;
+}
+.course-overview-card .course-overview-makeup .cvo-makeup-tooltip {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: rgba(10, 14, 20, 0.97);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+.course-overview-card .course-overview-makeup:hover .cvo-makeup-tooltip {
+  opacity: 1;
+}
+.cvo-makeup-tooltip .cvo-mt-subject {
+  max-width: 100%;
+  overflow: hidden;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cvo-makeup-tooltip .cvo-mt-detail {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+/* Non-hover compact content: the subject (truncated) + the start time. */
+.course-overview-card .course-overview-makeup .course-overview-makeup-value {
+  display: block;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.course-overview-card .course-overview-makeup .course-overview-makeup-when {
+  display: block;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* ---- Term Progress card: upcoming milestone revealed on hover (overlay) --
+   Same inset-overlay pattern as .next-class-tooltip / .credits-info-tooltip:
+   the tip fills the card and fades in on :hover. JS injects .term-progress-tooltip
+   only when at least one of the four key milestones (End of 8th Week, Mid Term,
+   Final Term, Last withdrawal date) is still in the future — so it's a no-op
+   otherwise. pointer-events:none keeps the hover state stable. */
+#academics-module #academic-flexbox #stats .academic-term-progress-stat {
+  position: relative;
+}
+#academics-module #academic-flexbox #stats .academic-term-progress-stat .term-progress-tooltip {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: rgba(10, 14, 20, 0.97);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+#academics-module #academic-flexbox #stats .academic-term-progress-stat:hover .term-progress-tooltip {
+  opacity: 1;
+}
+.term-progress-tooltip .tpc-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.term-progress-tooltip .tpc-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+}
+
+
+/* ---- Attendance glance + Invoices tiles --------------------------------
+   Same 130px stat tiles; the value line carries the risk level / unpaid
+   count, the small sub line the at-risk course ("CS101 · 72%") or the total
+   amount due. Hover raises the shared .gmc-tooltip — NO font, size or
+   line-height change and the header icon stays put (only the shadow moves,
+   same as every other tile). */
+#academic-flexbox #stats .entry.attendance-glance,
+#academic-flexbox #stats .entry.invoices-stat {
+  cursor: pointer;
+}
+#academic-flexbox #stats .entry .stat-sub {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Value-line colours follow the risk thresholds (green = safe/cleared). */
+#academic-flexbox #stats .entry.attendance-glance .value {
+  color: rgba(255, 255, 255, 0.75); /* N/A / scanning default */
+}
+#academic-flexbox #stats .entry.attendance-glance.is-extreme .value { color: #ff5470; }
+#academic-flexbox #stats .entry.attendance-glance.is-risk .value { color: #ffa726; }
+#academic-flexbox #stats .entry.attendance-glance.is-caution .value { color: #ffd54f; }
+#academic-flexbox #stats .entry.attendance-glance.is-safe .value { color: #20d839; }
+#academic-flexbox #stats .entry.invoices-stat .value {
+  color: rgba(255, 255, 255, 0.75); /* Checking… default */
+}
+#academic-flexbox #stats .entry.invoices-stat.is-due .value { color: #ffa726; }
+#academic-flexbox #stats .entry.invoices-stat.is-safe .value { color: #20d839; }
+/* The sub line inherits the tile's state colour while it has content. */
+#academic-flexbox #stats .entry.attendance-glance.is-extreme .stat-sub { color: #ff5470; }
+#academic-flexbox #stats .entry.attendance-glance.is-risk .stat-sub { color: #ffa726; }
+#academic-flexbox #stats .entry.attendance-glance.is-caution .stat-sub { color: #ffd54f; }
+#academic-flexbox #stats .entry.invoices-stat.is-due .stat-sub { color: #ffa726; }
+
+/* Per-subject / per-invoice rows inside the shared .gmc-tooltip. */
+.gmc-tooltip .ag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+}
+.gmc-tooltip .ag-row:last-child { border-bottom: none; }
+.gmc-tooltip .ag-name {
+  color: #fff;
+  opacity: 0.92;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gmc-tooltip .ag-pct { font-weight: 600; color: rgba(255, 255, 255, 0.75); }
+.gmc-tooltip .ag-pct.is-extreme { color: #ff5470; }
+.gmc-tooltip .ag-pct.is-risk { color: #ffa726; }
+.gmc-tooltip .ag-pct.is-caution { color: #ffd54f; }
+.gmc-tooltip .ag-pct.is-safe { color: #20d839; }
+.gmc-tooltip .ag-pct.is-due { color: #ffa726; }
+
+/* ---- Course card right-click menu (all course links) ------------------- */
+.gmc-ctx-menu {
+  position: fixed;
+  z-index: 2147483000;
+  min-width: 145px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(10, 14, 20, 0.906);
+  border: 1px solid rgba(67, 67, 67, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.705);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gmc-ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background:rgba(10, 14, 20, 0.663) !important ;
+  text-decoration: none;
+  color: rgba(223, 226, 223, 0.906);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.gmc-ctx-item:hover {
+  background:rgba(10, 14, 20, 0.452) !important ;
+  text-decoration: none;
+  color: rgba(211, 211, 211, 0.583);
+  font-size: 0.85rem;
+  font-weight: 510;
+}
+
+
+.gmc-ctx-item:focus-visible {
+  background: rgba(13, 13, 13, 0.644);
+  outline: none;
+}
+.gmc-ctx-item .material-icons {
+  font-size: 16px;
+  color: rgba(60, 59, 59, 0.017);
+}
+
+/* ---- Refresh button: a true mini-card peer -----------------------------
+   .course-overview-section cells are auto-fit 1fr grid tracks; dropping the
+   fit-content width + right margin makes the button claim the same kind of
+   cell (identical fill, border, radius, shadow and label typography). */
+.gmc-courses-refresh-btn {
+  width: auto;
+  min-width: 0;
+  margin-left: 0;
+}
+
+/* ---- Keyboard focus rings (tiles are tabindex=0 now) -------------------- */
+#academic-flexbox #stats .entry:focus-visible,
+.gmc-card:focus-visible,
+.gmc-status:focus-visible,
+.gmc-ctx-item:focus-visible {
+  outline: 2px solid #dcecfee0;
+  outline-offset: 2px;
 }
