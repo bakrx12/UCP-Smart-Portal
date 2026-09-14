@@ -37,7 +37,7 @@
 <br/>
 
 > [!WARNING]
-> **Beta (v3.5.4).** [WIP] Notification, Course Updates & Settings
+> **Beta (v3.5.4).** [WIP] Notification, Course Updates & Settings <br>
 > Extension is still experimental. Read [Known issues](#%EF%B8%8F-known-issues) first.
 
 <br/>
