@@ -129,6 +129,7 @@
 
 ### Chromium Browsers (recommended) 
 
+#### Latest release (GitHub)
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
 2. Unzip it somewhere.
 3. Open `chrome://extensions` in your browser.
@@ -136,7 +137,8 @@
 5. Click **Load unpacked** and select the unzipped extension folder.
 6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
 
-Alternatively, you can download the extension on [Chrome webstore](https://chromewebstore.google.com/detail/ucp-smart-odoo-portal/ebmcimlgnnbkomlabkhijkblmchjifid?hl=en&pli=1)
+#### Chrome Web Store
+Alternatively, you can download the extension on [Chrome webstore](https://chromewebstore.google.com/detail/ucp-smart-odoo-portal/ebmcimlgnnbkomlabkhijkblmchjifid?hl=en&pli=1). (OLD VERSION)
 
 ### Mozilla FireFox [WIP]
 
