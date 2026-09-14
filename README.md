@@ -105,28 +105,6 @@
     <td> <img width="1538" height="987" alt="image" src="https://github.com/user-attachments/assets/4fb9af05-3d01-44b5-8327-865ac6afa05c" />
     Redesigned Student Timetable w/ additional features  </td>
 </tr>
-
-  </tr>
-  <tr>
-    <td> <img width="1172" height="862" alt="image" src="https://github.com/user-attachments/assets/4f71d4a2-5b7f-4607-915a-4fac22a85571" />
-    Default UCP Portal's Course Overview
-   </td>
-    <td> <img width="1609" height="990" alt="image" src="https://github.com/user-attachments/assets/e19371da-b793-4eb8-a99e-06752641eb9f" />
-    At a glance Course Gradebook Overview </td>
-</tr>
-
-  </tr>
-  <tr>
-    <td> <img width="1050" height="697" alt="image" src="https://github.com/user-attachments/assets/45536169-7c58-44b7-8de0-1e108628e78e" />
-    Default UCP Portal's Course Assessment 
-   </td>
-    <td> <img width="1606" height="986" alt="image" src="https://github.com/user-attachments/assets/bbdad921-bc35-4b27-a751-69c2639c507c" />
-    Smart UCP Portal's Redesigned version </td>
-</tr>
-
-</tr>
-
-  </tr>
   <tr>
     <td> <img width="1304" height="858" alt="image" src="https://github.com/user-attachments/assets/1d915fdd-2d5f-4599-a180-6b768c59be37" />
       Dashboard featuring Academic Calendar & much more </td>
