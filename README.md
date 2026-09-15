@@ -18,7 +18,7 @@
     <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=googlechrome&logoColor=white">
   </a>
   &nbsp;&nbsp;
-  <a href="[#-installation](https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/)" title="Install UCP Smart Portal: takes about a minute">
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/" title="Install UCP Smart Portal: takes about a minute">
     <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=firefox&logoColor=white">
   </a>
 </p>
