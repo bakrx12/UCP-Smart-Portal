@@ -1,52 +1,5 @@
-// =========================================================================
-// UCP Smart Portal — Settings PAGE
-// ---------------------------------------------------------------------------
 // Standalone page reached from the sidebar "Settings" entry. js/shell.js
-// pushes /student/settings, hides the normal page content and calls
-// window.__ucpSettingsPage.render(root) with the shell's page root
-// (#ucp-shell-root, inside #page_content) — so the page looks exactly like
-// the other portal pages (sidebar visible, wallpaper behind it).
-//
-// Owns: the setting toggles (stay / dark mode / new enrollment UI — the
-// power on/off option was removed from this page), the background picker
-// + custom upload, the manual blur slider (merged into the Background
-// card, 0–10 px via ucp_blur_amount / --ucp-blur-px) and the accent-color
-// mode (ucp_bg_accent, ON by default) that tints the page's icons, buttons
-// and the sidebar with the background's dominant color (js/shell.js applies
-// it globally on every page).
-// This file loads its own
-// stylesheet (styles/settings_page.css) via a <link> on first render (the
-// shared page frame + card styles stay in styles/shell.css). The wallpaper
-// LAYER is also guaranteed by that sheet ("wallpaper guarantee"), and the
-// saved background is synced onto this page at render (applyWallpaper) — so
-// the background shows behind this page and applies live when a preset is
-// picked or an image is uploaded. No page reload is ever needed.
-// Gated on `toggle_power`.
-//
-// This file loads at document_start (see manifest.json) so the CLICK GUARD
-// below is registered BEFORE the portal's aarsol vendor bundle runs and arms
-// its global click interceptor. On a click of any control armed by
-// wireAction() (nearest ancestor carrying __ucpAction) the guard runs FIRST,
-// fires the action and stops the event — the portal's interceptor never sees
-// the click. (This replaces the old standalone js/ucp_click_guard.js.) The
-// rest of the page still builds itself the way it always has: the heavy
-// render/ storage code lives inside the async storage callback below, which
-// fires once the DOM is ready (and render() is DOM-ready-safe for a direct
-// load).
-// =========================================================================
 
-  // =========================================================================
-  // CLICK GUARD — window-capture backstop registered at document_start.
-  //
-  // Click-only + NO preventDefault(): acting on the `click` event (not
-  // pointerdown) with stopPropagation (never preventDefault) keeps the portal
-  // from swallowing the click while leaving every native default intact — the
-  // file picker (input.click()), clipboard gestures, link navigation.
-  // Presses that START on a native interactive control inside an armed node
-  // (a real <a>/<button>/<input>/<select>/<textarea>) are left alone: those
-  // own their own behaviour. The 400 ms guard inside __ucpAction makes any
-  // overlap with the element-level / bottom backstops harmless.
-  // =========================================================================
   const __ucpFindGuardAction = (target) => {
     let n = target;
     while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
@@ -80,9 +33,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
   const powerOn = (v) => (v === undefined || v === null) ? true : !!v;
 
-  // =========================================================================
   // helpers
-  // =========================================================================
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"'`=\/]/g, (c) => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
@@ -259,7 +210,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const sub = byId('ucp-shell-notifBehaviorSub');
     if (sub) {
       if (mode === 'push') sub.textContent = 'Push Notification will only work if the browser is open.';
-      else sub.textContent = 'Background notification — checks course updates in the background and pushes to your phone; your computer still needs to be ON for this to work.';
+      else sub.textContent = 'Checks course updates in the background and pushes to your phone; your computer still needs to be ON for this to work.';
     }
   }
 
