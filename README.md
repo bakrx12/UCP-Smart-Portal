@@ -129,7 +129,7 @@
 
 ### Chromium Browsers 
 
-#### Latest release (GitHub)
+#### Latest release (via GitHub)
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
 2. Unzip it somewhere.
 3. Open `chrome://extensions` in your browser.
@@ -145,15 +145,13 @@ Alternatively, you can download the extension on [Chrome webstore](https://chrom
 #### FireFox Browser Add-ons
 Download the extension from official [Morzilla FireFox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/) page.
 
-#### Latest release
+#### Latest release (via GitHub)
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
-2. Unzip it somewhere.
-3. Open `about:debugging` in Firefox and select **This Firefox**.
-4. Click **Load Temporary Add-on**.
-5. Open the unzipped extension folder and select `manifest.json`.
+2. Unzip it somewhere. Delete `manifest.json` file.
+3. Rename `manifest_firefox.json` to `manifest.json`
+4. On FireFox Add-ons, click gear icon & select "Install Add-on from file"
+5. Select `manifest.json` from the extension folder and it will automatically load extension.
 6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
-
-
 
 
 ## 📁 Architecture
@@ -248,7 +246,7 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 ## ⚠️ Known issues
 
-This is a `3.6.0` beta, so expect some rough edges. The extension otherwise works as expected.
+This is a `3.5.40` beta, so expect some rough edges. The extension otherwise works as expected.
 
 - **Settings page buttons** are currently broken, clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
 - **Notifications** are currently a **work in progress** and may not function reliably yet.
