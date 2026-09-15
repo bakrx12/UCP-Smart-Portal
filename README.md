@@ -18,7 +18,7 @@
     <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=googlechrome&logoColor=white">
   </a>
   &nbsp;&nbsp;
-  <a href="#-installation" title="Install UCP Smart Portal: takes about a minute">
+  <a href="[#-installation](https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/)" title="Install UCP Smart Portal: takes about a minute">
     <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=firefox&logoColor=white">
   </a>
 </p>
@@ -127,7 +127,7 @@
 
 ## 🚀 Installation
 
-### Chromium Browsers (recommended) 
+### Chromium Browsers 
 
 #### Latest release (GitHub)
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
@@ -140,8 +140,12 @@
 #### Chrome Web Store
 Alternatively, you can download the extension on [Chrome webstore](https://chromewebstore.google.com/detail/ucp-smart-odoo-portal/ebmcimlgnnbkomlabkhijkblmchjifid?hl=en&pli=1). (OLD VERSION)
 
-### Mozilla FireFox [WIP]
+### Mozilla FireFox
 
+#### FireFox Browser Add-ons
+Download the extension from official [Morzilla FireFox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/) page.
+
+#### Latest release
 1. Grab `ucp-smart-portal-vX.X.X.zip` from the [**Releases**](../../releases) page.
 2. Unzip it somewhere.
 3. Open `about:debugging` in Firefox and select **This Firefox**.
@@ -149,7 +153,7 @@ Alternatively, you can download the extension on [Chrome webstore](https://chrom
 5. Open the unzipped extension folder and select `manifest.json`.
 6. Open the UCP Smart Portal and log in. The extension will automatically apply its enhanced interface and features.
 
-> **Note:** Firefox temporary add-ons are removed when Firefox is restarted, so you'll need to load the extension again after restarting Firefox.
+
 
 
 ## 📁 Architecture
