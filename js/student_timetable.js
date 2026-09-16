@@ -1,5 +1,4 @@
-// UCP Smart Portal — Student Timetable (grid/card design, live-fetched data)
-//
+
 // Data is fetched exactly as before (scrape the live schedule DOM), then rendered
 // in the richer grid/card design. The full feature set (profiles, drag-drop edit,
 // add/edit/delete, spreadsheet editor, JSON import/export, bulk paste, local-cache
@@ -14,10 +13,8 @@ chrome.storage.local.get('toggle_power', (result) => {
     const MAKEUP_CLASS = "MAKEUP CLASS";
 
     if (!enabled) return;
-
-    // =========================================================================
-    // FETCH — unchanged from the original implementation ("as it does currently")
-    // =========================================================================
+ 
+    // FETCH 
     function extractTimeTableInfo() {
         const timeTable = [];
         const days = document.querySelectorAll("li.cd-schedule__group ul");
@@ -48,20 +45,45 @@ chrome.storage.local.get('toggle_power', (result) => {
 
         return timeTable;
     }
+ 
+    // mapping the fetched entries from portal
 
-    // =========================================================================
-    // MAP — fetched entries -> app data model { day,time,code,section,title,room,teacher,color }
-    // =========================================================================
     function toMinutes(t) {
         if (!t) return 0;
         const [h, m] = t.split(':').map(Number);
         return (h || 0) * 60 + (m || 0);
     }
 
-    function deriveCode(title) {
-        const m = (title || '').match(/^([A-Za-z]{1,5}\d{1,4}[A-Za-z]*)/);
-        return m ? m[1] : '';
+    function getCourseSection(courseCode) {
+      const normalizedCode = String(courseCode || "").trim();
+      return normalizedCode.length >= 2 ? normalizedCode.slice(-2) : "N/A";
     }
+
+    function formatInstructorName(instructorName) {
+      const normalizedName = String(instructorName || "").replace(/\s+/g, " ").trim();
+      if (!normalizedName) return "Not available";
+
+      const muhammadIndex = normalizedName.search(/\bmuhammad\b/i);
+      if (muhammadIndex === -1) return normalizedName;
+
+      const nameAfterMuhammad = normalizedName
+        .slice(muhammadIndex)
+        .replace(/^muhammad\b\s*/i, "")
+        .trim();
+      return nameAfterMuhammad || instructorName;
+    }
+
+    function getCourseCode(courseCode) {
+    const normalizedCode = String(courseCode || "").trim();
+    
+    const hyphenIndex = normalizedCode.indexOf('-');
+    if (hyphenIndex !== -1) {
+        return normalizedCode.slice(0, hyphenIndex);
+    }
+    
+    return normalizedCode.length >= 2 ? normalizedCode : "N/A";
+    }
+    
 
     function cleanRoomName(roomStr) {
         if (!roomStr) return '';
@@ -77,20 +99,20 @@ chrome.storage.local.get('toggle_power', (result) => {
             out.push({
                 day: e.day,
                 time: slot,
-                code: deriveCode(e.courseName),
-                section: e.sectionDetails || '',
+                code:  getCourseCode(e.sectionDetails) || '',  
+                section: getCourseSection(e.sectionDetails) || '',
                 title: e.courseName || '',
                 room: cleanRoomName(e.roomNo),
-                teacher: e.instructorName || '',
+                teacher: formatInstructorName(e.instructorName) || '',
                 color: ''
             });
         });
         return out;
     }
 
-    // =========================================================================
+
     // INJECT DOM
-    // =========================================================================
+    
     const appHtml = `
 <div id="ucp-tt-root" class="ucp-tt-app">
   <div class="ucp-tt-widgets-bar">
@@ -140,7 +162,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         <button class="ucp-tt-btn-action" id="ucp-tt-localCacheBtn">Local Cache</button>
       </div>
       <div class="ucp-tt-profile-controls-right">
-        <button class="ucp-tt-btn-action" id="ucp-tt-fetchBtn">🔄 Fetch from Portal</button>
+        <button class="ucp-tt-btn-action" id="ucp-tt-fetchBtn">Fetch from Portal</button>
                 <div class="ucp-tt-zoom-controls" role="group" aria-label="Timetable zoom">
                     <button class="ucp-tt-btn-action ucp-tt-zoom-btn" id="ucp-tt-zoomOutBtn" type="button" aria-label="Zoom out timetable" title="Zoom out">−</button>
                       <button class="ucp-tt-zoom-level" id="ucp-tt-zoomResetBtn" type="button" aria-label="Reset timetable zoom" title="Reset zoom">115%</button>
@@ -183,7 +205,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         <p>Fetch the live timetable from the portal, import a saved timetable, or edit data manually.</p>
         <div class="ucp-tt-empty-state-actions">
           <button class="ucp-tt-btn-action" id="ucp-tt-emptyImport">📥 Import Timetable</button>
-          <button class="ucp-tt-btn-action" id="ucp-tt-emptyEdit">✏️ Edit Data Manually</button>
+          <button class="ucp-tt-btn-action" id="ucp-tt-emptyEdit">Edit Data Manually</button>
         </div>
       </div>
     </div>
@@ -200,7 +222,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         </div>
         <div class="ucp-tt-footer-actions-right">
           <button class="ucp-tt-btn-action" id="ucp-tt-printBtn">🖨️ Print</button>
-          <button class="ucp-tt-btn-action" id="ucp-tt-editDataBtn">✏️ Edit data</button>
+          <button class="ucp-tt-btn-action" id="ucp-tt-editDataBtn">Edit Data</button>
         </div>
       </div>
     </div>
@@ -276,7 +298,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
   <div class="ucp-tt-modal-overlay" id="ucp-tt-excelModalOverlay">
     <div class="ucp-tt-modal ucp-tt-modal-large">
-      <h3>✏️ Edit Data</h3>
+      <h3>Edit Data</h3>
       <div style="display:flex;gap:15px;margin-bottom:12px;background:var(--input-bg);padding:12px;border-radius:6px;border:1px solid var(--border-color);">
         <div class="ucp-tt-form-group" style="margin-bottom:0;flex:1;"><label>Profile Created At</label><input type="text" id="ucp-tt-excelCreatedAtInput"></div>
         <div class="ucp-tt-form-group" style="margin-bottom:0;flex:1;"><label>Profile Last Modified At</label><input type="text" id="ucp-tt-excelModifiedAtInput"></div>
@@ -343,14 +365,10 @@ chrome.storage.local.get('toggle_power', (result) => {
     const el = (id) => document.getElementById(id);
     const q = (sel) => root.querySelector(sel);
     const qa = (sel) => root.querySelectorAll(sel);
-
-    // =========================================================================
-    // CONSTANTS & STATE
-    // =========================================================================
+ 
+    // CONSTANTS & STATE 
     const days = 6;
     const timeSlots = 10;
-    // Reserved internal key for the LIVE profile — the logged-in UCP/Microsoft
-    // account's schedule, always fetched fresh from the portal. It is LOCKED.
     const DEFAULT_PROFILE = '__UCP_LIVE__';
     const dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const timeNames = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
@@ -362,7 +380,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     let targetCell = null;
     let draggedCard = null;
     let gridLocked = false;          // true while rendering the locked live profile
-    let liveProfileLabel = '';       // detected logged-in account roll no / id (display label)
+    let liveProfileLabel = '';       // detected logged-in account roll no / id 
     let timetableZoom = 115;
 
     let currentProfile = DEFAULT_PROFILE;
@@ -433,15 +451,13 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     function assertEditable() {
         if (isLiveProfile(currentProfile)) {
-            alert('🔒 This profile is locked — it shows the live UCP portal schedule and can’t be edited.\n\nUse “➕ New Profile” or “📋 Duplicate Profile” to create an editable copy.');
+            alert('  This profile is your logged in UCP Student ID and can’t be edited.\n\nUse “➕ New Profile” or “📋 Duplicate Profile” to create an editable copy.');
             return false;
         }
         return true;
     }
-
-    // =========================================================================
-    // HELPERS
-    // =========================================================================
+ 
+    // HELPERS 
     function formatDate(dateObj) {
         const d = new Date(dateObj);
         if (isNaN(d.getTime())) return dateObj || 'N/A';
@@ -503,13 +519,11 @@ chrome.storage.local.get('toggle_power', (result) => {
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
-
-    // =========================================================================
+ 
     // INFO WIDGETS — "Next Class" (left) + "Term Progress" (right), shown above
     // the timetable. Logic mirrors the dashboard's term-week / next-class math so
     // the two stay consistent. Term Progress = week X/16 of the active term;
-    // Next Class = the soonest scheduled slot in the future (any day of the week).
-    // =========================================================================
+    // Next Class = the soonest scheduled slot in the future (any day of the week). 
     const TERM_TOTAL_WEEKS = 16;
     function lastMondayOf(year, monthIndex) {
         const d = new Date(year, monthIndex + 1, 0); // last day of this month
@@ -602,10 +616,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         nSub.innerText = `${dayName}, ${time} • ${formatRelative(nc.next - now)}`
             + (nc.room && cleanRoomName(nc.room) ? ` • ${cleanRoomName(nc.room)}` : '');
     }
-
-    // =========================================================================
-    // PERSISTENCE
-    // =========================================================================
+ 
+    // PERSISTENCE 
     function persistProfiles(isModified = true) {
         if (isModified && profilesData[currentProfile]) {
             profilesData[currentProfile].lastModified = new Date().toISOString();
@@ -626,12 +638,10 @@ chrome.storage.local.get('toggle_power', (result) => {
         if (!profile) return;
         el('ucp-tt-headerTermText').innerText = calculateSemesterTerm(profile.createdAt);
     }
-
-    // =========================================================================
+ 
     // NIGHT MODE — driven by the GLOBAL ucp_night_mode setting (the in-page
     // Settings panel). The old per-timetable toggle was removed; the timetable
-    // now follows the universal night mode and reacts to live changes.
-    // =========================================================================
+    // now follows the universal night mode and reacts to live changes. 
     function applyNightMode(enabled) {
         if (enabled) root.classList.add('ucp-tt-night');
         else root.classList.remove('ucp-tt-night');
@@ -647,10 +657,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             });
         } catch (e) {}
     }
-
-    // =========================================================================
-    // PROFILES
-    // =========================================================================
+ 
+    // PROFILES 
     function initProfiles() {
         try {
             const storedProfiles = localStorage.getItem(LS_PROFILES);
@@ -681,7 +689,7 @@ chrome.storage.local.get('toggle_power', (result) => {
             const item = document.createElement('div');
             const locked = isLiveProfile(rollNo);
             item.className = `ucp-tt-dropdown-option-item ${rollNo === currentProfile ? 'active' : ''}`;
-            item.innerHTML = `<span>${locked ? '🔒 ' : ''}${escapeHtml(profileLabel(rollNo))}</span> ${rollNo === currentProfile ? '✓' : ''}`;
+            item.innerHTML = `<span>${locked ? '' : ''}${escapeHtml(profileLabel(rollNo))}</span> ${rollNo === currentProfile ? '✓' : ''}`;
             item.onclick = (e) => {
                 e.stopPropagation();
                 switchProfile(rollNo);
@@ -727,7 +735,7 @@ chrome.storage.local.get('toggle_power', (result) => {
             confirmBtn.className = 'ucp-tt-btn ucp-tt-btn-save';
         } else if (action === 'delete') {
             if (isLiveProfile(currentProfile)) {
-                alert('🔒 The live profile (your logged-in UCP account) is locked and cannot be deleted.');
+                alert('  This profile is locked and cannot be deleted.');
                 return;
             }
             if (Object.keys(profilesData).length <= 1) {
@@ -797,10 +805,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         loadProfileData(rollNo);
         try { localStorage.setItem(LS_ACTIVE, rollNo); } catch (e) {}
     }
-
-    // =========================================================================
-    // FETCH FROM PORTAL (the live data source — "as it does currently")
-    // =========================================================================
+ 
+    // FETCH FROM PORTAL (the live data source — "as it does currently") 
     function fetchFromPortal() {
         // Fetch live data and update ONLY the live (locked) profile. Other
         // (user-created) profiles are left untouched so their edits persist.
@@ -823,15 +829,13 @@ chrome.storage.local.get('toggle_power', (result) => {
         fetchFromPortal();
         switchProfile(DEFAULT_PROFILE);
     }
-
-    // =========================================================================
-    // GRID
-    // =========================================================================
+ 
+    // GRID 
     function checkEmptyState() {
         const overlay = el('ucp-tt-emptyStateOverlay');
         if (initialData && initialData.length) { overlay.classList.remove('visible'); return; }
 
-        // Empty-state primary action is IMPORT (the header's "🔄 Fetch from Portal"
+        // Empty-state primary action is IMPORT (the header's "Fetch from Portal"
         // stays available for live refreshes). Same label in both variants.
         const isLive = isLiveProfile(currentProfile);
         overlay.innerHTML = isLive
@@ -847,7 +851,7 @@ chrome.storage.local.get('toggle_power', (result) => {
                  <p>Import a saved timetable or edit data manually to populate classes.</p>
                  <div class="ucp-tt-empty-state-actions">
                    <button class="ucp-tt-btn-action" id="ucp-tt-emptyImport">📥 Import Timetable</button>
-                   <button class="ucp-tt-btn-action" id="ucp-tt-emptyEdit">✏️ Edit Data Manually</button>
+                   <button class="ucp-tt-btn-action" id="ucp-tt-emptyEdit">Edit Data Manually</button>
                  </div>
                </div>`;
         overlay.classList.add('visible');
@@ -944,7 +948,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         const cleanedRoom = cleanRoomName(room);
 
         card.dataset.code = code || '';
-        card.dataset.section = section || 'B1';
+        card.dataset.section = section || '';
         card.dataset.room = cleanedRoom;
         card.dataset.teacher = teacher || '';
         card.dataset.title = title || '';
@@ -1026,10 +1030,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             if (activeCell) activeCell.classList.add('ucp-tt-current-time-active');
         }
     }
-
-    // =========================================================================
-    // COLOR / VISIBILITY
-    // =========================================================================
+ 
+    // COLOR / VISIBILITY 
     function toggleColorCoding() {
         const enabled = el('ucp-tt-toggleColorCoding').checked;
         qa('.ucp-tt-card').forEach(card => {
@@ -1068,10 +1070,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             if (teacherEl) teacherEl.style.display = showTeacher ? 'block' : 'none';
         });
     }
-
-    // =========================================================================
-    // CONTEXT MENU
-    // =========================================================================
+ 
+    // CONTEXT MENU 
     function positionContextMenu(menu, e) {
         menu.style.left = `${e.clientX}px`;
         menu.style.top = `${e.clientY}px`;
@@ -1160,10 +1160,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         checkConflicts();
         hideContextMenu();
     }
-
-    // =========================================================================
-    // CARD EDIT / CREATE MODAL
-    // =========================================================================
+ 
+    // CARD EDIT / CREATE MODAL 
     function openEditModal(card) {
         if (!assertEditable()) return;
         activeCard = card;
@@ -1282,10 +1280,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
         closeModal();
     }
-
-    // =========================================================================
-    // EXCEL / SPREADSHEET EDITOR
-    // =========================================================================
+ 
+    // EXCEL / SPREADSHEET EDITOR 
     function excelRowHtml(item, index) {
         const dayOpts = dayNames.map((d, i) => `<option value="${i}" ${i === item.day ? 'selected' : ''}>${d}</option>`).join('');
         const timeOpts = timeNames.map((t, i) => `<option value="${i}" ${i === item.time ? 'selected' : ''}>${t}</option>`).join('');
@@ -1364,10 +1360,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         buildGrid();
         closeExcelModal();
     }
-
-    // =========================================================================
-    // BULK IMPORT
-    // =========================================================================
+ 
+    // BULK IMPORT 
     function openBulkImportModal() {
         if (!assertEditable()) return;
         el('ucp-tt-bulkImportInput').value = '';
@@ -1412,10 +1406,8 @@ chrome.storage.local.get('toggle_power', (result) => {
 
         closeBulkImportModal();
     }
-
-    // =========================================================================
-    // JSON EXPORT / IMPORT
-    // =========================================================================
+ 
+    // JSON EXPORT / IMPORT 
     function exportDataJSON() {
         const profile = profilesData[currentProfile];
         const exportObject = {
@@ -1473,10 +1465,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         reader.readAsText(file);
         e.target.value = '';
     }
-
-    // =========================================================================
-    // LOCAL STORAGE HISTORY MANAGER
-    // =========================================================================
+ 
+    // LOCAL STORAGE HISTORY MANAGER 
     function openLocalStorageModal() {
         const tbody = el('ucp-tt-localStorageTableBody');
         tbody.innerHTML = '';
@@ -1487,7 +1477,7 @@ chrome.storage.local.get('toggle_power', (result) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
               <td><code>${LS_PROFILES}</code></td>
-              <td><b>${isLive ? '🔒 ' : ''}${escapeHtml(profileLabel(rollNo))}</b></td>
+              <td><b>${isLive ? '  ' : ''}${escapeHtml(profileLabel(rollNo))}</b></td>
               <td>${formatDate(item.createdAt)}</td>
               <td>${formatDate(item.lastModified)}</td>
               <td>${item.items ? item.items.length : 0} classes</td>
@@ -1508,7 +1498,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     function deleteLocalStorageEntry(rollNo) {
         if (isLiveProfile(rollNo)) {
-            alert('🔒 The live profile (your logged-in UCP account) is locked and cannot be deleted.');
+            alert('This profile is locked and cannot be deleted.');
             return;
         }
         if (Object.keys(profilesData).length <= 1) {
@@ -1537,22 +1527,18 @@ chrome.storage.local.get('toggle_power', (result) => {
             closeLocalStorageModal();
         }
     }
-
-    // =========================================================================
-    // PRINT
-    // =========================================================================
+ 
+    // PRINT 
     function printTimetable() {
         window.print();
     }
-
-    // =========================================================================
+ 
     // ACADEMIC CALENDAR EXPANDER — below the timetable.
     // Renders the SHARED cached calendar from window.__ucpAcadCal (owned by
     // js/academic_calendar.js, loaded on every /student* page): same data and
     // same chrome.storage.local cache as the Notification page's calendar tab,
     // so a fresh page-load refresh there is reused here. Compact layout: one
-    // block per term, one row per dated item (name · date · countdown).
-    // =========================================================================
+    // block per term, one row per dated item (name · date · countdown). 
     let acadCalRendered = false;
 
     function acadCalRowHtml(r, nowMs) {
@@ -1667,10 +1653,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             renderAcadCalExpander();   // lazy: first open pulls the shared cache
         }
     }
-
-    // =========================================================================
-    // EVENT WIRING (content script world — no inline onclick)
-    // =========================================================================
+ 
+    // EVENT WIRING (content script world — no inline onclick) 
     function wireEvents() {
         el('ucp-tt-profileDropdownBtn').addEventListener('click', (e) => toggleProfileDropdown(e));
         el('ucp-tt-localCacheBtn').addEventListener('click', openLocalStorageModal);
@@ -1751,10 +1735,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             hideProfileDropdown();
         });
     }
-
-    // =========================================================================
-    // INIT
-    // =========================================================================
+ 
+    // INIT 
     function init() {
         initProfiles();            // restore persisted profiles (custom ones survive refresh)
         wireEvents();
