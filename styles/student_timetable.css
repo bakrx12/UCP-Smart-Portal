@@ -1,10 +1,3 @@
-/* =========================================================================
-   UCP Smart Portal — Student Timetable (grid/card design)
-   All rules are namespaced (ucp-tt-*) and scoped so they never leak onto the
-   rest of the UCP portal page. The two rules at the top hide the original
-   portal timetable that this design replaces.
-   ========================================================================= */
-
 h3.heading_b.uk-margin-bottom {
   display: none;
 }
@@ -13,7 +6,8 @@ h3.heading_b.uk-margin-bottom {
   display: none !important;
 }
 
-/* --- Root container + theme variables --------------------------------- */
+
+/*  Root container + theme variables   */
 #ucp-tt-root {
   --bg-image: none;
   --container-bg: rgba(0, 0, 0, 0.25);
@@ -24,21 +18,18 @@ h3.heading_b.uk-margin-bottom {
   --text-color: #ffffff;
   --subtext-color: #aaaaaa;
   --border-color: rgba(255, 255, 255, 0.2);
-
+    transform: translateY(-120px);
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text-color);
   background: transparent;
-  margin-top: 18px; /* breathing room below the portal page header */
-  padding: 8px 0 24px;
+  padding: 0px 4px !important;
+
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Night mode overrides the variables (scoped to the root, not the page body).
-   The root stays TRANSPARENT — the page's already-darkened background (shell
-   night veil / wallpaper) shows through; only the surfaces (container,
-   header, cards) are dark. (The old solid #0d1117 black slab is gone.) */
+/* Night mode  */
 #ucp-tt-root.ucp-tt-night {
   --container-bg: rgba(10, 14, 20, 0.55);
   --header-bg: #161b22;
@@ -57,10 +48,11 @@ h3.heading_b.uk-margin-bottom {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- Translucent container -------------------------------------------- */
+/*  Translucent container    */
 .ucp-tt-timetable-container {
   width: 100%;
   max-width: 1650px;
@@ -68,6 +60,7 @@ h3.heading_b.uk-margin-bottom {
   background: var(--container-bg);
   border-radius: 16px;
   border: 1px solid var(--border-color);
+
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -75,14 +68,14 @@ h3.heading_b.uk-margin-bottom {
   position: relative;
 }
 
-/* --- Info widgets bar (Next Class + Term Progress) above the timetable ------ */
+/*  Info widgets bar (Next Class + Term Progress) above the timetable --- */
 .ucp-tt-widgets-bar {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  gap: 14px;
+  gap: 50px;
   margin: 14px auto 0;
-  padding: 0 2px;
+  padding: 15px 2px;
   width: 100%;
   max-width: 1650px;
   box-sizing: border-box;
@@ -157,7 +150,7 @@ h3.heading_b.uk-margin-bottom {
   text-align: right;
 }
 
-/* --- Top profile control bar ------------------------------------------ */
+/*  Top profile control bar  ------ */
 .ucp-tt-profile-bar {
   display: flex;
   align-items: center;
@@ -343,7 +336,7 @@ h3.heading_b.uk-margin-bottom {
   background: rgba(239, 68, 68, 0.6);
 }
 
-/* --- Main grid area ---------------------------------------------------- */
+/*  Main grid area */
 .ucp-tt-timetable-content {
   display: flex;
   width: 100%;
@@ -452,9 +445,7 @@ h3.heading_b.uk-margin-bottom {
   box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.6);
 }
 
-/* The ONLY horizontal scroll region: the days column sits outside it. The
-   scroll container itself must be able to shrink (min-width: 0), so the old
-   1450px floor moves onto the grid content below. */
+/* The ONLY horizontal scroll region  */
 .ucp-tt-main-grid {
   flex: 1;
   display: flex;
@@ -949,7 +940,7 @@ h3.heading_b.uk-margin-bottom {
   border-radius: 4px;
 }
 
-/* --- Academic calendar expander (below the timetable) ------------------- */
+/* Academic calendar expander (below the timetable) */
 .ucp-tt-acadcal {
   width: 100%;
   max-width: 1650px;
