@@ -1,9 +1,8 @@
-
 chrome.storage.local.get('toggle_power', (result) => {
   if (!result || !result['toggle_power']) return;
 
   const BASE = 'https://horizon.ucp.edu.pk';
-  const PAGE_URLS = { settings: '/student/settings', notif: '/student/notifications' };
+  const PAGE_URLS = { settings: '/student/settings' };
   let originalContent = null; // saved display styles of the page content's children
 
   const powerOn = (v) => (v === undefined || v === null) ? true : !!v;
@@ -12,9 +11,9 @@ chrome.storage.local.get('toggle_power', (result) => {
   // Accent-color mode is ON by default (a missing value means "on").
   const accentOn = (v) => (v === undefined || v === null) ? true : !!v;
 
-
+  // 
   // helpers
-
+  // 
   function byId(id) { return document.getElementById(id); }
   // Extension path → chrome-extension:// URL (slash-stripped; see settings).
   function extUrl(p) {
@@ -33,17 +32,8 @@ chrome.storage.local.get('toggle_power', (result) => {
     l.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
     document.head.appendChild(l);
   }
-  // =========================================================================
-  // CONSOLE NOISE FILTER — the portal's own vendor bundle
-  // (odoocms_web.assets_aarsol_portal.min.js) logs debug junk on every page:
-  // "i fired" (its click-interceptor's debug line) and zero-length jQuery
-  // objects (rendered in the console as the "T.fn.init" blob). The user asked
-  // for it gone. The filter must run in the PAGE's main world to catch the
-  // portal's own console calls, so it is injected as an inline <script>
-  // (inline scripts from the DOM run in the main world; this content script
-  // itself is isolated). Only log/info/debug are wrapped — warn/error pass
-  // through untouched (never hide real errors).
-  // =========================================================================
+
+  // CONSOLE NOISE FILTER
   function ensureConsoleFilter() {
     if (byId('ucp-shell-consoleFilter')) return;
     const s = document.createElement('script');
@@ -79,11 +69,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     (document.head || document.documentElement).appendChild(s);
   }
 
-  // =========================================================================
+  // 
   // PREFERENCES (night / blur / stay / power) → body classes + switch UI
   // The switches themselves live on the Settings page (js/settings_page.js);
   // syncSwitch() is a no-op whenever that page is not open.
-  // =========================================================================
+  // 
   // Dark Mode (ucp_night_mode, default ON): the dark THEME — dark glass
   // surfaces, white text, the wallpaper dimmed + veiled (the wallpaper is
   // KEPT). Night Mode (ucp_night_mode_deep, default OFF): SEPARATE — it
@@ -113,7 +103,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       else document.body.style.removeProperty('--ucp-blur-px');
     } catch (e) {}
   }
-  // =========================================================================
+  // 
   // ACCENT COLOR — GLOBAL (default ON)
   // When the mode is on, <body> gets body.ucp-bg-accent + --ucp-accent so the
   // CSS (styles/shell.css + the pages' own sheets) can tint icons, the
@@ -121,7 +111,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // color — on EVERY page, not just Settings/Notification. The color is
   // sampled from the current wallpaper (same technique as settings_page.js)
   // and cached in ucp_bg_accent_color so page loads apply it instantly.
-  // =========================================================================
+  // 
   const ACCENT_KEY = 'ucp_bg_accent';
   const ACCENT_COLOR_KEY = 'ucp_bg_accent_color';
   const BG_KEY = 'background-wallpaper-path';
@@ -354,7 +344,17 @@ chrome.storage.local.get('toggle_power', (result) => {
     }
   });
 
-//sidebar stuff
+
+  // SIDEBAR ENTRIES (sized to match the portal's own menu items)
+  // 
+  // Two entries live in the sidebar: Notifications (the standalone
+  // Notification & Updates page — openShell('notif') pushes
+  // /student/notifications and js/notification_page.js renders it into
+  // #ucp-shell-root) and Settings. The dashboard keeps its embedded
+  // "Notification & Updates" widget too (js/student_dashboard.js) — the
+  // sidebar entry is the full-page view, not a duplicate of the widget. The
+  // unread count (js/notification_page.js writes ucp_notif_unread) badges the
+  // dashboard section head.
 
   function injectSidebarItems() {
     const ul = document.querySelector('.menu_section ul');
@@ -373,20 +373,17 @@ chrome.storage.local.get('toggle_power', (result) => {
         return li;
       };
 
-      const notifLi = makeItem('ucp-shell-nav--notif', 'notifications', 'Notifications', 'notif', 'Notification & Updates');
       const settingsLi = makeItem('ucp-shell-nav--settings', 'settings', 'Settings', 'settings', 'Extension Settings');
 
       const logout = document.querySelector('.logout-btn');
       if (logout && logout.parentElement === ul) {
-        ul.insertBefore(notifLi, logout);
         ul.insertBefore(settingsLi, logout);
       } else {
-        ul.appendChild(notifLi);
         ul.appendChild(settingsLi);
       }
     }
 
-    // About Extension — bottom of the sidebar. Shows the installed version,
+    // About Extension: bottom of the sidebar. Shows the installed version,
     // the project links (GitHub = current dev version, Chrome Web Store = the
     // older store version, Firefox = coming soon) and the tagline. Clicking
     // anywhere EXCEPT a real link opens Settings scrolled to the credits
@@ -396,7 +393,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       const sc = document.createElement('div');
       sc.className = 'ucp-sidebar-credits';
       sc.id = 'ucp-sidebar-credits';
-      sc.title = 'About the extension — opens Settings';
+      sc.title = 'About the extension opens Settings';
       let extVersion = '';
       try { extVersion = chrome.runtime.getManifest().version; } catch (e) {}
       sc.innerHTML = `
@@ -410,7 +407,6 @@ chrome.storage.local.get('toggle_power', (result) => {
           <a href="https://chromewebstore.google.com/search/UCP%20Smart%20Portal" target="_blank" rel="noopener" title="Older (store) version">Chrome Extension</a>
           <a class="ucp-sidebar-credits-soon" href="#" title="Coming soon">Firefox</a>
         </div>
-        <div class="ucp-sidebar-credits-tag">By UCP Students for UCP Students</div>
       `;
       sc.addEventListener('click', (e) => {
         const a = e.target.closest('a');
@@ -429,7 +425,8 @@ chrome.storage.local.get('toggle_power', (result) => {
     }
   }
 
-// signed in label
+  // SIGNED-IN LABEL
+
   function injectSignedInAs() {
     try {
       const header = document.querySelector('#sidebar_main .sidebar_main_header');
@@ -443,9 +440,13 @@ chrome.storage.local.get('toggle_power', (result) => {
         header.insertBefore(label, header.firstChild);
         return true;
       }
-      
-//hide student avatar
-      
+      // Hide the WHOLE placeholder, not just the <img>: the photo usually sits
+      // inside a fixed-size frame (.user-image / .avatar / nested wrappers) that
+      // keeps showing as an empty box once the image is gone. Walk up from the
+      // image through any text-less ancestors (stopping at the header, or at the
+      // first ancestor that carries the student's name) and hide the outermost
+      // one — that removes every nested frame at once. Hiding a wrapper that
+      // still holds text is avoided so the name is never taken out with the box.
       let target = avatar;
       let parent = avatar.parentElement;
       while (parent && parent !== header && !parent.textContent.trim()) {
@@ -462,15 +463,21 @@ chrome.storage.local.get('toggle_power', (result) => {
   function scheduleSignedInAs(attempt) {
     if (injectSignedInAs()) return;
     if (attempt > 10) return;
-    setTimeout(() => scheduleSignedInAs(attempt + 1), 300);
+    setTimeout(() => scheduleSignedInAs(attempt + 1), 50);
   }
   function scheduleSidebarItems(attempt) {
     injectSidebarItems();
     if (attempt > 10) return;
-    setTimeout(() => scheduleSidebarItems(attempt + 1), 300);
+    setTimeout(() => scheduleSidebarItems(attempt + 1), 100);
   }
 
-//sidebar accent
+  // SIDEBAR ACTIVE COLOR (night mode)
+  // Read the red the portal itself paints on the open section's items and
+  // expose it as --ucp-active-red, so the selected top-level item can show
+  // the SAME red at night even when the portal only styles the expanded
+  // sub-items. Day mode is untouched (the CSS var is only used under
+  // body.ucp-night).
+
   function syncActiveRed() {
     const ul = document.querySelector('#sidebar_main .menu_section ul');
     if (!ul) return;
@@ -490,7 +497,14 @@ chrome.storage.local.get('toggle_power', (result) => {
     }
   }
 
-// sidebar avatar frame
+  // 
+  // PAGE FRAME — the shell's pages render INTO #page_content (the portal's
+  // content column) so the sidebar + wallpaper stay visible, exactly like
+  // the dashboard / profile pages. Opening a page hides the portal's own
+  // page content; its children's display values are saved and restored on
+  // close. (If #page_content is absent, the root falls back to <body> and
+  // nothing is hidden.)
+  // 
   function contentHost() {
     return document.getElementById('page_content') || document.body;
   }
@@ -529,7 +543,9 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (li) li.classList.toggle('current_section', on);
   }
 
-
+  // 
+  // OPEN / CLOSE + history (own URLs)
+  // 
   function openShell(which) {
     ensureMaterialIcons();
     const root = ensurePageRoot();
@@ -604,6 +620,9 @@ chrome.storage.local.get('toggle_power', (result) => {
     try { openShell(which); } catch (e) {}
   };
 
+  // 
+  // init
+  // 
   (function init() {
     ensureConsoleFilter();
     ensureMaterialIcons();
