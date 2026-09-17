@@ -2,24 +2,17 @@ chrome.storage.local.get("toggle_power", (result) => {
   const enabled = result["toggle_power"];
 
   if (enabled) {
-    // Task 3 — cover the page the instant the script runs so the ORIGINAL
-    // portal dashboard never flashes before the extension's own dashboard is
-    // injected. An opaque-enough dark-glass sheet masks the old UI while we
-    // build the replacement; dismissDashboardLoader() fades it out once the
-    // replacement is in the DOM (the dashboard then shows its own live
-    // "loading" states — badges, "Loading…" — as the data fills in).
+    // dashboard loading
     function showDashboardLoader() {
       if (document.getElementById("ucp-dash-loader")) return;
       const el = document.createElement("div");
       el.id = "ucp-dash-loader";
       el.className = "ucp-dash-loader";
       el.setAttribute("role", "status");
-      // The spinning circle (ucp-dash-loader-spinner) was barely visible and is
-      // not needed — only the dark sheet + text is shown while the dashboard
-      // builds, so the original portal UI never flashes through.
+
       el.innerHTML =
         '<div class="ucp-dash-loader-title">Loading dashboard…</div>' +
-        '<div class="ucp-dash-loader-sub">Preparing your academic overview</div>';
+        '<div class="ucp-dash-loader-sub">Preparing, if it doesnt load try refreshing</div>';
       document.body.appendChild(el);
     }
     function dismissDashboardLoader() {
@@ -319,7 +312,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       return items;
     }
 
-    // ---- Quiet course-page fetch -------------------------------------------
+    // ---- Quiet course-page fetch 
     // The request runs in the SERVICE WORKER (GET_PORTAL_PAGE): a 404/503-ing
     // page — courses without an announcement page, the flaky gradebook — comes
     // back as plain data instead of a "Failed to load resource" line in the
@@ -773,7 +766,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       return nameAfterMuhammad || "Not available";
     }
 
-    /* ------------------ Term week (Fall / Spring) ------------------
+    /* Term week
        Fall term starts the last Monday of September; Spring term starts the
        last Monday of February. We count weeks forward from that start and show
        "ongoing week / total weeks". The card shows N/A when the timetable has
@@ -840,7 +833,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       }
     }
 
-    /* ===== 1A: Predicted CGPA ===========================================
+    /*1A: Predicted CGPA 
        For a student whose CGPA is N/A (no grades posted) and who has earned no
        credits yet (i.e. 1st semester), project a CGPA from each course's
        CURRENT gradebook standing. Each course's predicted final % = its
@@ -1066,7 +1059,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       return `${when} • ${weekday}`;
     }
 
-    // --- Make-Up Class card -----------------------------------------------
+    // --- Make-Up Class card ----
     // The timetable is a weekly grid: each li.cd-schedule__group ul entry is
     // one class slot (entry.children[0]) with data-start/data-end times and
     // cells [instructor, course, section, room] (mirrors extractTimeTableInfo in
@@ -1364,7 +1357,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         .join("");
     }
 
-    /* ===== Attendance glance tile =========================================
+    /* Attantendce at glance widget
        Shows the LOWEST attendance % across all subjects, read against the
        university's risk thresholds. The value line is the risk level itself;
        the small sub line names the at-risk course ("CS101 · 72%") ONLY while
@@ -1442,11 +1435,11 @@ chrome.storage.local.get("toggle_power", (result) => {
           <span class="ag-pct ${status ? status.cls : ""}">${isNaN(pct) ? "--" : pct + "%"}</span>
         </div>`;
       });
-      return `<div class="tt-header"><span>Attendance — this semester</span></div>` +
+      return `<div class="tt-header"><span>Attendance Details</span></div>` +
         (rows || `<div class="no-submissions">No attendance records</div>`);
     }
 
-    /* ===== Invoices tile ===================================================
+    /*Invoices tile 
        Fetches /student/invoices (same table js/student_invoices.js parses)
        and counts the UNPAID rows. Value = unpaid count (or "Cleared"); the
        sub line carries the total amount still due. Hover lists the unpaid
@@ -1491,7 +1484,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         if (subEl) subEl.textContent = "";
       } else {
         tile.classList.add("is-due");
-        valueEl.textContent = String(unpaid.length);
+        valueEl.textContent = String(unpaid.length) + " unpaid";
         if (subEl) subEl.textContent = formatRsAmount(unpaid.reduce((s, u) => s + u.amount, 0)) + " due";
       }
       tile.dataset.unpaid = JSON.stringify(unpaid);
@@ -1509,7 +1502,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         </div>`;
       });
       return `<div class="tt-header"><span>Unpaid invoices</span></div>` +
-        (rows || `<div class="no-submissions">No unpaid invoices</div>`);
+        (rows || `<div class="no-submissions">Not found</div>`);
     }
 
     function renderCourses(coursesArray) {
@@ -1969,7 +1962,7 @@ chrome.storage.local.get("toggle_power", (result) => {
     // Every course subpage, for the right-click menu. path:null = the course
     // root (the card's own link).
     const COURSE_LINKS = [
-      { icon: "campaign", label: "Announcements", path: "announcement" },
+      { icon: "campaign", label: "Announcements", path: "info" },
       { icon: "list_alt", label: "Course outline", path: "outline" },
       { icon: "article", label: "Course material", path: "material" },
       { icon: "grade", label: "Gradebook", path: "gradebook" },
@@ -2639,12 +2632,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         }
       });
       updateCourseOverview(coursesInfo, coursesInfo, getSemesterWeek(currentSemester));
-      // 1B: re-check ALL three from scratch — submissions left (drop the
-      // submission-page promise cache first, or fetchSubmissionCount/Details
-      // would just re-parse the first-load pages), next assessments
-      // (re-fetches the info/outline/assessment/announcement pages), and
-      // make-up classes — and only mark "Updated just now" once they've ALL
-      // settled (no fixed timer; resolveSubmissionsLeft awaits every check).
+      // re-check ALL three from scratch 
       try {
         submissionPageCache.clear();
         submissionDetailsCache.clear();
@@ -2672,10 +2660,8 @@ chrome.storage.local.get("toggle_power", (result) => {
       coursesSectionEl.addEventListener("click", (e) => {
         if (e.target.closest("#gmc-refresh-courses")) refreshCourseSection();
       });
-      // Right-click a course card → the all-links menu (see showCourseMenu).
-      // Delegated here on the stable section element — the cards themselves
-      // are only ever created once, but the section outlives the overview
-      // rebuilds, so this is the one stable delegation point.
+
+      // Right-click a course card → the all-links menu (see showCourseMenu)
       coursesSectionEl.addEventListener("contextmenu", (e) => {
         const card = e.target.closest(".gmc-card");
         if (!card) return;
@@ -2684,17 +2670,11 @@ chrome.storage.local.get("toggle_power", (result) => {
       });
     }
 
-    /* ------------------ Task 1a: make the academic stat mini-cards visually
-       identical to the course mini-cards (same blackish-glass fill). The JS
-       paints the exact CARD_GLASS gradient the .gmc-card uses inline, so the
-       two card families read as one design. (CSS carries the fallback.) */
     document.querySelectorAll("#stats .entry").forEach((tile) => {
       tile.style.background = CARD_GLASS;
     });
 
-    /* ------------------ Task 4a: flip the UCP student card once on load.
-       A one-shot animation (not tied to :hover) plays the flip, then the
-       class is removed so a later hover flip is unaffected. */
+    /* fLIP the UCP Card */
     const loadedCard = document.getElementById("card");
     if (loadedCard) {
       loadedCard.classList.add("card-load-anim");
@@ -2703,14 +2683,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       setTimeout(clearLoadAnim, 2200); // fallback if animationend never fires
     }
 
-    /* ------------------ Task 2: per-item dashboard visibility.
-       Settings (js/settings_page.js) stores a map of item→bool under
-       ucp_dashboard_items. Missing keys default to VISIBLE, so a fresh
-       install shows everything. "earned" now controls the merged Credits Info
-       card (in-progress is revealed on hover, no longer a separate card). The
-       Course Overview card's three mini-sections (Submissions Left / Next
-       Assessment / Make-Up Class) are each independently toggleable via the
-       cvo-* ids below. */
+    /* ACADEMICS WIDGETS */
     const DASH_ITEMS_KEY = "ucp_dashboard_items";
     const DASH_ITEM_MAP = {
       cgpa: "#stats .entry.cgpa",
@@ -2750,8 +2723,7 @@ chrome.storage.local.get("toggle_power", (result) => {
     }
     applyDashboardItemVisibility();
     try {
-      // Re-apply live if the settings page (this tab or another) changes the
-      // map — e.g. the user toggles an item then returns to the dashboard.
+      // Re-apply live if the settings page (this tab or another) 
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area !== "local" || !changes[DASH_ITEMS_KEY]) return;
         applyDashboardItemVisibility();
