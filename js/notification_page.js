@@ -1,3 +1,4 @@
+//UCP Smart Portal  Notification PAGE
 
 chrome.storage.local.get('toggle_power', (result) => {
   if (!result || !result['toggle_power']) return;
@@ -12,42 +13,30 @@ chrome.storage.local.get('toggle_power', (result) => {
   let courseUpdatesShown = 0;
   let scanning = false;
 
-  // --- Course-updates scan bar: type filter / Instant Push / unread state ---
-  // FILTER — which update types the scan REPORTS (the feed shows them and
-  // Instant Push announces them). The snapshot still advances for EVERY type
-  // on every scan, so switching back to "All" never re-surfaces old items.
-  // 'all' (default) | 'submission' | 'content' | 'grade'
+  // Course-updates scan bar
   const FILTER_KEY = 'ucp_notif_course_filter';
-  // PUSH — "Push Notification" (Settings renamed it from "Instant Push
-  // Notification"), default OFF. When on, the service worker's alarm pings an
-  // OPEN portal tab (UCP_PUSH_SCAN) to scan in the background; new items
-  // trigger SHOW_COURSE_NOTIF (the worker shows the browser notification).
-  // A portal tab must be open for the scan to run — the tab-less twin is
-  // "Instant Push Notification" (ucp_instant_push; the worker scans itself).
-  // Enabling either is gated on the site's notification permission.
+  
   const PUSH_KEY = 'ucp_push_notify';
   const INSTANT_KEY = 'ucp_instant_push';
   // The scan-bar quick toggle re-enables the LAST-USED mode when flipped ON
   // (Settings → Notifications writes it; 'push' | 'instant').
   const LAST_MODE_KEY = 'ucp_notif_last_mode';
-  // SEEN — last "Mark all as read" per feed; an item is unread while its
+  // SEEN  last "Mark all as read" per feed; an item is unread while its
   // detected-at timestamp (it.at, set when the scan first finds it) is newer.
   const SEEN_KEY = 'ucp_notif_seen';
-  // UNREAD — the unread count, written so js/shell.js can badge the sidebar
+  // UNREAD  the unread count, written so js/shell.js can badge the sidebar
   // "Notification" entry on every page (the widget itself isn't present
   // everywhere).
   const UNREAD_KEY = 'ucp_notif_unread';
-  // ACADEMIC CALENDAR — which terms' "previous activities" were expanded.
+  // ACADEMIC CALENDAR  which terms' "previous activities" were expanded.
   // term-name → true; the initial render re-applies the saved expansion so
   // past items stay greyed/revealed exactly where the user left them.
   const ACAD_EXPANDED_KEY = 'ucp_acad_expanded_terms';
   let acadExpanded = {};
   let courseFilter = 'all';
-  let seenCoursesAt = 0; // ms — items detected after this are unread
+  let seenCoursesAt = 0; // ms  items detected after this are unread
 
-  // =========================================================================
   // helpers
-  // =========================================================================
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"'`=\/]/g, (c) => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
@@ -73,7 +62,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     try { l.href = chrome.runtime.getURL('styles/notification_page.css'); } catch (e) { return; }
     document.head.appendChild(l);
   }
-  // Widget stylesheet — the embeddable Course Updates / UCP Notification widget
+  // Widget stylesheet  the embeddable Course Updates / UCP Notification widget
   // styles (tabs, scan bar, feed, placeholder). Shared by BOTH the standalone
   // page (below) and the dashboard "Notification & Updates" section
   // (js/student_dashboard.js). Loaded separately from ensurePageCss() because
@@ -88,13 +77,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     document.head.appendChild(l);
   }
 
-  // =========================================================================
   // ACCENT-COLOR MODE (set in Settings → Background; ON by default)
   // The color is sampled + cached by js/shell.js (every page) /
   // js/settings_page.js. On render, restore the cached tint so this page's
   // icons/headings pick it up too (body class + --ucp-accent, read by
   // styles/notification_page.css).
-  // =========================================================================
   const ACCENT_KEY = 'ucp_bg_accent';
   const ACCENT_COLOR_KEY = 'ucp_bg_accent_color';
   // ON unless explicitly turned off (missing value = on).
@@ -147,7 +134,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // /student page answers: the scan + storage merge work with or without the
   // widget on screen, and the feed / badges update if this tab happens to
   // show them. (The whole module is gated on toggle_power, so power-off means
-  // no receiver — the worker's sendMessage then just no-ops.)
+
   try {
     chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       if (msg && msg.type === 'UCP_PUSH_SCAN') {
@@ -157,13 +144,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
   } catch (e) {}
 
-  // =========================================================================
-  // WIDGET MARKUP — the embeddable Course Updates / UCP Notification widget
+  // WIDGET MARKUP  the embeddable Course Updates / UCP Notification widget
   // (tabs + both tabpanels). Wrapped in .ucp-notif-widget so the shared widget
   // CSS (styles/notification_widget.css) can scope its night/accent icon
   // rules. Reused by BOTH the standalone page (buildPageHtml) and the
   // dashboard "Notification & Updates" section (embed).
-  // =========================================================================
   const widgetHtml = `
     <div class="ucp-notif-widget">
       <div class="ucp-shell-card ucp-shell-notif-head">
@@ -213,7 +198,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       <div class="ucp-shell-tabpanel" id="ucp-shell-notif-courses">
         <div class="ucp-shell-card">
           <div class="ucp-shell-scan-bar">
-            <!-- Scan now — LEFT end of the scan bar. Two lines (title +
+            <!-- Scan now  LEFT end of the scan bar. Two lines (title +
                  transient status). -->
             <button class="ucp-shell-btn ucp-shell-btn-primary ucp-shell-refresh-btn" id="ucp-shell-scanBtn" type="button">
               <span class="material-icons">refresh</span>
@@ -226,7 +211,7 @@ chrome.storage.local.get('toggle_power', (result) => {
                  CENTERED between Scan now (left) and the Notifications block
                  (right) via margin:auto on both sides. Static control in the
                  scan bar (never re-created), so a direct click listener works
-                 — same as the Refresh buttons. All = the default; the stored
+                  same as the Refresh buttons. All = the default; the stored
                  value survives reloads (ucp_notif_course_filter). -->
             <div class="ucp-wseg ucp-shell-scan-filter" id="ucp-shell-courseFilter" role="radiogroup" aria-label="Update types to check">
               <div class="ucp-wseg-opt is-on" data-cfilter="all" role="radio" aria-checked="true" tabindex="0">All</div>
@@ -238,17 +223,17 @@ chrome.storage.local.get('toggle_power', (result) => {
             <button class="ucp-shell-btn ucp-wmark" id="ucp-shell-markRead" type="button" hidden>
               <span class="material-icons">done_all</span> Mark all as read
             </button>
-            <!-- Notifications — RIGHT end (margin-left:auto). The quick on/off
+            <!-- Notifications  RIGHT end (margin-left:auto). The quick on/off
                  for the background course-update checks. The SWITCH is a real
                  quick-toggle: ON re-enables the last-used mode (Push, when the
-                 mode was never chosen in Settings — ucp_notif_last_mode) and
+                 mode was never chosen in Settings  ucp_notif_last_mode) and
                  OFF disables ALL checks. Clicking the LABEL (not the switch)
                  opens Settings scrolled to the Notifications card, where
                  Off / Push / Instant Push is chosen. The switch is a plain
-                 div with role="switch" (NO role="button" — the portal's
+                 div with role="switch" (NO role="button"  the portal's
                  aarsol bundle swallows that markup); the label is tabindex=0
                  with Enter/Space for the keyboard path. -->
-            <div class="ucp-push" id="ucp-shell-pushWrap" title="Background course-update checks — click the label to open Settings">
+            <div class="ucp-push" id="ucp-shell-pushWrap" title="Background course-update checks  click the label to open Settings">
               <div class="ucp-push-col">
                 <span class="ucp-push-title ucp-push-link" id="ucp-shell-pushLabel" tabindex="0">Notifications</span>
                 <span class="ucp-push-state" id="ucp-shell-pushState">OFF</span>
@@ -294,7 +279,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     </div>`;
 
   // The standalone page frame: a page header (title + a compact print action
-  // docked at the RIGHT end of the row — the title's flex:1 leaves it room)
+  // docked at the RIGHT end of the row  the title's flex:1 leaves it room)
   // + the shared widget.
   const buildPageHtml = () => `
     <div class="ucp-shell-page">
@@ -307,14 +292,12 @@ chrome.storage.local.get('toggle_power', (result) => {
       ${widgetHtml}
     </div>`;
 
-  // =========================================================================
-  // wireWidget(root) — tab switching, the "Scan now" button, and the
+  // wireWidget(root)  tab switching, the "Scan now" button, and the
   // automatic first scan. Takes the widget's root element so it works for BOTH
   // the standalone page and the embedded dashboard section. (The feed / status
   // / scan-button ids are document-global by design: only one widget ever
-  // exists in a given document — the standalone page is a different URL from
+  // exists in a given document  the standalone page is a different URL from
   // the dashboard.)
-  // =========================================================================
   function wireWidget(root, opts) {
     // The index passed to setShellView is the position among the VISIBLE tabs
     // (Settings can hide some of the five), so compute it at click time from
@@ -332,12 +315,12 @@ chrome.storage.local.get('toggle_power', (result) => {
       scanCourses();
     });
 
-    // Type filter (All / Submissions / Content / Grades) — static segment in
+    // Type filter (All / Submissions / Content / Grades)  static segment in
     // the scan bar, direct listeners (as above).
     root.querySelectorAll('#ucp-shell-courseFilter .ucp-wseg-opt').forEach((o) =>
       o.addEventListener('click', () => setCourseFilter(o.dataset.cfilter)));
 
-    // Instant Push quick-toggle (site-permission gated — see togglePush()).
+    // Instant Push quick-toggle (site-permission gated  see togglePush()).
     const pushToggle = root.querySelector('#ucp-shell-pushToggle');
     if (pushToggle) pushToggle.addEventListener('click', togglePush);
 
@@ -376,7 +359,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       });
     } catch (e) {}
     // Mode changed from Settings while this widget is mounted (the shell
-    // hides the widget's page but its listeners stay alive) — repaint.
+    // hides the widget's page but its listeners stay alive)  repaint.
     try {
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area !== 'local' || (!changes[PUSH_KEY] && !changes[INSTANT_KEY])) return;
@@ -387,14 +370,14 @@ chrome.storage.local.get('toggle_power', (result) => {
     } catch (e) {}
 
     // Portal News: the two-line "Refresh" button re-reads the live
-    // "News and Announcement" section. (Static button — a direct listener is
+    // "News and Announcement" section. (Static button  a direct listener is
     // fine; it is NOT re-created on re-render.)
     const newsRefresh = root.querySelector('#ucp-shell-newsRefresh');
     if (newsRefresh) newsRefresh.addEventListener('click', () => fetchPortalNews(true));
 
     // UCP News: the "Refresh" button re-fetches ucp.edu.pk/ucp-today (cross-origin
     // via the service worker); "Load more" reveals the next batch of cards. Both
-    // are static (in the panel's scan-bar / load-more bar — never re-created by
+    // are static (in the panel's scan-bar / load-more bar  never re-created by
     // render), so direct listeners are fine. The tab itself fetches only on open
     // (see setShellView), so nothing loads until the user clicks it.
     const ucpTodayRefresh = root.querySelector('#ucp-shell-ucpTodayRefresh');
@@ -407,7 +390,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (courseLoadMore) courseLoadMore.addEventListener('click', () => showMoreCourseUpdates());
 
     // Academic Calendar: the "Refresh" button lives INSIDE the Next-up mini-card
-    // and is re-created on every render, so delegate on the stable panel — a
+    // and is re-created on every render, so delegate on the stable panel  a
     // direct listener would bind to the first button only. It forces a live
     // re-fetch (bypassing the date-based auto-refresh gate). The same delegated
     // handler also covers the ongoing-term collapse toggle below it.
@@ -424,8 +407,8 @@ chrome.storage.local.get('toggle_power', (result) => {
       const icon = toggle.querySelector('.material-icons');
       if (label) label.textContent = expanded ? 'Hide previous activities' : 'Show previous activities';
       if (icon) icon.textContent = expanded ? 'expand_less' : 'expand_more';
-      // Remember the expansion (term name → true) so the next render —
-      // including the first paint after a reload — greys/reveals the past
+      // Remember the expansion (term name → true) so the next render 
+      // including the first paint after a reload  greys/reveals the past
       // items exactly where the user left them.
       const termName = term.dataset.acadTerm;
       if (termName != null) {
@@ -456,27 +439,25 @@ chrome.storage.local.get('toggle_power', (result) => {
     // Default view: the user's saved default tab (Settings → Dashboard items →
     // "Notification widget · tabs"), falling back to the first visible tab.
     // applyNotifTabPrefs also hides any disabled tabs, sizes the sliding
-    // indicator to the visible count, and calls setShellView() — which
+    // indicator to the visible count, and calls setShellView()  which
     // populates the default tab on load (the Academic Calendar Next-up card +
     // feed when it is the default; the other tabs refresh on open as before).
     //
     // The DASHBOARD embed forces ONE live calendar refresh here so the calendar
-    // is fresh the moment the dashboard loads (not the possibly-stale cache) —
+    // is fresh the moment the dashboard loads (not the possibly-stale cache) 
     // only meaningful when the default tab IS the Academic Calendar.
     applyNotifTabPrefs(root, !!(opts && opts.forceAcad));
   }
 
-  // =========================================================================
-  // render(container) — the standalone page, called by shell.js (and on a
+  // render(container)  the standalone page, called by shell.js (and on a
   // direct load of /student/notifications). Rebuilds the page fresh.
-  // =========================================================================
   function render(container) {
     ensureMaterialIcons();
     ensureWidgetCss();
     ensurePageCss();
     applyAccent(); // restore the cached tint (if the accent mode is on)
     container.innerHTML = buildPageHtml();
-    // Page-header print action (standalone page only — the dashboard embed
+    // Page-header print action (standalone page only  the dashboard embed
     // has no page header). Plain <button> + addEventListener: the reliable
     // path (no role="button" markup, so the portal's click interceptor
     // never sees it).
@@ -485,12 +466,10 @@ chrome.storage.local.get('toggle_power', (result) => {
     wireWidget(container);
   }
 
-  // =========================================================================
-  // embed(container) — the widget only, for the dashboard "Notification &
+  // embed(container)  the widget only, for the dashboard "Notification &
   // Updates" section (js/student_dashboard.js). Loads ONLY the widget
   // stylesheet (never notification_page.css, whose page-level rules would
   // restyle the dashboard's #page_content / body) and skips the page header.
-  // =========================================================================
   function embed(container) {
     ensureMaterialIcons();
     ensureWidgetCss();
@@ -501,16 +480,14 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   window.__ucpNotifPage = { render, embed };
 
-  // =========================================================================
-  // TAB VISIBILITY + DEFAULT TAB — driven by the Settings page ("Dashboard
+  // TAB VISIBILITY + DEFAULT TAB  driven by the Settings page ("Dashboard
   // items" → "Notification widget · tabs"). Prefs live in
   // chrome.storage.local under ucp_notif_tabs as
   //   { default: <original index 0-4>, tabs: { <original index>: bool } }
   // A missing key = all five tabs ON and the default is the Academic Calendar
-  // (index 0) — the original behavior. `index` everywhere in this widget is a
+  // (index 0)  the original behavior. `index` everywhere in this widget is a
   // POSITION AMONG THE VISIBLE TABS; the panels are mapped back to the original
   // index (the tab order in the DOM is fixed, so indexOf is the mapping).
-  // =========================================================================
   const NOTIF_PREFS_KEY = 'ucp_notif_tabs';
   const NOTIF_PANEL_IDS = [
     'ucp-shell-notif-acad',
@@ -533,7 +510,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
     if (indicator) indicator.style.transform = `translateX(${index * 100}%)`;
     // Each live tab refreshes on open: Academic Calendar (0) is lazy-loaded from
-    // ucp.edu.pk (date-gated cache in js/academic_calendar.js — the only cached tab);
+    // ucp.edu.pk (date-gated cache in js/academic_calendar.js  the only cached tab);
     // Portal News (1) re-reads the live "News and Announcement" section;
     // Miscellaneous (3) re-fetches the ucp-news feed; UCP Feed (4) re-fetches
     // ucp.edu.pk/announcement (only on click, never cached).
@@ -570,12 +547,10 @@ chrome.storage.local.get('toggle_power', (result) => {
     } catch (e) { paint({}); } // stale extension context → default layout
   }
 
-  // =========================================================================
-  // COURSE UPDATES — scanner (moved in from shell.js)
-  // =========================================================================
-  // ---- Quiet portal-page fetch ---------------------------------------------
+  // COURSE UPDATES  scanner (moved in from shell.js)
+  //Quiet portal-page fetch
   // Runs in the SERVICE WORKER (GET_PORTAL_PAGE): when a gradebook 503s or a
-  // page 404s the failure comes back as plain data — no "Failed to load
+  // page 404s the failure comes back as plain data  no "Failed to load
   // resource" line in the page console on every scan. A short negative cache
   // keeps a recently-failed page from being re-fetched at all.
   const failedScanFetches = new Map(); // url -> { status, ts }
@@ -609,7 +584,7 @@ chrome.storage.local.get('toggle_power', (result) => {
           text = resp.ok ? resp.text : null;
         }
       }
-    } catch (e) { /* stale extension context — fall through to a direct fetch */ }
+    } catch (e) { /* stale extension context  fall through to a direct fetch */ }
     if (text === null) {
       try {
         const r = await fetch(url, { credentials: 'include' });
@@ -741,7 +716,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       const snapshot = (await loadSnapshot()) || {};
       const firstRun = Object.keys(snapshot).length === 0;
       const fresh = [];
-      // The button's status line reports live per-course progress — the pool
+      // The button's status line reports live per-course progress  the pool
       // runs up to 4 courses concurrently, so this ticks up as each resolves.
       let done = 0;
       const total = courses.length;
@@ -758,7 +733,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       // first), persist it, then render the paginated feed (6 at a time).
       // The merge base is the LATEST STORED list, not this tab's in-memory
       // view: a background Instant-Push scan can run in a tab where the widget
-      // was never rendered (empty view) — merging against that would WIPE the
+      // was never rendered (empty view)  merging against that would WIPE the
       // stored feed.
       if (fresh.length) {
         const stored = await loadStoredUpdates();
@@ -767,14 +742,14 @@ chrome.storage.local.get('toggle_power', (result) => {
         const merged = [];
         fresh.forEach((it) => {
           if (seen.has(updKey(it))) return;
-          it.at = nowIso; // detected-at — the unread state compares against it
+          it.at = nowIso; // detected-at  the unread state compares against it
           merged.push(it);
         });
         if (merged.length) {
           courseUpdatesItems = merged.concat(stored).slice(0, 120);
           saveStoredUpdates(courseUpdatesItems);
           // Instant Push: announce the NEW items (already filtered through the
-          // user's type filter) — the service worker shows the notification.
+          // user's type filter)  the service worker shows the notification.
           try {
             chrome.storage.local.get(PUSH_KEY, (r) => {
               if (!r || !r[PUSH_KEY]) return;
@@ -815,7 +790,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   function saveStoredUpdates(list) { try { chrome.storage.local.set({ [UPD_KEY]: list }); } catch (e) {} }
   // One course-update card. Unread items (detected after the last "Mark all
-  // as read") get the is-unread class — a blue dot + a brighter edge.
+  // as read") get the is-unread class  a blue dot + a brighter edge.
   function feedItemHtml(it) {
     const unreadCls = isUnread(it) ? ' is-unread' : '';
     return `
@@ -835,7 +810,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // the "Load more" button. `firstRun` tunes the empty-state copy. The list is
   // filtered by the user's type filter (All / Submissions / Content / Grades).
   function renderCourseUpdates(firstRun) {
-    updateUnreadBadges(); // tab / section-head / sidebar badges — this runs
+    updateUnreadBadges(); // tab / section-head / sidebar badges  this runs
                           // even when the widget DOM is absent (a background
                           // Instant-Push scan in a tab without the widget).
     const feed = byId('ucp-shell-feed');
@@ -843,7 +818,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const items = filteredItems(courseUpdatesItems);
     if (!items.length) {
       const all = courseFilter === 'all';
-      const noun = courseFilter === 'submission' ? 'submission' : courseFilter === 'content' ? 'content' : 'grade';
+      const noun = courseFilter === 'submission' ? 'submission' : courseFilter === 'content' ? 'content' : 'grade' ;
       feed.innerHTML = feedStateHtml('empty',
         all
           ? (firstRun
@@ -867,12 +842,10 @@ chrome.storage.local.get('toggle_power', (result) => {
     renderCourseUpdates();
   }
 
-  // =========================================================================
-  // TYPE FILTER — which update types the scan REPORTS (the feed shows them,
+  // TYPE FILTER  which update types the scan REPORTS (the feed shows them,
   // Instant Push announces them). Stored under FILTER_KEY; the snapshot still
   // advances for every type, so switching back to "All" never re-surfaces
   // items that were reported while another filter was active.
-  // =========================================================================
   function syncFilterUi(f) {
     if (f !== 'submission' && f !== 'content' && f !== 'grade') f = 'all';
     courseFilter = f;
@@ -890,16 +863,14 @@ chrome.storage.local.get('toggle_power', (result) => {
   const filterMatches = (it) => (courseFilter === 'all' || it.type === courseFilter);
   const filteredItems = (list) => (courseFilter === 'all' ? (list || []) : (list || []).filter(filterMatches));
 
-  // =========================================================================
-  // INSTANT PUSH — background scans + browser notification (default OFF).
+  // INSTANT PUSH  background scans + browser notification (default OFF).
   // Enabling it first checks the SITE's notification permission (the browser
   // "site settings" gate): granted → on; default → ask (inside the click
   // gesture); denied → stay off with an explanation. The scan itself rides on
-  // scanCourses() — the service worker's alarm pings a portal tab with
+  // scanCourses()  the service worker's alarm pings a portal tab with
   // UCP_PUSH_SCAN (see the onMessage listener below), and the new-items merge
   // in scanCourses() reports SHOW_COURSE_NOTIF to the worker, which shows the
   // notification (chrome.notifications is worker-only).
-  // =========================================================================
   let pushBusy = false;
   let pushStatusTimer = null;
   function setPushUi(on) {
@@ -923,8 +894,8 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (!isError) pushStatusTimer = setTimeout(() => { el.textContent = ''; }, 5000);
   }
   // Quick on/off. ON re-enables the LAST-USED mode (Settings →
-  // Notifications; ucp_notif_last_mode) — Push when the mode was never
-  // chosen there — and OFF disables ALL background checks (both keys).
+  // Notifications; ucp_notif_last_mode)  Push when the mode was never
+  // chosen there  and OFF disables ALL background checks (both keys).
   async function togglePush() {
     const el = byId('ucp-shell-pushToggle');
     if (!el || pushBusy) return;
@@ -944,8 +915,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
         if (perm !== 'granted') {
           setPushStatus(perm === 'denied'
-            ? 'Blocked in site settings — allow notifications for this site, then retry.'
-            : 'Not allowed for this site yet — allow it in the browser settings, then retry.', true);
+            ? 'Blocked in site settings  allow notifications for this site, then retry.'
+            : 'Not allowed for this site yet  allow it in the browser settings, then retry.', true);
           return;
         }
         // Last-used mode (default: Push).
@@ -966,7 +937,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         } catch (e) {}
         try { chrome.runtime.sendMessage({ type: 'UCP_PUSH_ENABLED', on: true }); } catch (e) {}
         setPushStatus(mode === 'instant' ? 'Background checks on (instant).' : 'Background checks on.');
-        scanCourses(); // immediate first check — don't wait for the next alarm
+        scanCourses(); // immediate first check  don't wait for the next alarm
       } else {
         setPushUi(false);
         try {
@@ -978,13 +949,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     } finally { pushBusy = false; }
   }
 
-  // =========================================================================
-  // UNREAD STATE — items detected after the last "Mark all as read"
+  // UNREAD STATE  items detected after the last "Mark all as read"
   // (SEEN_KEY.courses) count as unread: the feed dots them, and the count
   // badges the Course Updates tab, the dashboard section head and the
-  // sidebar entry (UNREAD_KEY — js/shell.js reads it). Counted over the
+  // sidebar entry (UNREAD_KEY  js/shell.js reads it). Counted over the
   // FILTERED list (what the feed actually shows).
-  // =========================================================================
   function loadSeen() {
     return new Promise((resolve) => {
       try {
@@ -1005,7 +974,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const mark = byId('ucp-shell-markRead');
     if (mark) mark.hidden = n <= 0;
     // Dashboard section head badge (#my-notifications is built by
-    // student_dashboard.js — absent on the standalone page, which is fine).
+    // student_dashboard.js  absent on the standalone page, which is fine).
     const head = byId('my-notifications');
     if (head) {
       let b = byId('ucp-dash-notif-badge');
@@ -1018,7 +987,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       b.hidden = n <= 0;
       b.textContent = text;
     }
-    // Sidebar badge (shell.js) — written from every /student page so the
+    // Sidebar badge (shell.js)  written from every /student page so the
     // count reaches pages where the widget itself isn't present.
     try { chrome.storage.local.set({ [UNREAD_KEY]: n }); } catch (e) {}
   }
@@ -1031,15 +1000,13 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (st) { st.textContent = 'All marked as read'; setTimeout(() => { st.textContent = ''; }, 4000); }
   }
 
-  // =========================================================================
-  // PORTAL NEWS — the portal's own "Notification & Announcement" section from
+  // PORTAL NEWS  the portal's own "Notification & Announcement" section from
   // the live dashboard, shown as cards. (Earlier this scraped the whole
   // dashboard generically and latched onto the Classes section; now it targets
   // the notification/announcement section specifically.) When embedded on the
   // dashboard we read that section straight out of the live DOM; on the
   // standalone notifications page we fetch /student/dashboard instead. If the
   // section is empty we show "No portal news found".
-  // =========================================================================
   let newsLoading = false;
 
   function extractPortalNews(doc) {
@@ -1073,7 +1040,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const heading = newsHeads.find((h) => /heading/i.test(h.className || '')) || newsHeads[0];
     if (!heading) {
       const cand = heads.map((h) => (h.textContent || '').trim()).filter(Boolean).slice(0, 25);
-      console.log('UCP shell: Portal News — no "News and Announcements" heading found; headings =', cand);
+      console.log('UCP shell: Portal News  no "News and Announcements" heading found; headings =', cand);
       return items;
     }
 
@@ -1169,7 +1136,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     let items = [];
     try {
       // On the live dashboard the "News and Announcement" section is already in
-      // the DOM (below this widget) — read it directly. On the standalone
+      // the DOM (below this widget)  read it directly. On the standalone
       // notifications page, fetch the dashboard HTML instead.
       let doc;
       if (/\/student\/dashboard/i.test(location.pathname)) doc = document;
@@ -1187,14 +1154,12 @@ chrome.storage.local.get('toggle_power', (result) => {
     else feed.innerHTML = feedStateHtml('empty', 'No portal news found');
   }
 
-  // =========================================================================
-  // MISCELLANEOUS (was "UCP Notification") — the ucp-news feed (a single
+  // MISCELLANEOUS (was "UCP Notification")  the ucp-news feed (a single
   // { headline, subtitle } item, the same source the login page's "Latest UCP
   // News" box uses). raw .githubusercontent.com sends Access-Control-Allow-Origin:*,
   // so a content script fetch works directly (no service worker needed).
   // No cache (1C): re-fetched on every open.
-  // =========================================================================
-  const UCP_NEWS_URL = 'https://raw.githubusercontent.com/raz0229/ucp-news/main/news.json';
+  const UCP_NEWS_URL = 'https://raw.githubusercontent.com/bakrx12/ucp-news/refs/heads/patch-1/news.json';
   // No cache (1C): the feed is re-fetched on every tab open / refresh.
   let ucpNewsLoading = false;
 
@@ -1203,7 +1168,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (!feed) return;
     const headline = (data && (data.headline || data.title)) || '';
     const subtitle = (data && (data.subtitle || data.description || data.body)) || '';
-    if (!headline && !subtitle) { feed.innerHTML = feedStateHtml('empty', 'No UCP news yet.'); return; }
+    if (!headline && !subtitle) { feed.innerHTML = feedStateHtml('empty', 'No UCP Smart Portal updates found.'); return; }
     feed.innerHTML = `
       <div class="ucp-shell-feed-item ucp-shell-news-item" title="${esc(headline)}">
         <div class="ucp-shell-feed-icon">📣</div>
@@ -1226,22 +1191,20 @@ chrome.storage.local.get('toggle_power', (result) => {
       renderUcpNews(data);
     } catch (e) {
       console.warn('UCP shell: ucp-news feed failed', e);
-      if (feed) feed.innerHTML = feedStateHtml('error', "Couldn't load UCP news. Try again in a moment.");
+      if (feed) feed.innerHTML = feedStateHtml('error', "Couldn't load. Try again in a moment.");
     }
     ucpNewsLoading = false;
   }
 
-  // =========================================================================
-  // UCP FEED (was "UCP News") — the right-most tab. Live-fetched from the
+  // UCP FEED (was "UCP News")  the right-most tab. Live-fetched from the
   // PUBLIC ucp.edu.pk/announcement/ listing (a different origin than the
   // portal), so the service worker does the cross-origin fetch (background
   // GET_UCP_TODAY) and we parse the raw HTML here. Populated ONLY when the
-  // user clicks the tab (setShellView index 4) — never on load. NO caching (1C):
+  // user clicks the tab (setShellView index 4)  never on load. NO caching (1C):
   // every open / refresh re-fetches live and nothing is written to storage.
   // Shows 5 cards at a time with a "Load more" button (5 more); "Refresh"
   // re-fetches. Each card shows the title, the listing excerpt, and the publish
   // date + author (best-effort from the listing); articles link out in a new tab.
-  // =========================================================================
   const UCP_TODAY_PAGE_SIZE = 5;
   let ucpTodayItems = [];     // all parsed items (page order, most recent first)
   let ucpTodayShown = 0;      // how many are currently rendered
@@ -1375,7 +1338,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const status = byId('ucp-shell-ucpTodayStatus');
     // No caching (1C): every tab open AND every manual "Refresh" re-fetches the
     // live announcement listing. `ucpTodayItems` is only kept in memory for the
-    // "Load more" pagination of the current fetch — it is never written to storage.
+    // "Load more" pagination of the current fetch  it is never written to storage.
     ucpTodayLoading = true;
     if (status) status.textContent = 'Fetching…';
     if (feed) feed.innerHTML = feedStateHtml('loading');
@@ -1401,8 +1364,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     renderUcpToday();
   }
 
-  // =========================================================================
-  // ACADEMIC CALENDAR — the left-most (default) tab. Live-fetched from
+  // ACADEMIC CALENDAR  the left-most (default) tab. Live-fetched from
   // ucp.edu.pk via the service worker (js/academic_calendar.js owns the fetch +
   // parse + model; background's GET_ACADEMIC_CALENDAR does the cross-origin
   // fetch). Shows a mini-card (with the Refresh button docked inside it) for the
@@ -1412,7 +1374,6 @@ chrome.storage.local.get('toggle_power', (result) => {
   // and re-fetched on every tab open (setShellView index 0); the module caches
   // the model, re-fetching only once its date-gate is reached or on a manual
   // refresh.
-  // =========================================================================
   let acadRendering = false;
   async function renderAcademicCalendar(force) {
     if (acadRendering) return;
@@ -1421,7 +1382,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     const feed = byId('ucp-shell-acad-feed');
     if (!mini || !feed) { acadRendering = false; return; }
     // If a mini-card (or loading shell) is already showing, keep its button +
-    // status visible and only update the status line — so a manual refresh shows
+    // status visible and only update the status line  so a manual refresh shows
     // "Refreshing…" INSIDE the button instead of wiping the card to a spinner.
     const hasMini = !!mini.querySelector('.ucp-acad-mini-card');
     const setStatus = (t) => { const st = byId('ucp-shell-acadStatus'); if (st) st.textContent = t; };
@@ -1449,7 +1410,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         } catch (e) {}
         mini.innerHTML = renderAcadMiniCard(model);
         feed.innerHTML = renderAcadFeed(model, semNum);
-        // Reflect the data provenance so the manual refresh gives feedback — the
+        // Reflect the data provenance so the manual refresh gives feedback  the
         // text lands inside the button, under its "Refresh" title.
         setStatus(
           model._source === 'live' ? 'Updated just now'
@@ -1471,7 +1432,7 @@ chrome.storage.local.get('toggle_power', (result) => {
 
   // The Next-up mini-card shell: a left info column (stretches, truncates) + the
   // two-line "Refresh" button docked on the right. The button carries the id
-  // (#ucp-shell-acadRefresh) and its own status span (#ucp-shell-acadStatus) —
+  // (#ucp-shell-acadRefresh) and its own status span (#ucp-shell-acadStatus) 
   // both are re-created on every render, so the click is handled by DELEGATION on
   // the stable panel (see wireWidget), not a direct listener.
   function acadMiniShell(inner) {
@@ -1493,7 +1454,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   // Mini-card: the nearest UPCOMING dated item across all terms (headlines +
-  // milestones + holidays), labelled with its term — e.g. "Next up • Fall 2026".
+  // milestones + holidays), labelled with its term  e.g. "Next up • Fall 2026".
   function renderAcadMiniCard(model) {
     const ac = window.__ucpAcadCal;
     // Prefer the cached "Next up" (captured at the page-load refresh and stored
@@ -1525,7 +1486,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // A season+year ("Fall 2026", "Summer 2026") embedded in a row's NAME, in the
   // same normalized form the term headings use. Used to spot the trailing
   // "Registration / Commencement of Classes for <next term>" rows a term's table
-  // tacks on — they actually belong to the NEXT term.
+  // tacks on  they actually belong to the NEXT term.
   const ACADEM_SEASON_RE = /\b(autumn|fall|spring|summer|winter)\s+(\d{4})\b/i;
   function termInName(name) {
     const m = ACADEM_SEASON_RE.exec(name || '');
@@ -1538,9 +1499,9 @@ chrome.storage.local.get('toggle_power', (result) => {
   // reassign the trailing next-term rows. For each row whose NAME names a
   // different term than the section it sits in: if that referenced term already
   // has its OWN section (its table is rendered on the page), DROP the row
-  // (redundant — that section shows the same event). Otherwise the referenced
+  // (redundant  that section shows the same event). Otherwise the referenced
   // term is only reached via these preview rows, so MOVE every preview row for
-  // it — registration AND commencement — into its (possibly freshly created)
+  // it  registration AND commencement  into its (possibly freshly created)
   // section. (Dropping after the first row created the section would otherwise
   // leave the third term missing its "Commencement of Classes" card.)
   function buildTermSections(model, keepHoliday) {
@@ -1639,7 +1600,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     }).join('');
 
     // Saved expansion (ucp_acad_expanded_terms): if the user left this term's
-    // previous activities open, start expanded — the older past rows stay
+    // previous activities open, start expanded  the older past rows stay
     // revealed (CSS: .ucp-acad-term.is-expanded shows .is-hidden-past).
     const wasExpanded = !!acadExpanded[s.term];
 
@@ -1700,7 +1661,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   function renderAcadRow(r, extraCls) {
     const ac = window.__ucpAcadCal;
-    const week = (r.week && r.week !== '–' && r.week !== '—' && r.week !== '-') ? r.week : '';
+    const week = (r.week && r.week !== '–' && r.week !== '' && r.week !== '-') ? r.week : '';
     // Split the date into a DATE cell and a separate DAY (weekday) cell. Both sit
     // on the LEFT side of the row (before the Week column) and are right-aligned.
     // Ranges / "To be announced" fall back to the raw date text (in the title).
@@ -1717,9 +1678,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       </div>`;
   }
 
-  // =========================================================================
-  // Direct load — a refresh on /student/notifications still shows the page.
-  // =========================================================================
+  // Direct load  a refresh on /student/notifications still shows the page.
   if (location.pathname === '/student/notifications') {
     const ensureRoot = () => {
       let root = byId('ucp-shell-root');
