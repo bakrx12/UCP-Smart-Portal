@@ -1,4 +1,4 @@
-/* ==== Global Background with Overlay ==== */
+/*  Global Background with Overlay  */
 :root {
   --bg-overlay-transparency: 0.6;
 }
@@ -21,13 +21,6 @@ body.bg::before {
   z-index: 0;
 }
 
-
-
-
-
-
-
-
 /* Looks ugly */
   .short_image {
     background: none !important;
@@ -42,7 +35,7 @@ body.bg::before {
     display: none;
   }
 
-/* ==== Glassmorphic Login Card ==== */
+/*  Glassmorphic Login Card  */
 .custom-login {
   position: relative;
   z-index: 1;
@@ -58,7 +51,7 @@ body.bg::before {
   animation: fadeIn 1s ease-out;
 }
 
-/* ==== Logo ==== */
+/*  Logo  */
 div.mb-4 {
     margin-bottom: 0 !important;
 }
@@ -71,7 +64,7 @@ img.logo_ucp {
   padding-left: 0;
 }
 
-/* ==== Inputs ==== */
+/*  Inputs  */
 .custom-login .form-control {
   border-radius: 30px !important;
   background: rgba(255,255,255,0.18) !important;
@@ -92,7 +85,7 @@ img.logo_ucp {
   outline: none;
 }
 
-/* ==== Buttons ==== */
+/*  Buttons  */
 .custom-login .btn-outline-primary {
   border-radius: 30px;
   padding: 0.6rem 1.4rem;
@@ -108,7 +101,7 @@ img.logo_ucp {
   transform: translateY(-2px);
 }
 
-/* ==== Microsoft Login Button ==== */
+/*  Microsoft Login Button  */
 .custom-login a.btn-outline-primary {
   /* display: inline-flex; */
   align-items: center;
@@ -118,13 +111,13 @@ img.logo_ucp {
   /* width: 100%; */
 }
 
-/* ==== Animations ==== */
+/*  Animations  */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(5px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ==== Responsive Styling ==== */
+/*  Responsive Styling  */
 @media (max-width: 768px) {
   .custom-login {
     max-width: 90%;
