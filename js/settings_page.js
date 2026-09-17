@@ -1,5 +1,3 @@
-// Standalone page reached from the sidebar "Settings" entry. js/shell.js
-
   const __ucpFindGuardAction = (target) => {
     let n = target;
     while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
@@ -33,7 +31,9 @@ chrome.storage.local.get('toggle_power', (result) => {
 
   const powerOn = (v) => (v === undefined || v === null) ? true : !!v;
 
+
   // helpers
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"'`=\/]/g, (c) => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
@@ -79,14 +79,14 @@ chrome.storage.local.get('toggle_power', (result) => {
     document.head.appendChild(l);
   }
 
-  // =========================================================================
+
   // WALLPAPER SYNC — make the saved background actually paint on this page.
   // --ucp-bg-image is normally set by student.js at page load; in tabs where
   // that did not run (opened before the extension loaded, extension reloaded
   // without a page reload) the variable is missing and nothing paints. This
   // mirrors student.js's resolve + probe + default-fallback logic and runs on
   // every render, so the background is guaranteed to show behind the page.
-  // =========================================================================
+
   const DEFAULT_BG = 'assets/bgs/bg.jpg'; // bundled — always exists
   // Cap for uploaded background size (max width/height it's stored at). The
   // Storage & Cache section lets the user lower it to save storage.
@@ -132,7 +132,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // pending Save/Discard model wired in render(); onChanged below syncs the
   // UI from storage changes made by THIS page's Save button or other tabs.)
 
-  // --- Blur amount (slider, 0–10 px) -------------------------------------
+  // --- Blur amount (slider, 0–10 px)
   // Replaces the old on/off `ucp_blur_bg` boolean. The amount is applied as
   // body.ucp-blur + a --ucp-blur-px variable (the CSS blur filter reads the
   // variable). The legacy boolean still works when no amount is saved yet:
@@ -174,7 +174,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       try { chrome.storage.local.set({ [BLUR_KEY]: v, ucp_blur_bg: v > 0 }); } catch (e) {}
     }
   }
-  // --- Accent-color toggle (ON by default; off = plain white) -------------
+  // --- Accent-color toggle (ON by default; off = plain white) 
   const ACCENT_KEY = 'ucp_bg_accent';
   const ACCENT_COLOR_KEY = 'ucp_bg_accent_color'; // cached "r,g,b" of last sample
   // ON unless the user explicitly turned it off (missing value = on).
@@ -241,7 +241,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
   }
 
-  // --- ntfy (phone push) ----------------------------------------------------
+  // --- ntfy (phone push)--
   // A private topic the phone subscribes to: 'ucp-' + 24 hex chars (192
   // random bits). ntfy.sh topics are 1–64 URL-safe chars — ours fits by
   // construction. The QR encodes https://ntfy.sh/<topic>; if the QR image
@@ -453,7 +453,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     }
   });
 
-  // =========================================================================
+
   // ACCENT COLOR (ON by default) — tints this page's icons, buttons and
   // headings with the dominant vibrant color of the current background
   // image. js/shell.js runs the same logic globally on every page; this
@@ -466,7 +466,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // When ON the page gets body.ucp-bg-accent + a --ucp-accent variable; the
   // page stylesheets do the tinting (see settings_page.css /
   // notification_page.css).
-  // =========================================================================
+
   function sampleAccent(img) {
     const S = 48;
     try {
@@ -577,14 +577,14 @@ chrome.storage.local.get('toggle_power', (result) => {
     } catch (e) { return; } // stale extension context
   }
 
-  // =========================================================================
+
   // STORAGE & CACHE — usage meters + clear-cache + background-size cap
   // The extension's own chrome.storage is metered via getUsage() /
   // getBytesInUse() (a per-item breakdown is only possible HERE). The portal
   // (website) uses its OWN origin storage, metered via navigator.storage.
   // estimate() — a single approximate total (no images-vs-data split, and it
   // is NOT the extension's storage).
-  // =========================================================================
+
   function fmtBytes(n) {
     n = Number(n) || 0;
     if (n < 1024) return Math.round(n) + ' B';
@@ -858,9 +858,9 @@ chrome.storage.local.get('toggle_power', (result) => {
     } catch (e) { done(); }
   }
 
-  // =========================================================================
+
   // PAGE MARKUP (rendered into the shell's page root)
-  // =========================================================================
+
   const pageHtml = `
     <div class="ucp-shell-page">
       <header class="ucp-shell-page-header">
@@ -1085,11 +1085,12 @@ chrome.storage.local.get('toggle_power', (result) => {
               <div class="ucp-notif-default-row" style="margin-top: 12px;">
                 <span class="ucp-notif-default-label">Default Card Button</span>
                 <div class="ucp-shell-seg ucp-notif-default-seg" id="ucp-shell-courseBtnDefault" role="radiogroup">
-                  <div class="ucp-shell-seg-opt is-on" data-course-btn="gradebook" role="radio" aria-checked="true" tabindex="0">Open Gradebook</div>
-                  <div class="ucp-shell-seg-opt" data-course-btn="announcements" role="radio" aria-checked="false" tabindex="0">Open Announcement</div>
-                  <div class="ucp-shell-seg-opt" data-course-btn="material" role="radio" aria-checked="false" tabindex="0">Open Course Material</div>
-                  <div class="ucp-shell-seg-opt" data-course-btn="assessments" role="radio" aria-checked="false" tabindex="0">Open Assessments</div>
-                  <div class="ucp-shell-seg-opt" data-course-btn="outline" role="radio" aria-checked="false" tabindex="0">Open Outline</div>
+                <div class="ucp-shell-seg-opt" data-course-btn="info" role="radio" aria-checked="false" tabindex="0">Announcements / Info</div>
+                  <div class="ucp-shell-seg-opt" data-course-btn="outline" role="radio" aria-checked="false" tabindex="0">Outline</div>
+                  <div class="ucp-shell-seg-opt" data-course-btn="assessments" role="radio" aria-checked="false" tabindex="0">Assessments</div>
+                  <div class="ucp-shell-seg-opt is-on" data-course-btn="gradebook" role="radio" aria-checked="true" tabindex="0">Gradebook</div>
+                  <div class="ucp-shell-seg-opt" data-course-btn="material" role="radio" aria-checked="false" tabindex="0">Course Material</div>
+                  <div class="ucp-shell-seg-opt" data-course-btn="attendance" role="radio" aria-checked="false" tabindex="0">Attandence</div>
                 </div>
               </div>
             </div>
@@ -1219,19 +1220,8 @@ chrome.storage.local.get('toggle_power', (result) => {
       </div>
     </div>`;
 
-  // =========================================================================
+
   // PENDING CHANGES — "Save changes" / "Discard" per setting
-  // A UI change applies LIVE (a preview of the new look) but is NOT written
-  // to storage until the setting's "Save changes" is pressed. "Discard"
-  // reverts that setting to its stored value. `pending` holds one entry per
-  // dirty setting id:
-  //   previous — the stored value when the row first became dirty (frozen;
-  //              cross-tab onChanged re-bases it without touching the UI)
-  //   save()   — persist the CURRENT (UI/preview) value
-  //   discard()— restore `previous` in the UI + its live effect
-  // Every render() starts clean (the page DOM is rebuilt, old pending state
-  // would point at dead nodes).
-  // =========================================================================
   const pending = new Map();
   const pendingRows = []; // { pIds: "a b", rowEl, actionsEl }
   function anyPending(pIds) {
@@ -1282,16 +1272,16 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
   }
 
-  // =========================================================================
+
   // CREDITS — the card's title links to the extension's repo. The four
   // credited developers are shown as plain text; the only personal social
   // found in the extension's own code is the repo owner's GitHub.
-  // =========================================================================
+
   const CREDITS_SOCIALS = {
     'Abdurrehman': null,
     'Talha Abid': null,
     'Abdullah Zafar': null,
-    'AbuBakr Aslam': 'https://github.com/bakrx12', // the UCP-Smart-Portal repo owner
+    'AbuBakr Aslam': 'https://github.com/bakrx12', // hehe
   };
   function renderCredits() {
     const box = byId('ucp-shell-creditsNames');
@@ -1302,7 +1292,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     )).join('');
   }
 
-  // =========================================================================
+
   // wireAction(el, action) — ROBUST ACTIVATION for every settings control
   // (module scope so renderBgGrid's tiles can use it too). The portal's own
   // scripts register a window-level click interceptor that swallows pointer
@@ -1322,7 +1312,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   //     only when an event slips past the portal's interceptor.
   // run() is double-fire guarded (400 ms): one press can fire several of
   // these paths at once, and only the FIRST may execute.
-  // =========================================================================
+
   const BUILD_TAG = '2026-09-08.7';
   let wiredControls = 0;
   // True when the press started INSIDE a native interactive descendant of el
@@ -1366,11 +1356,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); } });
   }
 
-  // =========================================================================
+
   // render(container) — called by shell.js (and on a direct load of
   // /student/settings). Rebuilds the page fresh every time (the shell
   // already cleared the container).
-  // =========================================================================
+
   function render(container) {
     ensureMaterialIcons();
     ensurePageCss();
@@ -1381,17 +1371,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     wiredControls = 0;
     renderCredits();
 
-    // =========================================================================
-    // INSTANT TOGGLES — single switches (Stay Active, Dark Mode, Night Mode,
-    // accent, new enrollment UI, Notification master) apply IMMEDIATELY: the
-    // paint IS the final state and storage is written in the same gesture —
-    // no Save/Discard (those remain for multi-step blocks: wallpaper/blur,
-    // notification behaviour, dashboard items, the webhook field). All
-    // controls go through __ucpAction (wireAction) so the in-file click
-    // guard (document_start) and the window/document-capture backstops can
-    // reach them. Clicking anywhere on the toggle's ROW runs it too (the row
-    // shares the switch's __ucpAction = one shared 400 ms guard).
-    // =========================================================================
+    // toggles
     const nightUi = () => {
       const d = byId('ucp-shell-nightToggle');
       const p = byId('ucp-shell-nightDeepToggle');
@@ -1510,14 +1490,14 @@ chrome.storage.local.get('toggle_power', (result) => {
       wireAction(opt, pick);
     });
 
-    // =========================================================================
+
     // ntfy (phones) + Discord Webhook — Notifications card.
     // ntfy: Add = create a private topic + fire the welcome/test push;
     // Rotate = brand-new topic (old phones must re-scan); Remove = unpair.
     // The SW owns the fetch (background/script.js — pushExternalChannels /
     // UCP_NTFY_TEST). Discord: the input is pending on change (Save writes
     // ucp_discord_webhook); Send test POSTs the SAVED url.
-    // =========================================================================
+  
     const ntfyAdd = byId('ucp-shell-devicesAdd');
     const ntfyRotate = byId('ucp-shell-devicesRotate');
     const ntfyRemove = byId('ucp-shell-devicesRemove');
@@ -1682,12 +1662,12 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
     const dashReset = byId('ucp-shell-dashReset');
 
-    // =========================================================================
+  
     // Notification widget — tab visibility toggles + default-tab selector.
     // Stored under ucp_notif_tabs as { default: <orig 0-4>, tabs: {<orig>:bool} };
     // js/notification_page.js reads it on every widget render (missing = all
     // five tabs on, default = Academic Calendar).
-    // =========================================================================
+  
     const NOTIF_PREFS_KEY = 'ucp_notif_tabs';
     const notifTabItems = Array.from(container.querySelectorAll('[data-notif-tab]'));
     const notifDefaultOpts = Array.from(container.querySelectorAll('#ucp-shell-notifDefault .ucp-shell-seg-opt'));
@@ -1777,9 +1757,9 @@ chrome.storage.local.get('toggle_power', (result) => {
       wireAction(o, pick);
     });
 
-    // =========================================================================
+  
     // Courses · Card Details wiring (code, section, credits toggles & defaultBtn)
-    // =========================================================================
+  
     const courseCardItems = Array.from(container.querySelectorAll('[data-course-card-item]'));
     const courseBtnOpts = Array.from(container.querySelectorAll('#ucp-shell-courseBtnDefault .ucp-shell-seg-opt'));
 
@@ -1967,12 +1947,12 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     initPrefs();
 
-    // =========================================================================
+  
     // PENDING ACTIONS — wire each "Save changes" / "Discard" pair (the boxes
     // are shown only while their setting is dirty) and register the rows they
     // highlight. One box can cover several settings ("dash notif" — the two
     // groups share a card).
-    // =========================================================================
+  
     document.querySelectorAll('.ucp-pending-actions').forEach((box) => {
       const pIds = box.dataset.pending || '';
       const rowEl = pIds === 'blur' ? box.closest('.ucp-shell-bg-blur')
@@ -2021,7 +2001,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   window.__ucpSettingsPage = { render, revertPending };
 
-  // -------------------------------------------------------------------------
+  //----------
   // Window- + document-level CAPTURE backstops for the settings controls.
   //
   // The portal's own scripts register capture handlers (on window AND/OR
@@ -2043,7 +2023,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   // the portal never gets it. Targets without __ucpAction (all portal
   // content, the blur slider) are ignored — the backstops only ever touch
   // our own controls.
-  // -------------------------------------------------------------------------
+  //----------
   const __ucpFindAction = (target) => {
     let n = target;
     while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
@@ -2074,9 +2054,9 @@ chrome.storage.local.get('toggle_power', (result) => {
     document.addEventListener(type, ucpBackstop(type), true);
   });
 
-  // =========================================================================
+
   // BACKGROUND — picker + custom upload (moved in from shell.js)
-  // =========================================================================
+
   // A tile whose image failed to load gets a text label so the option stays
   // visible and pickable (no blank boxes).
   function showTileFallback(tile, name) {
@@ -2173,10 +2153,10 @@ chrome.storage.local.get('toggle_power', (result) => {
       });
     } catch (e) {}
   }
-  // =========================================================================
+
   // UPLOAD FEEDBACK — a short status line confirms a pick/upload applied, so
   // the user can see the upload actually took effect (it is applied live).
-  // =========================================================================
+
   let statusTimer = null;
   // sticky = keep the message on screen until something else replaces it
   // (used for "Processing image…" — a large file can take a while and the
@@ -2242,13 +2222,13 @@ chrome.storage.local.get('toggle_power', (result) => {
     reader.readAsDataURL(file);
   }
 
-  // =========================================================================
+
   // Direct load — a refresh on /student/settings (or the portal serving that
   // path) still shows the settings page: render into the shell root (created
   // here when shell.js hasn't). Leaving the page is via the sidebar entries
   // / Escape / the browser Back button (shell.js' popstate handler) — the
   // page itself no longer has a Back button.
-  // =========================================================================
+
   if (location.pathname === '/student/settings') {
     const ensureRoot = () => {
       let root = byId('ucp-shell-root');
