@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=UnifrakturMaguntia&display=swap");
 
-/* ===== GLASSMORPHIC BASE STYLING ===== */
+/*  GLASSMORPHIC BASE STYLING  */
 :root {
   --primary-glass: rgba(126, 125, 125, 0.919);
   --secondary-glass: rgba(27, 67, 153, 0.233);
@@ -21,7 +21,7 @@
 
 
 
-/* ===== DASHBOARD CARDS ===== */
+/*  DASHBOARD CARDS  */
 .md-card {
   background: var(--light-glass) !important;
   border-radius: 20px !important;
@@ -29,7 +29,7 @@
   box-shadow: var(--shadow-glass);
   overflow: hidden;
   transition: var(--transition-slow);
-  transform: translateY(-60px);
+  transform: translateY(-87px);
   margin: 0 1rem 1rem;
 }
 
@@ -48,9 +48,8 @@
 }
 
 .md-card:hover {
-  transform: translateY(-60px);
-  /* 1Z: lighter hover shadow — the container doesn't lift (base is already
-     at -60px), so only a softer shadow is added on hover. */
+  transform: translateY(-93px);
+  /* lighter hover shadow */
   box-shadow: 0 12px 34px 0 rgba(0, 0, 0, 0.4);
 }
 
@@ -79,7 +78,7 @@
   border-radius: 3px;
 }
 
-/* ===== USER PROFILE SECTION ===== */
+/* USER PROFILE SECTION  */
 .user_heading_dash {
   background: rgba(255, 255, 255, 0.1) !important;
   border-radius: 20px;
@@ -123,7 +122,7 @@ div.user_heading_avatar div.thumbnail {
   margin-top: 5px;
 }
 
-/* ===== ACADEMIC INFO CARDS ===== */
+/* ACADEMIC INFO CARDS  */
 .uk-grid > div {
   padding: 10px;
 }
@@ -142,7 +141,7 @@ div.user_heading_avatar div.thumbnail {
   transform: translateY(-15px);
 }
 
-/* ===== BUTTONS ===== */
+/*  BUTTONS  */
 .md-btn {
   border-radius: 12px !important;
   transition: var(--transition-fast) !important;
@@ -212,30 +211,7 @@ div.user_heading_avatar div.thumbnail {
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== NOTIFICATIONS & ALERTS ===== */
-.uk-badge {
-  border-radius: 0% !important;
-  min-width: 20px;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(153, 27, 30, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(153, 27, 30, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(153, 27, 30, 0);
-  }
-}
-
-/* ===== TABLES ===== */
+/*  TABLES  */
 thead th {
   background: var(--primary-glass) !important;
   color: #fff !important;
@@ -248,11 +224,11 @@ thead th {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* ===== ANIMATIONS ===== */
+/*  ANIMATIONS  */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
@@ -281,7 +257,7 @@ thead th {
   animation-delay: 0.5s;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/*  RESPONSIVE DESIGN  */
 @media (max-width: 960px) {
   .user_heading_dash {
     flex-direction: column;
@@ -293,7 +269,7 @@ thead th {
   }
 }
 
-/* ===== SCROLLBAR STYLING ===== */
+/*  SCROLLBAR STYLING  */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -312,7 +288,7 @@ thead th {
   background: rgba(17, 43, 79, 0.9);
 }
 
-/* ===== SLIDER/CAROUSEL ===== */
+/*  SLIDER/CAROUSEL  */
 .uk-slider-container {
   padding: 20px 0;
 }
@@ -326,9 +302,7 @@ thead th {
   transform: scale(1.05);
 }
 
-/* ===== FLOATING ELEMENTS ===== */
-
-/* ===== TEXT SELECTION ===== */
+/*  TEXT SELECTION  */
 ::selection {
   background: rgba(17, 43, 79, 0.5);
   color: #fff;
@@ -420,7 +394,7 @@ thead th {
   }
 }
 
-/* ----- Card ----- */
+/*  Card  */
 .card {
   position: relative;
   width: 310px;
@@ -595,7 +569,7 @@ thead th {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center; /* center the stats column against the ID card */
+  align-items: center; 
 }
 
 /* CGPA / Earned / Total / Inprogress Cr now sit in their own cards, stacked
@@ -608,11 +582,14 @@ thead th {
   width: fit-content;
 }
 
+
+
+
 /* Each academic stat is its own blackish-glass card, matching the portal's
    dark card surfaces (wallpaper shows through). Fixed width keeps the column
    slim — no stretching to fill the row. */
 #academic-flexbox #stats .entry {
-  width: 130px;
+  width: 100px;
   box-sizing: border-box;
   background: rgba(10, 14, 20, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -656,6 +633,9 @@ thead th {
   color: rgb(20, 160, 220);
   font-size: x-large;
 }
+
+
+
 /* Term Week stat — a warm accent to set it apart from the credit values. */
 .term-week .value {
   color: #ffb74d;
@@ -699,6 +679,7 @@ thead th {
 
 .attendance-card-title {
   margin: 0 0 16px;
+  
   padding: 1rem;
   text-align: center;
   color: white !important;
@@ -1027,7 +1008,7 @@ body.ucp-bg-accent .attendance-card-title {
 .gmc-badge.checking {
   background: rgba(10, 14, 20, 0.35);
 }
-/* 1B: "Checking…" — while a course's submission count is still being fetched,
+/* "Checking…" — while a course's submission count is still being fetched,
    the badge reads "Checking" + animated dots (… → . → .. → ... → .). The dots
    live in a ::after on the count so a static "…" still shows if the content
    animation is unsupported. */
@@ -1499,7 +1480,7 @@ body.ucp-bg-accent .attendance-card-title {
   margin: 8px 0;
 }
 
-/* ===== SECTION EXPAND / COLLAPSE (Academics + Courses) =====
+/*  SECTION EXPAND / COLLAPSE (Academics + Courses) 
    A circular chevron button sits on the RIGHT of the heading row, bottom-
    aligned with the heading's underline. Clicking it hides the section's
    content (display:none) and rotates the icon; the state persists in
@@ -1536,7 +1517,7 @@ body.ucp-bg-accent .attendance-card-title {
 }
 .gmc-collapse-btn.collapsed .material-icons { transform: rotate(180deg); }
 
-/* ===== ACADEMICS / COURSES HEADING BARS — width alignment =====
+/*  ACADEMICS / COURSES HEADING BARS — width alignment 
    The Academics heading row is inserted OUTSIDE .md-card-content (the JS
    uses beforeBegin, which puts it as a sibling of the padded content,
    directly under .md-card), while the Courses row is inserted INSIDE the
@@ -1828,25 +1809,9 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   }
 }
 
-/* =========================================================================
-   FINAL LAYOUT — appended last so it wins the cascade over the many
-   partially-superseded rules above. One coherent set:
-     · Task 3 : loading splash (masks the original portal dashboard).
-     · Task 1a: academic stat mini-cards match the course mini-cards (same
-                glass fill/border/shadow/radius); more gap between the
-                icon/label and the value.
-     · Task 1b: Term Progress card's header aligns at the top like the others.
-     · Task 1c: course cards are content-fit (no longer stretched to the row
-                end).
-     · Task 4a: one-shot card flip on first load.
-     · Task 4b: the UCP student card is the same size as the Attendance /
-                Classes cards and sits on the LEFT; those sit to the right.
-   ========================================================================= */
+/*dashboard layout*/
 
-/* ---- Task 3 : loading splash ------------------------------------------
-   #ucp-dash-loader is added by js/student_dashboard.js the moment the script
-   runs and removed (faded) once the extension's dashboard is in the DOM. The
-   near-opaque dark sheet hides the original portal dashboard during the gap. */
+/* loading splash */
 .ucp-dash-loader {
   position: fixed;
   inset: 0;
@@ -1888,7 +1853,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   to { transform: rotate(360deg); }
 }
 
-/* ---- Academic stat mini-cards: shared look + LEFT / RIGHT split ---------
+/* Academic stat mini-cards: shared look + LEFT / RIGHT split 
    The JS paints the exact CARD_GLASS gradient inline; this only adds the
    matching border / radius (no box-shadow on the container). The four numeric
    cards (CGPA / Earned / Total / Inprogress) sit on the LEFT; Term Progress
@@ -1899,6 +1864,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   gap: 12px;
 }
 #academics-module #academic-flexbox #stats .entry {
+      margin-left: 0;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
   box-shadow: none;
@@ -1913,18 +1879,93 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
 #academics-module #academic-flexbox #stats .entry .stat-icon {
   font-size: 18px;
 }
+/* Attendance glance + Invoices tiles --
+   Same 130px stat tiles; the value line carries the risk level / unpaid
+   count, the small sub line the at-risk course ("CS101 · 72%") or the total
+   amount due. Hover raises the shared .gmc-tooltip — NO font, size or
+   line-height change and the header icon stays put (only the shadow moves,
+   same as every other tile). */
+#academic-flexbox #stats .entry.attendance-glance {
+    margin-left: auto !important;
+  flex-basis: 190px !important;
+  width: 190px !important;
+  max-width: 190px !important;
+    display: flex;
+
+    flex-direction: column;
+}
+#academic-flexbox #stats .entry.invoices-stat {
+  cursor: pointer;
+}
+#academic-flexbox #stats .entry .stat-sub {
+
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Value-line colours follow the risk thresholds (green = safe/cleared). */
+#academic-flexbox #stats .entry.attendance-glance .value {
+  color: rgba(255, 255, 255, 0.75); /* N/A / scanning default */
+}
+#academic-flexbox #stats .entry.attendance-glance.is-extreme .value { color: #ff5470; }
+#academic-flexbox #stats .entry.attendance-glance.is-risk .value { color: #ffa726; }
+#academic-flexbox #stats .entry.attendance-glance.is-caution .value { color: #ffd54f; }
+#academic-flexbox #stats .entry.attendance-glance.is-safe .value { color: #20d839; }
+#academic-flexbox #stats .entry.invoices-stat .value {
+  color: rgba(255, 255, 255, 0.75); /* Checking… default */
+}
+#academic-flexbox #stats .entry.invoices-stat.is-due .value { color: #ffa726; }
+#academic-flexbox #stats .entry.invoices-stat.is-safe .value { color: #20d839; }
+/* The sub line inherits the tile's state colour while it has content. */
+#academic-flexbox #stats .entry.attendance-glance.is-extreme .stat-sub { color: #ff5470; }
+#academic-flexbox #stats .entry.attendance-glance.is-risk .stat-sub { color: #ffa726; }
+#academic-flexbox #stats .entry.attendance-glance.is-caution .stat-sub { color: #ffd54f; }
+#academic-flexbox #stats .entry.invoices-stat.is-due .stat-sub { color: #ffa726; }
+
+/* Per-subject / per-invoice rows inside the shared .gmc-tooltip. */
+.gmc-tooltip .ag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+}
+.gmc-tooltip .ag-row:last-child { border-bottom: none; }
+.gmc-tooltip .ag-name {
+  color: #fff;
+  opacity: 0.92;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gmc-tooltip .ag-pct { font-weight: 600; color: rgba(255, 255, 255, 0.75); }
+.gmc-tooltip .ag-pct.is-extreme { color: #ff5470; }
+.gmc-tooltip .ag-pct.is-risk { color: #ffa726; }
+.gmc-tooltip .ag-pct.is-caution { color: #ffd54f; }
+.gmc-tooltip .ag-pct.is-safe { color: #20d839; }
+.gmc-tooltip .ag-pct.is-due { color: #ffa726; }
+
+
+
 /* Push the Term Progress / Next Class pair to the right edge (auto gap).
    A definite width (overriding the fit-content sizing) so the value row and
    the bar inside it have a concrete width to fill — otherwise the 100% track
    collapses to 0 in a fit-content card. */
 #academics-module #academic-flexbox #stats .academic-term-progress-stat {
-  margin-left: auto;
   flex-basis: 190px !important;
   width: 190px !important;
   max-width: 190px !important;
 }
 
-/* ---- Term Progress card ------------------------------------------------
+/* Term Progress card ---
    Same 2-row structure as the other mini-cards (icon+title heading, then a
    value row) so its icon/title align identically to the rest. The current
    week is a small badge in the heading row; the value row holds the bar. */
@@ -1946,8 +1987,9 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
 #academics-module #academic-flexbox #stats .academic-term-progress-stat .value.academic-term-progress-bar {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 90%;
   margin-top: 14px;
+  margin-left: 7px;
   min-height: 1.4rem;
 }
 #academics-module #academic-flexbox #stats .academic-term-progress-stat .academic-term-progress-track {
@@ -1955,11 +1997,11 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   margin-top: 0;
 }
 
-/* ---- Course cards: back to the original uniform grid --------------------
+/* Course cards: back to the original uniform grid 
    The per-course .gmc-card tiles keep the auto-fit grid (each fills an equal
    column). Only the overview strip is content-fit — not the course cards. */
 
-/* ---- Course-overview strip: content-fit, split left / right -------------
+/* Course-overview strip: content-fit, split left / right ---
    Term Progress was removed. "Submissions Left" + "Next Assessment" hug their
    content on the left; "Latest Grade Updates" is pushed to the right, with a
    gap between the two groups. */
@@ -1981,7 +2023,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   margin-left: auto;
 }
 
-/* ---- Manual "Refresh courses" button ------------------------------------
+/* Manual "Refresh courses" button -
    1B: styled to look EXACTLY like the course-overview mini-cards (same glass
    fill, border, radius, box-shadow, and heading icon+label) so it reads as a
    peer widget in the same row. width:fit-content (like the mini-cards) sizes it
@@ -2091,7 +2133,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   padding: 0 18px 18px;
 }
 
-/* ---- Attendance / Classes cards: header on top, scroll body below --------
+/* Attendance / Classes cards: header on top, scroll body below ---
    The header is a STATIC bar at the top (rounded top corners); only the body
    below it scrolls, so the side scrollbar sits BELOW the headline instead of
    spanning up over it. Each card becomes a flex column (overflow:hidden, so the
@@ -2134,7 +2176,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* ---- Next Class: commencement detail shown INSIDE the card on hover ------
+/* Next Class: commencement detail shown INSIDE the card on hover -
    While a term is still upcoming the card shows "Fall 2026 in 22 days" but no
    calendar date. On hover the card reveals the exact commencement date + days
    left. JS injects .next-class-tooltip only in this state (see
@@ -2195,7 +2237,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   vertical-align: middle;
 }
 
-/* ---- Credits Info card: in-progress revealed on hover (overlay) --------
+/* Credits Info card: in-progress revealed on hover (overlay) ---
    Same inset-overlay pattern as .next-class-tooltip above: the tip fills the
    card and fades in on :hover. Only present in the DOM when in-progress data
    exists (JS injects it conditionally), so it's a no-op otherwise. */
@@ -2237,7 +2279,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   line-height: 1.25;
 }
 
-/* ---- Make-Up Class section (Course Overview): hover reveal (overlay) ------
+/* Make-Up Class section (Course Overview): hover reveal (overlay) -
    Same inset-overlay pattern as .next-class-tooltip / .credits-info-tooltip:
    the tip fills the section and fades in on :hover. Only present in the DOM
    when a make-up class was found (JS injects it conditionally), so it's a
@@ -2303,7 +2345,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   font-weight: 500;
 }
 
-/* ---- Term Progress card: upcoming milestone revealed on hover (overlay) --
+/* Term Progress card: upcoming milestone revealed on hover (overlay) --
    Same inset-overlay pattern as .next-class-tooltip / .credits-info-tooltip:
    the tip fills the card and fades in on :hover. JS injects .term-progress-tooltip
    only when at least one of the four key milestones (End of 8th Week, Mid Term,
@@ -2321,7 +2363,7 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   align-items: flex-start;
   justify-content: center;
   gap: 3px;
-  padding: 8px 12px;
+  padding: 8px 15px;
   box-sizing: border-box;
   border-radius: inherit;
   background: rgba(10, 14, 20, 0.97);
@@ -2348,72 +2390,9 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
 }
 
 
-/* ---- Attendance glance + Invoices tiles --------------------------------
-   Same 130px stat tiles; the value line carries the risk level / unpaid
-   count, the small sub line the at-risk course ("CS101 · 72%") or the total
-   amount due. Hover raises the shared .gmc-tooltip — NO font, size or
-   line-height change and the header icon stays put (only the shadow moves,
-   same as every other tile). */
-#academic-flexbox #stats .entry.attendance-glance,
-#academic-flexbox #stats .entry.invoices-stat {
-  cursor: pointer;
-}
-#academic-flexbox #stats .entry .stat-sub {
-  margin-top: 2px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  line-height: 1.3;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* Value-line colours follow the risk thresholds (green = safe/cleared). */
-#academic-flexbox #stats .entry.attendance-glance .value {
-  color: rgba(255, 255, 255, 0.75); /* N/A / scanning default */
-}
-#academic-flexbox #stats .entry.attendance-glance.is-extreme .value { color: #ff5470; }
-#academic-flexbox #stats .entry.attendance-glance.is-risk .value { color: #ffa726; }
-#academic-flexbox #stats .entry.attendance-glance.is-caution .value { color: #ffd54f; }
-#academic-flexbox #stats .entry.attendance-glance.is-safe .value { color: #20d839; }
-#academic-flexbox #stats .entry.invoices-stat .value {
-  color: rgba(255, 255, 255, 0.75); /* Checking… default */
-}
-#academic-flexbox #stats .entry.invoices-stat.is-due .value { color: #ffa726; }
-#academic-flexbox #stats .entry.invoices-stat.is-safe .value { color: #20d839; }
-/* The sub line inherits the tile's state colour while it has content. */
-#academic-flexbox #stats .entry.attendance-glance.is-extreme .stat-sub { color: #ff5470; }
-#academic-flexbox #stats .entry.attendance-glance.is-risk .stat-sub { color: #ffa726; }
-#academic-flexbox #stats .entry.attendance-glance.is-caution .stat-sub { color: #ffd54f; }
-#academic-flexbox #stats .entry.invoices-stat.is-due .stat-sub { color: #ffa726; }
 
-/* Per-subject / per-invoice rows inside the shared .gmc-tooltip. */
-.gmc-tooltip .ag-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.8rem;
-}
-.gmc-tooltip .ag-row:last-child { border-bottom: none; }
-.gmc-tooltip .ag-name {
-  color: #fff;
-  opacity: 0.92;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.gmc-tooltip .ag-pct { font-weight: 600; color: rgba(255, 255, 255, 0.75); }
-.gmc-tooltip .ag-pct.is-extreme { color: #ff5470; }
-.gmc-tooltip .ag-pct.is-risk { color: #ffa726; }
-.gmc-tooltip .ag-pct.is-caution { color: #ffd54f; }
-.gmc-tooltip .ag-pct.is-safe { color: #20d839; }
-.gmc-tooltip .ag-pct.is-due { color: #ffa726; }
 
-/* ---- Course card right-click menu (all course links) ------------------- */
+/* Course card right-click menu (all course links) */
 .gmc-ctx-menu {
   position: fixed;
   z-index: 2147483000;
@@ -2458,17 +2437,14 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
   color: rgba(60, 59, 59, 0.017);
 }
 
-/* ---- Refresh button: a true mini-card peer -----------------------------
-   .course-overview-section cells are auto-fit 1fr grid tracks; dropping the
-   fit-content width + right margin makes the button claim the same kind of
-   cell (identical fill, border, radius, shadow and label typography). */
+/* Refresh button: a true mini-card peer */
 .gmc-courses-refresh-btn {
   width: auto;
   min-width: 0;
-  margin-left: 0;
+  height: 60px;
 }
 
-/* ---- Keyboard focus rings (tiles are tabindex=0 now) -------------------- */
+/* Keyboard focus rings (tiles are tabindex=0 now)  */
 #academic-flexbox #stats .entry:focus-visible,
 .gmc-card:focus-visible,
 .gmc-status:focus-visible,
