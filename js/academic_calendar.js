@@ -1,26 +1,3 @@
-// Owns the academic-calendar data so BOTH consumers can share one fetch +
-// parse + model without duplicating the (fragile) live-page scraping:
-//   - the dashboard's Term Progress hover (js/student_dashboard.js), and
-//   - the Notification page's "Academic Calendar" tab (js/notification_page.js).
-// These run in different content-script contexts (different URLs), so the
-// data lives here, once.
-//
-// The calendar lives on a DIFFERENT public domain (ucp.edu.pk — not the
-// horizon LMS), so it is fetched by the service worker (cross-origin host
-// permission, ucp.edu.pk) which returns raw HTML; this file parses it with
-// DOMParser (the SW has no DOM). It also reads the student's semester number
-// from the same-origin LMS profile for the Convocation gating.
-//
-// Exposes: window.__ucpAcadCal = { fetchCalendar, getSemesterNumber,
-//   nearestHeadline, nearestUpcoming, hasContent, calendarRefreshThreshold,
-//   daysUntil, countdown, formatShortDate, ts, esc, clearCache }
-//
-// NOTE: the live ucp.edu.pk markup is not known ahead of time, so parsing is
-// best-effort and defensive. When it can't find recognizable data it logs an
-// outline of the page's tables so the selectors can be tuned in one pass
-// (same story as the Portal News tab). Loaded on all /student* pages via the
-// shell content_scripts entry in manifest.json.
-// =========================================================================
 (function () {
   if (window.__ucpAcadCal) return; // guard against double injection
 
@@ -84,11 +61,7 @@
     return { name, dateText, dateISO: parseDate(dateText) };
   }
 
-  // The calendar page lists each term as: a heading ("… Fall 2026"), a near-term
-  // table (No. | Details | Date), a milestones table (Activity | Date | Semester
-  // Week), and a holiday/convocation bullet list — events grouped by that term
-  // heading, NOT a column. We walk the page in document order, tracking the
-  // current term heading, and tag every row with its term.
+  // term
   const SEASON_RE = /\b(autumn|fall|spring|summer|winter)\s+(\d{4})\b/i;
   function termFromHeading(el) {
     const m = SEASON_RE.exec(el.textContent || '');
@@ -97,10 +70,7 @@
     return s.charAt(0).toUpperCase() + s.slice(1) + ' ' + m[2];
   }
 
-  // Which kind of table? Milestones = [name, date, week]; near-term headlines =
-  // [no, name, date]. Told apart by which column holds a real date: if the middle
-  // column is the date it's a milestones table; if the last column is the date
-  // (with a small int up front) it's a near-term headlines table.
+  //
   function tableIsMilestones(table) {
     const rows = Array.from(table.querySelectorAll('tr'));
     const body = rows.find((r) => !r.querySelector('th')) || rows[0];
@@ -130,8 +100,7 @@
     return rows;
   }
 
-  // A holiday/convocation bullet item must carry a date (or "to be announced")
-  // and read like a named event — keeps nav/footer/paragraph text out.
+  // A holiday/convocation bullet item must carry a date (or tba)
   const HOLIDAY_KW = /\b(day|convocation|announced|holiday|break|ceremony|fair|eid|milad)\b/i;
   function parseHolidayList(ul, term) {
     const out = [];
@@ -205,7 +174,7 @@
     return model;
   }
 
-  // --- SW fetch (cross-origin) with a stale-context / no-response fallback -
+  // SW fetch (cross-origin) with a stale-context / no-response fallback
   function swFetchHtml() {
     return new Promise((resolve) => {
       try {
@@ -361,7 +330,7 @@
     }
   }
 
-  // --- small render helpers (reused by both pages) ------------------------
+  //small render helpers (reused by both pages)
   // Coerce a date value (Date or, defensively, a JSON-round-tripped ISO string)
   // to a timestamp; unparseable/absent → Infinity so it sorts to the end and is
   // dropped by "> t" filters. normalizeDates() already hands back real Dates,
