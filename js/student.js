@@ -24,7 +24,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
   if (enabled) {
-    const DEFAULT_BG = 'assets/bgs/bg.jpg'; // bundled — always exists
+    const DEFAULT_BG = 'assets/bgs/bg.jpg'; // bundled  always exists
 
     function setBodyBackground(url) {
       const body = document.body || document.documentElement;
@@ -43,7 +43,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         imageUrl = chrome.runtime.getURL(DEFAULT_BG);
       }
       // Validate that the image actually loads before publishing it as the
-      // wallpaper — a stale saved background (deleted custom file, invalid
+      // wallpaper  a stale saved background (deleted custom file, invalid
       // data URL, bad path) would otherwise leave the page with NO background.
       // On failure, fall back to the bundled default wallpaper.
       const apply = (finalUrl) => {
@@ -153,8 +153,6 @@ chrome.storage.local.get('toggle_power', (result) => {
           sidebar.classList.toggle('translate-sidebar')
       }
     })
-
-
   }
 });
 
