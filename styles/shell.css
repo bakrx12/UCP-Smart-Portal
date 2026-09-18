@@ -1,20 +1,3 @@
-/* =========================================================================
- * UCP Smart Portal — Shell
- *  - body::before renders the wallpaper (--ucp-bg-image); removed in Night
- *    Mode (body.ucp-night-deep — a flat dark ground instead) and blurred
- *    when the blur slider is on. Dark Mode (body.ucp-night) keeps the
- *    wallpaper and only dims it.
- *  - Sidebar entries sized to match the portal's own menu items.
- *  - Full-page Notification / Settings overlays (solid, semi-transparent bg —
- *    no backdrop blur).
- * All UI classes are namespaced ucp-shell-*.
- * ========================================================================= */
-
-/* ----- Background layer ------------------------------------------------- */
-/* The portal's own CSS paints a background on <body>; that background is
-   rendered ABOVE our z-index:-1 wallpaper layer and hides it (the page then
-   shows the portal's white/light background instead of the wallpaper).
-   Kill the body background so body::before is the only visible background. */
 body {
   background: none !important;
 }
@@ -120,7 +103,7 @@ body:not(.ucp-night) #sidebar_main {
    #page_content flow (no fixed full-screen overlay). */
 #ucp-shell-root {
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
 }
 #ucp-shell-root[hidden] { display: none; }
 
@@ -161,7 +144,7 @@ body:not(.ucp-night) #sidebar_main {
    styles/settings_page.css (loaded via <link> by the page scripts). Only
    the shared frame / card rules above remain in this file. */
 
-/* =========================================================================
+/* 
  * DARK MODE — whole page
  * Darken the portal's glass surfaces (re-set the :root variables so every
  * .glass / #sidebar_main / #top_bar darkens) and keep the sidebar legible.
@@ -169,7 +152,7 @@ body:not(.ucp-night) #sidebar_main {
  * (body.ucp-night-deep) is what removes it — see the body::before rule.
  * (Night Mode implies these styles: body.ucp-night is applied whenever
  * either mode is on.)
- * ========================================================================= */
+ *  */
 body.ucp-night {
   --primary-glass: rgba(15, 20, 26, 0.72) !important;
   --secondary-glass: rgba(18, 22, 28, 0.82) !important;
@@ -197,10 +180,10 @@ body.ucp-night #ucp-shell-root .material-icons { color: #fff !important; }
 
 /* Night mode: sidebar header text strictly white.
    (The profile picture is left UNTOUCHED — it keeps its normal colors in
-   every mode, so it never becomes invisible.) */
+   every mode, so it never becomes invisible.) 
 body.ucp-night .uk-text-bold.uk-text-center { color: #fff !important; }
 body.ucp-night .sidebar_main_header { color: #fff !important; }
-body.ucp-night .sidebar_main_header * { color: #fff !important; }
+body.ucp-night .sidebar_main_header * { color: #fff !important; } */
 
 /* Night mode: the dashboard student card is a white ID card — the global
    white-text rule would make its dark ink invisible (white on white), so
@@ -242,13 +225,13 @@ body.ucp-night .ucp-shell-card {
   background: rgba(8, 11, 16, 0.62);
 }
 
-/* =========================================================================
+/* 
  * ACCENT COLOR — global (default ON). When body.ucp-bg-accent is set (by
  * js/shell.js on every page), icons, the sidebar text and the shell
  * buttons take the current background's accent color (--ucp-accent, set on
  * <body>). Placed AFTER the night-mode rules so the accent — an explicit
  * user choice — wins over the night-mode white when both are on.
- * ========================================================================= */
+ *  */
 /* Every material icon on the page (dashboard classes/empty states, the
    portal's own icons, the shell pages' icons). */
 body.ucp-bg-accent .material-icons { color: var(--ucp-accent, #fff) !important; }
@@ -283,7 +266,7 @@ body.ucp-bg-accent .gmc-status {
 }
 body.ucp-bg-accent .gmc-status:hover { filter: brightness(0.92); }
 
-/* =========================================================================
+/* 
  * "Signed in as" — replaces the sidebar's profile picture (see
  * js/shell.js injectSignedInAs). Inserted INSIDE .sidebar_main_header, so it
  * inherits the header's text color for free: the wallpaper's ACCENT color when
@@ -293,11 +276,11 @@ body.ucp-bg-accent .gmc-status:hover { filter: brightness(0.92); }
 #sidebar_main .sidebar_main_header .ucp-signed-in {
   display: block;
   margin-top: 44px; /* nudge it down a little from the header's top edge */
-  line-height: 0.8;
+  line-height: 0.4 !important;
   white-space: nowrap;
 }
 
-/* =========================================================================
+/* 
  * ABOUT EXTENSION — bottom of the sidebar (see js/shell.js). A small, quiet
  * block: version + the project links + the tagline. Clicking it (anything
  * but a real link) opens Settings scrolled to the credits card. Colours are
