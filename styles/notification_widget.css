@@ -1,18 +1,6 @@
-/* =========================================================================
- * Notification WIDGET — the embeddable Course Updates / UCP Notification
- * widget (tabs, scan bar, feed, placeholder). Shared by BOTH:
- *   - the standalone Notification page (js/notification_page.js), and
- *   - the Dashboard "Notification & Updates" section (js/student_dashboard.js)
- * Loaded on demand via a <link> by the widget's render()/embed() — never by
- * the service worker — so it is guaranteed present wherever the widget shows.
- * The page-frame + wallpaper rules stay in styles/notification_page.css.
- *
- * NOTE: the shared dark-glass surface (.ucp-shell-card) comes from
- * styles/shell.css (injected on the dashboard). All rules below are the
- * widget's own pieces, namespaced ucp-shell-*.
- * ========================================================================= */
+/* Notification WIDGET */
 
-/* ----- Tabs ------------------------------------------------------------- */
+/* - Tabs - */
 .ucp-shell-notif-head { padding: 10px; }
 /* Dark tints (not near-white): the content sits over the wallpaper in day
    mode too — a white 0.05 surface is invisible there. Sits inside the dark
@@ -52,7 +40,7 @@
 .ucp-shell-tabpanel.ucp-shell-tab-active { display: block; animation: ucpShellFade 0.25s ease; }
 @keyframes ucpShellFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-/* ----- Course updates (scan bar + feed) -------------------------------- */
+/* - Course updates (scan bar + feed)  */
 /* align-items: stretch — every control in the bar (Scan now left, the type
    filter centered, Mark-all-as-read, the Notifications block right) matches
    the tallest one, the two-line "Scan now" button, so the whole row reads
@@ -137,7 +125,7 @@
 }
 .ucp-shell-feed-state .material-icons { font-size: 42px; opacity: 0.85; }
 
-/* ----- UCP Notification placeholder ------------------------------------ */
+/* - UCP Notification placeholder  */
 .ucp-shell-ucp-placeholder {
   display: flex; flex-direction: column; align-items: center; text-align: center;
   gap: 8px; padding: 30px 12px;
@@ -160,7 +148,7 @@
 .ucp-shell-sample-row .s-title { font-size: 0.88rem; font-weight: 600; }
 .ucp-shell-sample-row .s-sub { font-size: 0.76rem; color: rgba(255, 255, 255, 0.55); }
 
-/* ----- Academic Calendar (mini-card + chronological list) -------------- */
+/* - Academic Calendar (mini-card + chronological list) -- */
 .ucp-shell-acad-mini { margin-bottom: 14px; }
 .ucp-acad-mini-card {
   display: flex; flex-direction: column; gap: 4px;
@@ -298,13 +286,13 @@
 }
 .ucp-acad-term-head .material-icons { font-size: 18px; }
 
-/* ----- Course-updates scan-bar controls (filter / Instant Push / read) ---- */
+/* - Course-updates scan-bar controls (filter / Instant Push / read)  */
 /* Type filter — a compact segmented control beside "Scan now" (All /
    Submissions / Content / Grades). Div-based radios (the portal swallows
    native form-control clicks), sized for the scan bar; same look as the
    Settings page's .ucp-shell-seg. */
 .ucp-wseg {
-  display: inline-flex; align-items: stretch; padding: 3px; border-radius: 10px; flex: 0 0 auto;
+  display: inline-flex; align-items: stretch; padding: 5px; border-radius: 10px; flex: 0 0 auto; margin-left: 0;
   background: rgba(10, 14, 20, 0.5); border: 1px solid rgba(255, 255, 255, 0.14);
 }
 /* Options fill the block's height (stretch — the block matches the Scan now
@@ -396,14 +384,14 @@
   background: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
 }
 
-/* =========================================================================
+/* 
  * MODE OVERRIDES — icon colors (scoped to the widget root).
  * The widget is wrapped in .ucp-notif-widget (js/notification_page.js) so
  * these hold on BOTH the standalone page and the dashboard embed. Placed
  * AFTER any base rules so the user's explicit accent choice wins. (The
  * standalone page additionally carries #ucp-shell-root-scoped copies in
  * styles/notification_page.css — same values, harmless.)
- * ========================================================================= */
+ *  */
 body.ucp-night .ucp-notif-widget .material-icons { color: #fff !important; }
 body.ucp-bg-accent .ucp-notif-widget .material-icons { color: var(--ucp-accent, #fff) !important; }
 body.ucp-bg-accent .ucp-notif-widget .ucp-shell-tab-active,
