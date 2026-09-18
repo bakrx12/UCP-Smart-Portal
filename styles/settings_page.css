@@ -1,9 +1,9 @@
-/* =========================================================================
+/*
  * Settings PAGE — styles for the standalone Settings page
  * (js/settings_page.js). Loaded on demand via a <link> when the page renders
  * (it lives in the portal content area, like the other pages). The shared
  * .ucp-shell-card / page-frame rules stay in styles/shell.css.
- * ========================================================================= */
+ */
 
 /* ----- Wallpaper guarantee (self-sufficient layer) ------------------------
    The wallpaper normally comes from styles/shell.css (body::before +
@@ -512,9 +512,9 @@ body.ucp-night::after {
    item was already on, i.e. no box visibly changed). */
 .ucp-shell-dash-status { margin-top: 10px; min-height: 1.1em; font-size: 0.8rem; color: #93c5fd; }
 
-/* =========================================================================
+/*
  * MODE OVERRIDES — icon colors
- * ========================================================================= */
+ */
 /* Night mode: this page's icons are strictly WHITE. The portal's own
    !important icon tint (.material-icons in student.css — #ffffff7e) would
    otherwise leave them gray; the #ucp-shell-root id + !important beats that
