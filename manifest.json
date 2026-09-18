@@ -3,7 +3,7 @@
 
   "manifest_version": 3,
   "name": "UCP Smart Portal",
-  "version": "3.5.41",
+  "version": "3.5.42",
   "description": "Modern UI/UX with built-in additional LMS features designed for UCP Portal",
 
   "content_scripts": [
@@ -24,10 +24,7 @@
       "matches": ["https://horizon.ucp.edu.pk/student/qa/feedback*"],
       "js": ["js/student_feedback.js"]
     },
-    {
-      "matches": ["https://horizon.ucp.edu.pk/web/login*"],
-      "js": ["js/homepage.js"]
-    },
+
     {
       "matches": ["https://horizon.ucp.edu.pk/student*", "https://horizon.ucp.edu.pk/join*", "https://horizon.ucp.edu.pk/election*"],
       "js": ["js/student.js"]
