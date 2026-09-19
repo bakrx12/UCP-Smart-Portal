@@ -1,4 +1,4 @@
-/* ====== Glass Tabs Bar (Desktop Default) ====== */
+/* Glass Tabs Bar (Desktop Default) */
 :root {
   --bg-1: #f8fbff;
   --bg-2: #eef6ff;
@@ -94,7 +94,7 @@
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* ====== Tabs ====== */
+/* Tabs */
 .glass-tabs-tab {
   flex: 1;
   text-align: center;
@@ -136,7 +136,7 @@
   color: #fff;
 }
 
-/* ====== Active Indicator (Desktop) ======
+/* Active Indicator (Desktop)
    TRANSPARENT by default (accent mode OFF) — accent mode paints it
    (bottom of this sheet). The active tab's label still brightens to
    solid white, so the active state stays visible either way. */
@@ -152,7 +152,7 @@
     background 0.3s ease;
 }
 
-/* ====== Content Containers ====== */
+/* Content Containers */
 .glass-tabs-content {
   margin-top: 2rem;
   width: 90%;
@@ -195,7 +195,7 @@
   line-height: 1.6;
 }
 
-/* ====== Responsive (Mobile <600px) ====== */
+/* Responsive (Mobile <600px) */
 @media (max-width: 600px) {
   .glass-tabs-bar {
     flex-direction: column;
@@ -243,8 +243,6 @@
 .gmc-card {
   cursor: pointer;
   text-decoration: none;
-  /* DARK GLASS fallback — js/student_results.js paints the same dark glass
-     gradient inline (no backdrop blur) on every card. */
   background: rgba(10, 14, 20, 0.55);
   border-radius: 20px;
   padding: 20px;
@@ -426,7 +424,7 @@ body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(43, 42, 42, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
@@ -567,8 +565,8 @@ body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
   padding: 14px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.28),
-    rgba(255, 255, 255, 0.2)
+    rgba(36, 36, 36, 0.28),
+    rgba(24, 24, 24, 0.2)
   );
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: var(--soft-shadow);
@@ -609,7 +607,7 @@ body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
   gap: 12px;
   padding: 10px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.111);
   border: 1px solid rgba(255, 255, 255, 0.15);
   transition:
     transform 0.18s ease,
@@ -646,28 +644,24 @@ body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
   display: inline-grid;
   place-items: center;
   padding: 8px;
+  background: #505050;
   border-radius: 8px;
   font-weight: 700;
 }
 .gmg-grade-A {
-  background: linear-gradient(90deg, #e6ffef, #ddffe6);
   color: #027a4b;
   box-shadow: 0 6px 18px rgba(33, 186, 137, 0.08);
 }
 .gmg-grade-B {
-  background: linear-gradient(90deg, #fff7e6, #fff2db);
   color: #b46b00;
 }
 .gmg-grade-C {
-  background: linear-gradient(90deg, #fff2f0, #fff7f2);
   color: #b84a4a;
 }
 .gmg-grade-S {
-  background: linear-gradient(90deg, #eef2ff, #f2f6ff);
   color: #2b4bff;
 }
 .gmg-grade-other {
-  background: linear-gradient(90deg, #f5f5f7, #ffffff);
   color: #334155;
 }
 
@@ -730,8 +724,8 @@ body.ucp-bg-accent .gmg-download-btn .gmg-icon-download {
 .obe-card {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.26),
-    rgba(250, 252, 255, 0.2)
+    rgba(89, 88, 88, 0.26),
+    rgba(58, 57, 57, 0.26)
   );
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius);
@@ -938,7 +932,7 @@ body.ucp-bg-accent .obe-download-link .material-icons {
   display: none;
 }
 
-/* ====== Accent mode =====================================================
+/* Accent mode
    js/shell.js sets body.ucp-bg-accent + --ucp-accent on EVERY page when
    "Match colors to background" is ON. The tab bar gets a TRANSLUCENT accent
    fill (the wallpaper still shows through) and the slider takes the accent
