@@ -172,7 +172,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   <!-- Content Sections -->
   <div id="glass-tabs-active-courses" class="glass-tabs-content glass-tabs-active">
     <h2>Current Results</h2>
-    <p style="margin: 2rem 0;">You are currently enrolled in ${coursesInfo.length} courses. Way to go champ! 🚀 Click down below to get results</p>
+    <p style="margin: 2rem 0;">You are currently enrolled in ${coursesInfo.length} courses.</p>
 
 <div class="gmc-container">
 
