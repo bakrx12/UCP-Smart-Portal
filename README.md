@@ -1,10 +1,10 @@
 <h1 align="center">UCP Smart Portal</h1>
 
 <p align="center">
-  Modern student portal experience, built for UCP students.<br/>
-  Born from the frustration of navigating the default portal, it adds a customizable dashboard,<br>
-  Glassmorphic theme, academic widgets, course updates, notifications, and other quality-of-life features.<br>
-  This extension injects custom styles and UI tweaks such as dockbar, hidden legacy title bar, and refined modals.</br>
+  Modern student portal experience, built by UCP Student for UCP students.<br/>
+  Born from the frustration of navigating default portal, inscrutable timetable, no notifications,<br>
+  Glassmorphic UI, academic widgets, course updates, notifications, and other quality-of-life features.<br>
+  Extension injects custom UI tweaks such as dockbar, hidden legacy title bar, widgets and refined modals.</br>
 </p>
 
 <p align="center">
@@ -14,12 +14,11 @@
 </p>
 
 <p align="center">
-  <a href="#-installation" title="Install UCP Smart Portal: takes about a minute">
-    <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=googlechrome&logoColor=white">
-  </a>
+  <a title="Install UCP Smart Portal: takes about a minute">
+    <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW%C2%B7_1_minute-6366f1?labelColor=4338ca&logo=googlechrome&logoColor=white"> </a>
   &nbsp;&nbsp;
   <a href="https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/" title="Install UCP Smart Portal: takes about a minute">
-    <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW-latest_release_%C2%B7_1_minute-6366f1?style=for-the-badge&labelColor=4338ca&logo=firefox&logoColor=white">
+    <img alt="Install now" src="https://img.shields.io/badge/INSTALL_NOW%C2%B7_1_minute-6366f1?labelColor=4338ca&logo=firefox&logoColor=white">
   </a>
 </p>
 
