@@ -752,20 +752,23 @@ chrome.storage.local.get("toggle_power", (result) => {
         : "Lecture";
     }
 
-    function formatInstructorName(name) {
-      const normalizedName = String(name || "").replace(/\s+/g, " ").trim();
-      if (!normalizedName) return "Not available";
+function formatInstructorName(name) {
+  const normalizedName = String(name || '').replace(/\s+/g, ' ').trim();
+  if (!normalizedName) return 'N/A';
 
-      const muhammadIndex = normalizedName.search(/\bmuhammad\b/i);
-      if (muhammadIndex === -1) return normalizedName;
 
-      const nameAfterMuhammad = normalizedName
-        .slice(muhammadIndex)
-        .replace(/^muhammad\b\s*/i, "")
-        .trim();
-      return nameAfterMuhammad || "Not available";
-    }
+  const withoutTitle = normalizedName.replace(/^(dr\.?)\s+/i, '').trim();
 
+  const muhammadIndex = withoutTitle.search(/\bmuhammad\b/i);
+  if (muhammadIndex === -1) return withoutTitle || 'N/A';
+
+  const nameAfterMuhammad = withoutTitle
+    .slice(muhammadIndex)
+    .replace(/^muhammad\b\s*/i, '')
+    .trim();
+
+  return nameAfterMuhammad || 'N/A';
+}
     /* Term week
        Fall term starts the last Monday of September; Spring term starts the
        last Monday of February. We count weeks forward from that start and show
@@ -991,33 +994,36 @@ chrome.storage.local.get("toggle_power", (result) => {
     }
 
     function getNextClassState(classes, semester, termWeek) {
-      const now = new Date();
-      if (!termWeek) {
-        const upcomingTerm = getUpcomingTerm(semester);
-        if (!upcomingTerm) {
-          return {
-            title: "Next class",
-            value: "Countdown unavailable",
-            commencement: null,
-          };
-        }
-        const days = Math.ceil(
-          (upcomingTerm.start - new Date()) / (24 * 60 * 60 * 1000),
-        );
-        return {
-          title: "Next class",
-          value: `${upcomingTerm.label} in ${days} day${days === 1 ? "" : "s"}`,
-          // Commencement date shown in the hover tooltip (only meaningful while
-          // a term is still upcoming — classes haven't started yet).
-          commencement: {
-            label: upcomingTerm.label,
-            start: upcomingTerm.start,
-            days,
-          },
-        };
-      }
+  const now = new Date();
 
-      const nextClass = classes
+  if (hasEnrolledCourses) {
+    const upcomingTerm = getUpcomingTerm(semester);
+
+    if (!upcomingTerm) {
+      return {
+        title: "Next class",
+        value: "Countdown unavailable",
+        commencement: null,
+      };
+    }
+
+    const days = Math.ceil(
+      (upcomingTerm.start - now) / (24 * 60 * 60 * 1000),
+    );
+
+    return {
+      title: "Next class",
+      value: `${upcomingTerm.label} in ${days} day${days === 1 ? "" : "s"}`,
+      commencement: {
+        label: upcomingTerm.label,
+        start: upcomingTerm.start,
+        days,
+      },
+    };
+  }
+
+  // Courses ARE enrolled, so always try to show the actual next class.
+  const nextClass = classes
         .filter((item) => item.startTime)
         .map((item) => {
           const [hours, minutes] = item.startTime.split(":").map(Number);
@@ -1042,6 +1048,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         commencement: null,
       };
     }
+
 
     // Human-readable commencement date for the Next Class card's in-card hover
     // detail, e.g. "September 28, 2026 • Mon" (date first, weekday after).
@@ -1241,17 +1248,17 @@ chrome.storage.local.get("toggle_power", (result) => {
     const coursesInfo = extractCoursesInfo();
     const attendanceInfo = extractAttendanceInfo(coursesInfo);
     // Term-week card data + whether the timetable has any classes (N/A gate).
-    const classesTodayList = extractClassesToday();
-    const hasTimetableClasses = classesTodayList.length > 0;
-    const termWeekInfo = getTermWeek(new Date());
-    let currentSemester = "Loading semester";
+const classesTodayList = extractClassesToday();
+const hasEnrolledCourses = coursesInfo.length > 0;
+const termWeekInfo = getTermWeek(new Date());
+let currentSemester = "Loading semester";
 
     function formatTermWeek(termWeek) {
       return termWeek?.ongoing ? `Week ${termWeek.ongoing}/${termWeek.total}` : "N/A";
     }
 
     // Prepare rendered HTML snippets for Academics / Attendance / Courses
-    function renderAcademicStats(info, termWeek, hasTimetableClasses) {
+    function renderAcademicStats(info, termWeek) {
       const allEmpty =
         ((x) => x === null || x === undefined || isNaN(x))(info.cgpa) &&
         ((x) => x === null || x === undefined || isNaN(x))(
@@ -1270,7 +1277,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         v === null || v === undefined || isNaN(v) ? fallback : v;
       // Term-week card: "ongoing / total" while the timetable has classes,
       // otherwise N/A.
-      const termWeekValue = hasTimetableClasses ? formatTermWeek(termWeek) : "N/A";
+        const termWeekValue = formatTermWeek(termWeek);
       // In-progress credits now live INSIDE the merged Credits Info card,
       // revealed on hover — same overlay pattern as the Next Class card's
       // "Classes commence" detail (see .next-class-tooltip in the CSS).
@@ -1652,6 +1659,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       // Prefer the explicit course list, falling back to the courses array
       // (both call sites pass the enrolled-courses list positionally).
       overview.outerHTML = `<div id="course-overview-card">${renderCourseOverview(courseList || coursesArray, overviewTermWeek, currentSemester, classesTodayList)}</div>`;
+      
       const nextClassCard = document.getElementById("academic-next-class-stat");
       if (nextClassCard) {
         const state = getNextClassState(classesTodayList, currentSemester, overviewTermWeek);
@@ -1669,6 +1677,7 @@ chrome.storage.local.get("toggle_power", (result) => {
           <div class="stat-heading"><span class="material-icons stat-icon">schedule</span><div class="ph">${state.title}</div></div>
           <div class="value">${state.value}</div>${commencementTip}`;
       }
+
       const termWeekValue = formatTermWeek(overviewTermWeek);
       document.getElementById("academic-term-progress-week")?.replaceChildren(
         document.createTextNode(termWeekValue),
@@ -1787,7 +1796,7 @@ chrome.storage.local.get("toggle_power", (result) => {
   </div>
 
     <!-- Academic standings (rendered) -->
-    ${renderAcademicStats(academicInfo, termWeekInfo, hasTimetableClasses)}
+${renderAcademicStats(academicInfo, termWeekInfo)}
 
 </div>
 
@@ -2131,7 +2140,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       });
     } catch (e) {}
 
-    // 1B: resolve each course's Section immediately on load (no idle deferral)
+    // resolve each course's Section immediately on load (no idle deferral)
     // so the Section chip fills in as soon as the dashboard paints. Cached
     // codes (rememberCourseCode) resolve with no network at all. Invalid
     // sections never reach the map, so the chip stays hidden for them.
@@ -2175,7 +2184,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       if (section) section.textContent = getCourseSection(fullCourseCode);
     });
 
-    /* ------------------ NEW: Attach hover handlers to badges ------------------ */
+    /*  Attach hover handlers to badges  */
     function attachBadgeHoverHandlers() {
       document.querySelectorAll(".gmc-card").forEach((card) => {
         const badge = card.querySelector(".gmc-badge");
@@ -2402,7 +2411,7 @@ chrome.storage.local.get("toggle_power", (result) => {
           <div class="classes-mini-card">
             <div class="classes-mini-course">
               <span class="material-icons classes-card-icon">book</span>
-              <span>${cls.courseName}</span>
+              <span>${cls.courseName.replace(/:\s*$/, "")}</span>
             </div>
             <div class="classes-mini-times">
               <span class="classes-mini-time">
@@ -2413,6 +2422,7 @@ chrome.storage.local.get("toggle_power", (result) => {
                 <span class="material-icons classes-card-icon">timer</span>
                 ${cls.endTime || "N/A"}
               </span>
+
             </div>
           </div>
         `;
@@ -2429,13 +2439,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       });
     }
 
-    /* ------------------ New stat tiles: Attendance glance + Invoices ------
-       Both navigate to their page on click / Enter / Space. The action is
-       exposed as __ucpAction so the in-file click guard in js/settings_page.js
-       (its document_start window-capture listener is registered before the
-       portal's interceptor exists) delivers the press; the plain listeners
-       are the fallback for a stale guard. Hover raises the shared
-       .gmc-tooltip with the per-subject / per-invoice detail. */
+    /*New stat tiles: Attendance glance + Invoices . */
     const glanceTile = document.getElementById("attendance-glance-stat");
     if (glanceTile) {
       const openAttendance = () => { location.href = "/student/attendance"; };
@@ -2723,7 +2727,8 @@ chrome.storage.local.get("toggle_power", (result) => {
     }
     applyDashboardItemVisibility();
     try {
-      // Re-apply live if the settings page (this tab or another) 
+      // Re-apply live if the settings page (this tab or another) changes the
+      // map — e.g. the user toggles an item then returns to the dashboard.
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area !== "local" || !changes[DASH_ITEMS_KEY]) return;
         applyDashboardItemVisibility();
