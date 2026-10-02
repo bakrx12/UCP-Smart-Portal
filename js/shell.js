@@ -385,7 +385,6 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     // About Extension: bottom of the sidebar. Shows the installed version,
     // the project links (GitHub = current dev version, Chrome Web Store = the
-    // older store version, Firefox = coming soon) and the tagline. Clicking
     // anywhere EXCEPT a real link opens Settings scrolled to the credits
     // card (#ucp-shell-credits).
     const sidebar = document.getElementById('sidebar_main');
@@ -400,12 +399,10 @@ chrome.storage.local.get('toggle_power', (result) => {
         <div class="ucp-sidebar-credits-title">About Extension</div>
         <div class="ucp-sidebar-credits-version">UCP Smart Portal v${extVersion || 'dev'}</div>
         <div class="ucp-sidebar-credits-links">
-          <a href="https://github.com/bakrx12/UCP-Smart-Portal" target="_blank" rel="noopener">GitHub</a>
-          <!-- store search: the unpacked/dev build is the current one; the
-               store listing is the older version (swap in the exact item URL
-               if the listing ever changes) -->
-          <a href="https://chromewebstore.google.com/search/UCP%20Smart%20Portal" target="_blank" rel="noopener" title="Older (store) version">Chrome Extension</a>
-          <a class="ucp-sidebar-credits-soon" href="#" title="Coming soon">Firefox</a>
+          <a href="https://chromewebstore.google.com/search/UCP%20Smart%20Portal" target="_blank" rel="noopener" title="Older version (Chrome Webstore)">Chrome</a>
+          <a href="https://github.com/bakrx12/UCP-Smart-Portal" target="_blank" title="Star Project on GitHub" rel="noopener">GitHub</a>
+          <a href="https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/" target="_blank" rel="noopener" title="Leatest version (Firefox Add-On)">Firefox</a>
+          <a class="ucp-sidebar-credits-soon" </a>
         </div>
       `;
       sc.addEventListener('click', (e) => {
