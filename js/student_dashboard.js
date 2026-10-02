@@ -2280,7 +2280,7 @@ ${renderAcademicStats(academicInfo, termWeekInfo)}
         const code = (c.courseLink || "").split("/")[4] || "";
         const subs = submissionDetailsCache.get(code) || [];
         subs.forEach((s) =>
-          rows.push({ course: c.courseName, name: s.name, dueDate: s.dueDate, link: s.attachmentLink }),
+          rows.push({ course: c.courseCode, name: s.name, dueDate: s.dueDate, link: s.attachmentLink }),
         );
       });
       let html = `<div class="tt-header"><span>Active Submissions</span></div>`;
