@@ -1414,8 +1414,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         // text lands inside the button, under its "Refresh" title.
         setStatus(
           model._source === 'live' ? 'Updated just now'
-          : model._source === 'cache' ? 'From cache'
-          : model._source === 'stale' ? 'From cache (last fetch failed)'
+          : model._source === 'cache' ? 'Academic Calendar'
+          : model._source === 'stale' ? 'Click to Update'
           : ''
         );
       }
