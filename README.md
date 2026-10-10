@@ -2,9 +2,8 @@
 
 <p align="center">
   Modern student portal experience, built by UCP Student for UCP students.<br/>
-  Born from the frustration of navigating default portal, inscrutable timetable, no notifications,<br>
-  Glassmorphic UI, academic widgets, course updates, notifications, and other quality-of-life features.<br>
-  Extension injects custom UI tweaks such as dockbar, hidden legacy title bar, widgets and refined modals.</br>
+  Born from the frustration of navigating default portal's inscrutable timetable <br>
+  Redesigned UI, widgets, course notifications, and other quality-of-life features.<br>
 </p>
 
 <p align="center">
@@ -36,17 +35,17 @@
 <br/>
 
 > [!WARNING]
-> **Beta (v3.5.4).** [WIP] Notification, Course Updates & Settings <br>
-> Extension is still experimental. Read [Known issues](#%EF%B8%8F-known-issues) first.
+> [**v3.5** BETA] Extension is still experimental. <br>
+> Read [Known issues](#%EF%B8%8F-known-issues) first before installing.
 
 <br/>
 
 ## 📰 News
 
-- **[v3.6.0](../../releases/tag/v3.6.0)** · *2026-09-21* [WIP] · **Dashboard widgets, Notifications, & Customization**<br/>
+- **[v3.6.0](../../releases/tag/v3.6.0)** · **Dashboard widgets, Notifications, & Customization**<br/>
   At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
 
-- **[v3.5.0](../../releases/tag/v3.5.0)** · *2026-06-20* · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
+- **[v3.5.0](../../releases/tag/v3.5.0)** · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
   Added support for Night/Dark Mode, add-your-own timetable (JSON), backup **export/import**, and lightweight update.
 
 <sub>Full notes for every version live on the [**Releases**](../../releases) page.</sub>
@@ -69,22 +68,16 @@
 - Quick-access buttons for gradebooks, announcements, course materials, assessments, and outlines.
 
 #### 🔔 Notifications & Updates
-- Centralized **Notifications & Updates** hub for academic calendar, portal news, course updates, miscellaneous announcements, and UCP feeds.
+- Centralized **Notifications & Updates** hub for academic calendar, portal news, course updates, and UCP feeds.
 - Background **course-update scanning** to detect changes without manually checking every course.
-- **Push notifications** for newly detected course updates.
-- Filter course updates by **submissions, content, grades, or all updates**.
-- Manual **Scan Now** and automatic background checks.
 
 #### ⚙️ Personalization & Productivity
 - **Stay Active** mode to prevent automatic portal logout.
 - Customizable notification behavior, including **Instant Push** mode.
 - Configurable dashboard widgets, cards, notification tabs, and default course actions.
-- New enrollment interface with an alternative card-based layout.
-- Local storage and cache controls for managing extension data.
 
 #### 🚀 Lightweight
 - Built as a browser extension that works directly on the existing UCP Smart Portal.
-- Designed to enhance the existing portal without requiring a separate application.
 - Focused on a lightweight, responsive experience with minimal friction for everyday student use.
 
 ## 🖼 Screenshots
@@ -94,7 +87,7 @@
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1398" height="834" alt="AFTER" src="https://github.com/user-attachments/assets/3e6e3d6c-cbf2-41bf-b8a8-1ecc636e83bc" />
+    <td> <img width="1654" height="1001" alt="image" src="https://github.com/user-attachments/assets/902343e3-7e03-4aa9-a2ed-9a0143d739a7" />
     UCP Smart Portal's Student Dashboard </td>
   </tr>
   <tr>
@@ -194,38 +187,14 @@ UCP-Smart-Portal/
 │ ├── student_societies.js # Societies
 │ └── student_timetable.js # Student timetable
 ├── styles/ # CSS styles for redesigned portal pages
-│ ├── course/ # Course-specific styles
-│ ├── enrollment_nav.css
-│ ├── homepage.css
-│ ├── new_enrollment.css
-│ ├── notification_page.css
-│ ├── notification_widget.css
-│ ├── portal_glass.css # Glassmorphic UI styling
-│ ├── settings_page.css
-│ ├── shell.css
-│ ├── student.css
-│ ├── student_attendance.css
-│ ├── student_dashboard.css
-│ ├── student_datesheet.css
-│ ├── student_enrolled.css
-│ ├── student_feedback.css
-│ ├── student_invoices.css
-│ ├── student_profile.css
-│ ├── student_results.css
-│ ├── student_societies.css
-│ └── student_timetable.css
-├── course_enrollment_ui.html # Redesigned course enrollment interface
 ├── manifest.json # Browser extension manifest
-├── test.js # Development/testing utilities
 ├── README.md # Project documentation
-├── LICENSE.md # Project license
-└── vite.svg # Vite asset
+└── LICENSE.md # Project license
 ```
 
 ## 🧩 How It Works
-The extension matches UCP Odoo portal pages and injects:
-- CSS (glassmorphic theme, layout fixes)
-- JS (UI enhancements: dockbar, modals, cleanups)
+The extension matches UCP Odoo portal pages and authenticates client-side web scraping of UCP Horizon through browser-native Fetch requests. Retrieved HTML is parsed using DOMParser and CSS selectors within content scripts, while the background service worker uses regex-based raw-HTML extraction where DOM APIs are unavailable. Extracted course data is persisted as snapshots in Browser's Storage and periodically polled using Alarms, with differential comparison used to detect new submissions, materials, and grade changes and trigger browser notifications.
+
 No data leaves your browser; everything runs locally in the page context.
 Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
@@ -245,7 +214,7 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 ## ⚠️ Known issues
 
-This is a `3.5.40` beta, so expect some rough edges. The extension otherwise works as expected.
+This is a `3.5` beta, so expect some rough edges. The extension otherwise works as expected.
 
 - **Settings page buttons** are currently broken, clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
 - **Notifications** are currently a **work in progress** and may not function reliably yet.
