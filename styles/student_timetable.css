@@ -1,3 +1,6 @@
+/* Import Google Material Icons font for cross-browser support (Firefox/Chrome/Safari) */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 h3.heading_b.uk-margin-bottom {
   display: none;
 }
@@ -6,8 +9,30 @@ h3.heading_b.uk-margin-bottom {
   display: none !important;
 }
 
+/* Material Icons Global Rule for Firefox / Gecko Engines */
+.material-icons,
+.ucp-tt-widget-icon {
+  font-family: 'Material Icons' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
 
-/*  Root container + theme variables   */
+  /* Enable ligatures across WebKit & Gecko (Firefox) */
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Root container + theme variables */
 #ucp-tt-root {
   --bg-image: none;
   --container-bg: rgba(0, 0, 0, 0.25);
@@ -18,7 +43,7 @@ h3.heading_b.uk-margin-bottom {
   --text-color: #ffffff;
   --subtext-color: #aaaaaa;
   --border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-120px);
+  transform: translateY(-120px);
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text-color);
@@ -29,7 +54,7 @@ h3.heading_b.uk-margin-bottom {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Night mode  */
+/* Night mode */
 #ucp-tt-root.ucp-tt-night {
   --container-bg: rgba(10, 14, 20, 0.55);
   --header-bg: #161b22;
@@ -42,17 +67,22 @@ h3.heading_b.uk-margin-bottom {
   background-color: transparent;
 }
 
-/* Box-model / reset — class-scoped (NOT an ID) so component rules still win */
+/* Box-model / reset — class-scoped */
 .ucp-tt-app,
 .ucp-tt-app * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/*  Translucent container    */
+/* Override font-family back to Material Icons specifically for icon elements */
+.ucp-tt-app .material-icons,
+.ucp-tt-app .ucp-tt-widget-icon {
+  font-family: 'Material Icons' !important;
+}
+
+/* Translucent container */
 .ucp-tt-timetable-container {
   width: 100%;
   max-width: 1650px;
@@ -60,15 +90,14 @@ h3.heading_b.uk-margin-bottom {
   background: var(--container-bg);
   border-radius: 16px;
   border: 1px solid var(--border-color);
-
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* only the lecture grid scrolls (see .ucp-tt-timetable-content) */
+  overflow: hidden;
   position: relative;
 }
 
-/*  Info widgets bar (Next Class + Term Progress) above the timetable --- */
+/* Info widgets bar */
 .ucp-tt-widgets-bar {
   display: flex;
   align-items: stretch;
@@ -80,6 +109,7 @@ h3.heading_b.uk-margin-bottom {
   max-width: 1650px;
   box-sizing: border-box;
 }
+
 .ucp-tt-widget {
   display: flex;
   align-items: center;
@@ -93,9 +123,11 @@ h3.heading_b.uk-margin-bottom {
   min-width: 0;
   flex: 0 1 auto;
 }
+
 .ucp-tt-widget-next { flex: 1 1 40%; min-width: 260px; }
-.ucp-tt-widget-progress { flex: 0 1 340px; min-width: 240px; }
-/* Material icon (replaces the old widget emoji) — schedule / timeline */
+.ucp-tt-widget-progress { flex: 0 2 40px; min-width: 290px; }
+
+/* Material icon — schedule / timeline */
 .ucp-tt-widget-icon {
   font-size: 1.5rem;
   line-height: 1;
@@ -103,6 +135,7 @@ h3.heading_b.uk-margin-bottom {
   color: var(--text-color);
   opacity: 0.8;
 }
+
 .ucp-tt-widget-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .ucp-tt-widget-head {
   font-size: 0.72rem;
@@ -111,6 +144,7 @@ h3.heading_b.uk-margin-bottom {
   text-transform: uppercase;
   color: var(--subtext-color);
 }
+
 .ucp-tt-widget-title {
   font-size: 1rem;
   font-weight: 700;
@@ -119,6 +153,7 @@ h3.heading_b.uk-margin-bottom {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .ucp-tt-widget-sub {
   font-size: 0.78rem;
   color: var(--subtext-color);
@@ -126,6 +161,7 @@ h3.heading_b.uk-margin-bottom {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .ucp-tt-widget-progress-row { display: flex; align-items: center; gap: 10px; }
 .ucp-tt-progress-track {
   flex: 1;
@@ -134,6 +170,7 @@ h3.heading_b.uk-margin-bottom {
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
+
 .ucp-tt-progress-fill {
   height: 100%;
   width: 0;
@@ -141,16 +178,17 @@ h3.heading_b.uk-margin-bottom {
   background: linear-gradient(90deg, #34d399, #3b82f6);
   transition: width 0.6s ease;
 }
+
 .ucp-tt-progress-pct {
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-color);
   flex: 0 0 auto;
-  min-width: 42px;
+  min-width: 02px;
   text-align: right;
 }
 
-/*  Top profile control bar  ------ */
+/* Top profile control bar */
 .ucp-tt-profile-bar {
   display: flex;
   align-items: center;
@@ -336,19 +374,15 @@ h3.heading_b.uk-margin-bottom {
   background: rgba(239, 68, 68, 0.6);
 }
 
-/*  Main grid area */
+/* Main grid area */
 .ucp-tt-timetable-content {
   display: flex;
   width: 100%;
   position: relative;
-  /* No scroll here: the day sidebar is a plain fixed-width column OUTSIDE the
-     scroll region, and the lecture grid scrolls inside .ucp-tt-main-grid.
-     (Scrolling the parent used to drag the left days column with the grid —
-     sticky pinning also misbehaves under the content's zoom.) */
   overflow: visible;
 }
 
-/* Empty state overlay (no blur / no dimming) */
+/* Empty state overlay */
 .ucp-tt-empty-state-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -401,8 +435,6 @@ h3.heading_b.uk-margin-bottom {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border-color);
-  /* Plain fixed column — the horizontal scroll lives in .ucp-tt-main-grid,
-     so the day labels can never be scrolled out of view. */
   flex: 0 0 auto;
 }
 
@@ -445,7 +477,7 @@ h3.heading_b.uk-margin-bottom {
   box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.6);
 }
 
-/* The ONLY horizontal scroll region  */
+/* Horizontal scroll region */
 .ucp-tt-main-grid {
   flex: 1;
   display: flex;
@@ -478,7 +510,7 @@ h3.heading_b.uk-margin-bottom {
 .ucp-tt-day-row {
   display: grid;
   grid-template-columns: repeat(10, minmax(125px, 1fr));
-  min-width: 1450px; /* matches .ucp-tt-time-header inside the scroll region */
+  min-width: 1450px;
   height: 95px;
   border-bottom: 1px solid var(--border-color);
 }
@@ -940,7 +972,7 @@ h3.heading_b.uk-margin-bottom {
   border-radius: 4px;
 }
 
-/* Academic calendar expander (below the timetable) */
+/* Academic calendar expander */
 .ucp-tt-acadcal {
   width: 100%;
   max-width: 1650px;
@@ -948,6 +980,7 @@ h3.heading_b.uk-margin-bottom {
   padding: 0 2px;
   box-sizing: border-box;
 }
+
 .ucp-tt-acadcal-toggle {
   display: flex;
   align-items: center;
@@ -965,36 +998,44 @@ h3.heading_b.uk-margin-bottom {
   cursor: pointer;
   transition: border-color 0.2s ease;
 }
+
 .ucp-tt-acadcal-toggle:hover {
   border-color: rgba(255, 255, 255, 0.32);
 }
+
 .ucp-tt-acadcal-toggle .material-icons {
   font-size: 1.3rem;
   opacity: 0.85;
   flex: 0 0 auto;
 }
+
 .ucp-tt-acadcal-chev {
   margin-left: auto;
   font-size: 1.4rem;
   transition: transform 0.2s ease;
 }
+
 .ucp-tt-acadcal-toggle[aria-expanded="true"] .ucp-tt-acadcal-chev {
   transform: rotate(180deg);
 }
+
 .ucp-tt-acadcal-body {
   margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .ucp-tt-acadcal-body[hidden] {
   display: none;
 }
+
 .ucp-tt-acadcal-state {
   font-size: 0.82rem;
   color: var(--subtext-color);
   padding: 8px 2px;
 }
+
 .ucp-tt-acadcal-term {
   background: var(--container-bg);
   border: 1px solid var(--border-color);
@@ -1002,6 +1043,7 @@ h3.heading_b.uk-margin-bottom {
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
   overflow: hidden;
 }
+
 .ucp-tt-acadcal-term-head {
   display: flex;
   align-items: center;
@@ -1013,10 +1055,12 @@ h3.heading_b.uk-margin-bottom {
   font-weight: 700;
   color: var(--text-color);
 }
+
 .ucp-tt-acadcal-term-head .material-icons {
   font-size: 1.2rem;
   opacity: 0.85;
 }
+
 .ucp-tt-acadcal-row {
   display: flex;
   align-items: baseline;
@@ -1025,12 +1069,15 @@ h3.heading_b.uk-margin-bottom {
   border-bottom: 1px solid var(--border-color);
   font-size: 0.82rem;
 }
+
 .ucp-tt-acadcal-row:last-child {
   border-bottom: none;
 }
+
 .ucp-tt-acadcal-row.is-past {
   opacity: 0.55;
 }
+
 .ucp-tt-acadcal-name {
   flex: 1 1 auto;
   min-width: 0;
@@ -1040,11 +1087,13 @@ h3.heading_b.uk-margin-bottom {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .ucp-tt-acadcal-date {
   flex: 0 0 auto;
   color: var(--subtext-color);
   font-size: 0.78rem;
 }
+
 .ucp-tt-acadcal-when {
   flex: 0 0 auto;
   min-width: 78px;
