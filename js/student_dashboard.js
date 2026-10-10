@@ -131,7 +131,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       tooltipEl.style.display = "none";
     }
 
-    /* ------------------ Existing functions (unchanged) ------------------ */
+    /*  Existing functions */
 
     async function fetchSubmissionCount(courseCode) {
       const url = `https://horizon.ucp.edu.pk/student/course/submission/${courseCode}`;
@@ -185,7 +185,7 @@ chrome.storage.local.get("toggle_power", (result) => {
       }
     }
 
-    /* ------------------ NEW: Fetch submission details for tooltip ------------------ */
+    /* Fetch submission details for tooltip  */
     async function fetchSubmissionDetails(courseCode) {
       const url = `https://horizon.ucp.edu.pk/student/course/submission/${courseCode}`;
       try {
@@ -290,35 +290,77 @@ chrome.storage.local.get("toggle_power", (result) => {
       return Number.isNaN(parsed.getTime()) ? null : parsed;
     }
 
-    function extractAssessmentItems(html, course) {
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      const now = new Date();
-      const items = [];
-      const seen = new Set();
-      doc.querySelectorAll("tr, li, .md-card, .uk-card").forEach((element) => {
-        const text = element.textContent.replace(/\s+/g, " ").trim();
-        if (!/(quiz|assignment|midterm|mid[- ]?term|final)/i.test(text)) return;
-        const date = parseDateFromText(text);
-        if (!date || date.getMonth() !== now.getMonth() || date.getFullYear() !== now.getFullYear()) return;
-        const key = `${course.courseName}|${text}`;
-        if (seen.has(key)) return;
-        seen.add(key);
-        items.push({
-          courseName: course.courseName,
-          title: text.slice(0, 120),
-          date,
-        });
-      });
-      return items;
+
+function extractAssessmentItems(html, course) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const now = new Date();
+  const items = [];
+  const seen = new Set();
+
+  doc.querySelectorAll("tr, li, .md-card, .uk-card").forEach((element) => {
+    // 1. Skip standard HTML header rows
+    if (element.tagName === "TR" && element.querySelector("th")) {
+      return;
     }
 
-    // ---- Quiet course-page fetch 
-    // The request runs in the SERVICE WORKER (GET_PORTAL_PAGE): a 404/503-ing
-    // page — courses without an announcement page, the flaky gradebook — comes
-    // back as plain data instead of a "Failed to load resource" line in the
-    // page console on every dashboard load. Plus a short negative cache so a
-    // recently-failed page isn't re-fetched at all (404s last a long time —
-    // a missing page is missing; 5xx are transient — short TTL).
+    // FIX 1: Ignore card/li elements if they are inside a table row (or vice versa)
+    if (element.tagName !== "TR" && element.closest("tr")) {
+      return;
+    }
+
+    // Extract text from individual cells, excluding Sr. No. column
+    const cells = [...element.querySelectorAll("td")]; // Target data cells only
+
+    let text;
+
+    if (cells.length) {
+      text = cells
+        .slice(1) // Skip Sr. No. column
+        .map((cell) => cell.textContent.trim())
+        .filter(Boolean)
+        .join(" ");
+    } else {
+      text = element.textContent;
+    }
+
+    text = text.replace(/\s+/g, " ").trim();
+
+    // 2. Ignore rows that match common header pattern keywords
+    if (/^(subject|name|type|date|due date|description|upload|attachment)/i.test(text)) {
+      return;
+    }
+
+    const date = parseDateFromText(text);
+
+    if (
+      !date ||
+      date.getMonth() !== now.getMonth() ||
+      date.getFullYear() !== now.getFullYear()
+    ) {
+      return;
+    }
+
+    // Extract core title identifier (first line / 60 chars) so description text differences don't bypass deduplication
+    const normalizedTitle = text.slice(0, 60).toLowerCase();
+
+    // FIX 2: Use course.courseCode consistently for deduplication
+    const courseId = course.courseCode || course.courseName;
+    const key = `${courseId}|${normalizedTitle}`;
+
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    items.push({
+      courseName: course.courseCode,
+      title: text.slice(0, 120),
+      date,
+    });
+  });
+
+  return items;
+}
+
+ 
     const failedCourseFetches = new Map(); // url -> { status, ts }
     const fetchFailTtlMs = (status) =>
       (status === 404 || status === 410) ? 30 * 60 * 1000
@@ -367,25 +409,49 @@ chrome.storage.local.get("toggle_power", (result) => {
       return fetchPortalPageQuiet(url);
     }
 
-    async function loadCourseOverviewData() {
-      const assessmentPages = ["info", "outline", "assessment", "announcement"];
-      const results = await Promise.all(
-        coursesInfo.map(async (course) => {
-          const courseId = (course.courseLink || "").split("/").filter(Boolean).pop();
-          if (!courseId) return { assessments: [] };
-          const pages = await Promise.all(
-            assessmentPages.map((page) => fetchCoursePage(courseId, page)),
-          );
-          const assessments = pages.flatMap((html) =>
-            html ? extractAssessmentItems(html, course) : [],
-          );
-          return { assessments };
-        }),
+    //ssdsdd
+async function loadCourseOverviewData() {
+  const assessmentPages = ["info", "outline", "assessment", "announcement"];
+
+  const results = await Promise.all(
+    coursesInfo.map(async (course) => {
+      const courseId = (course.courseLink || "").split("/").filter(Boolean).pop();
+      if (!courseId) return { assessments: [] };
+
+      const pages = await Promise.all(
+        assessmentPages.map((page) => fetchCoursePage(courseId, page)),
       );
-      assessmentItemsCache = results.flatMap((result) => result.assessments);
-      courseAssessmentsChecking = false;
-      updateCourseOverview(coursesInfo, coursesInfo, getSemesterWeek(currentSemester));
-    }
+
+      const assessments = pages.flatMap((html) => {
+        if (!html) return [];
+
+        const items = extractAssessmentItems(html, course);
+
+        return items.filter((item) => {
+          const text = typeof item === "string"
+            ? item
+            : item.textContent || item.subject || item.title || "";
+
+          return /\b(quiz|assignment)\b/i.test(text);
+        });
+      });
+
+      return { assessments };
+    }),
+  );
+
+  assessmentItemsCache = results.flatMap((result) => result.assessments);
+  courseAssessmentsChecking = false;
+
+  updateCourseOverview(
+    coursesInfo,
+    coursesInfo,
+    getSemesterWeek(currentSemester),
+  );
+}
+//sdsdsdsdsd
+
+
 
     async function resolveSubmissionsLeft(courses) {
       // Await ALL per-course checks: the initial-load call (scheduleIdleWork)
@@ -1571,8 +1637,8 @@ let currentSemester = "Loading semester";
             </div>
         </div>
         <div class="gmc-title" title="${item.courseName}">${item.courseName}</div>
-        <!-- Submission pill (right) + default-action button (left) share the
-             bottom row; the button's target follows ucp_course_card_config. -->
+ 
+
         <div class="gmc-actions">
           ${badgeHTML}
           <span class="gmc-status" tabindex="0"
@@ -1613,7 +1679,9 @@ let currentSemester = "Loading semester";
             <div class="course-overview-submissions">
               ${courseSubmissionsChecking
                 ? '<span class="course-overview-empty">Checking…</span>'
-                : submissionItems.length ? submissionItems.join("") : '<span class="course-overview-empty">No active submissions</span>'}
+                : submissionItems.length
+                  ? `<span class="course-overview-empty">${submissionItems.length} active submission</span>`
+                  : '<span class="course-overview-empty">No active submissions</span>'}
             </div>
           </div>
           <div class="course-overview-section course-overview-assessments" id="cvo-assessments">
@@ -1625,7 +1693,7 @@ let currentSemester = "Loading semester";
               ${courseAssessmentsChecking
                 ? '<span class="course-overview-empty">Checking…</span>'
                 : assessmentItemsCache.length
-                  ? assessmentItemsCache.map((item) => `<span class="course-overview-list-item" title="${item.courseName}">${item.title}</span>`).join("")
+                  ? `<span class="course-overview-empty">${assessmentItemsCache.length} entries found</span>`
                   : '<span class="course-overview-empty">No assessments this month</span>'}
             </div>
           </div>
@@ -1649,11 +1717,8 @@ let currentSemester = "Loading semester";
       courseList,
       overviewTermWeek = termWeekInfo,
     ) {
-      // Rebuild the #course-overview-card mini-cards (Submissions Left /
-      // Next Assessment / Make-Up) — the submission/assessment caches have
-      // likely filled in since first paint. Bail only if the card is missing;
-      // it is always present in the initial courses DOM, so this is a safety
-      // net (a null would otherwise throw on .outerHTML), not a normal exit.
+
+      // it is always present in the initial courses DOM
       const overview = document.getElementById("course-overview-card");
       if (!overview) return;
       // Prefer the explicit course list, falling back to the courses array
@@ -1696,7 +1761,7 @@ let currentSemester = "Loading semester";
       // re-apply it so a hidden Submissions/Assessments/Grades section stays
       // hidden across the 60s refresh.
       applyDashboardItemVisibility();
-      // 1B: the mini-cards were just replaced — re-bind their hover popups.
+
       attachOverviewCardHoverHandlers();
       // The refresh button was replaced too — re-bind its hover line (and make
       // sure it shows "Total courses: N", not a stale refresh message).
@@ -1704,7 +1769,7 @@ let currentSemester = "Loading semester";
       refreshStatusRestore();
     }
 
-    /* === Insert Student Card + modules (uses the prepared render functions) === */
+    /*   Student Card + modules (uses the prepared render functions) */
 
     const cardParent =
       document.querySelector(".md-card .md-card-content") ||
@@ -1894,7 +1959,7 @@ ${renderAcademicStats(academicInfo, termWeekInfo)}
     };
     mountNotifWidget(1);
 
-    /* ------------------ Section expand / collapse (Academics + Courses) ------------------
+    /*  Section expand / collapse (Academics + Courses) 
        A chevron button on the right of each heading toggles the section's
        content (display:none). The choice persists in storage
        (ucp_dashboard_sections) so it survives a page load. */
@@ -1952,7 +2017,7 @@ ${renderAcademicStats(academicInfo, termWeekInfo)}
       card.style.background = CARD_GLASS;
     });
 
-    /* ------------------ Course cards: config · sections · left/right click --
+    /*  Course cards: config · sections · left/right click --
        ucp_course_card_config (Settings → Courses · Card Details) gates the
        code / credits chips and picks the DEFAULT ACTION: the card's href and
        the bottom-left pill both open that subpage on a left click. A right
@@ -2303,7 +2368,7 @@ ${renderAcademicStats(academicInfo, termWeekInfo)}
     }
 
     function buildAssessmentsPopupHtml() {
-      let html = `<div class="tt-header"><span>Next Assessments</span></div>`;
+      let html = `<div class="tt-header"><span>This week assessments</span></div>`;
       if (!assessmentItemsCache.length)
         html += `<div class="no-submissions">No assessments this month</div>`;
       else
@@ -2728,7 +2793,6 @@ ${renderAcademicStats(academicInfo, termWeekInfo)}
     applyDashboardItemVisibility();
     try {
       // Re-apply live if the settings page (this tab or another) changes the
-      // map — e.g. the user toggles an item then returns to the dashboard.
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area !== "local" || !changes[DASH_ITEMS_KEY]) return;
         applyDashboardItemVisibility();
