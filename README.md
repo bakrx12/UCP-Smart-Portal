@@ -56,15 +56,12 @@
 ## ✨ Features
 
 #### 🎨 UI & Customization
-- Modern glassmorphic-inspired UI with a clean, student-focused dashboard.
-- **Dark Mode & Night Mode** for a more comfortable viewing experience.
+- Modern glassmorphic-inspired UI with a customizable, student dashboard.
 - Custom backgrounds with **blur, background color matching, and preset themes**.
-- Fully customizable dashboard — choose which widgets, cards, and information are displayed.
 
 #### 📊 Academic Dashboard
 - At-a-glance **CGPA, credit hours, term progress, next class, and attendance** information.
 - Course overview with **submissions, upcoming assessments, and make-up classes**.
-- Customizable course cards with **course code, section, credit hours, and quick actions**.
 - Quick-access buttons for gradebooks, announcements, course materials, assessments, and outlines.
 
 #### 🔔 Notifications & Updates
@@ -73,8 +70,7 @@
 
 #### ⚙️ Personalization & Productivity
 - **Stay Active** mode to prevent automatic portal logout.
-- Customizable notification behavior, including **Instant Push** mode.
-- Configurable dashboard widgets, cards, notification tabs, and default course actions.
+- Customizable notification behavior, widget, cards, and default course actions.
 
 #### 🚀 Lightweight
 - Built as a browser extension that works directly on the existing UCP Smart Portal.
@@ -87,18 +83,27 @@
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1654" height="1001" alt="image" src="https://github.com/user-attachments/assets/902343e3-7e03-4aa9-a2ed-9a0143d739a7" />
+    <td> <img width="1640" height="998" alt="image" src="https://github.com/user-attachments/assets/4279fded-39ec-4c00-ad1a-1d4c59f6bbbd" />
     UCP Smart Portal's Student Dashboard </td>
+  </tr>
+   <tr>
+    <td> <img width="1462" height="857" alt="image" src="https://github.com/user-attachments/assets/0114e362-f0a1-4ab6-a88b-ffc3c74fbc8c" />
+    Right click menu for all course links 
+ </td>
+    <td> <img width="1182" height="670" alt="image" src="https://github.com/user-attachments/assets/d34cb48b-8adf-4be9-8138-2db756f656cb" />
+      Tracker for Submission Left, Assessments, and Make-Up Class 
+ </td>
   </tr>
   <tr>
     <td> <img width="1750" height="943" alt="image" src="https://github.com/user-attachments/assets/683f06f8-e2c0-4208-9262-ac23263a8c79" />
     Default UCP Portal's Student Timetable
    </td>
-    <td> <img width="1538" height="987" alt="image" src="https://github.com/user-attachments/assets/4fb9af05-3d01-44b5-8327-865ac6afa05c" />
+    <td> <img width="1637" height="1003" alt="image" src="https://github.com/user-attachments/assets/8266d68b-ebd9-4177-ac61-97247ce44d87" />
     Redesigned Student Timetable w/ additional features  </td>
 </tr>
+   
   <tr>
-    <td> <img width="1304" height="858" alt="image" src="https://github.com/user-attachments/assets/1d915fdd-2d5f-4599-a180-6b768c59be37" />
+    <td> <img width="1529" height="988" alt="image" src="https://github.com/user-attachments/assets/ee582380-0b91-4635-96b7-cda7e9f53761" />
       Dashboard featuring Academic Calendar & much more </td>
         <td> <img width="1392" height="935" alt="image" src="https://github.com/user-attachments/assets/e33ded8a-19e2-4b17-9277-e57875bc8676" />
     Setting Background customization </td>
