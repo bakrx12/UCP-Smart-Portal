@@ -1,13 +1,3 @@
-
-// Data is fetched exactly as before (scrape the live schedule DOM), then rendered
-// in the richer grid/card design. The full feature set (profiles, drag-drop edit,
-// add/edit/delete, spreadsheet editor, JSON import/export, bulk paste, local-cache
-// inspector, night mode, color coding, field toggles, print) is layered on top.
-//
-// NOTE: this runs as a content script in an ISOLATED world. Inline onclick="fn()"
-// attributes execute in the PAGE world where our functions don't exist, so all
-// interaction is wired via addEventListener / property handlers below.
-
 chrome.storage.local.get('toggle_power', (result) => {
     const enabled = result['toggle_power'];
     const MAKEUP_CLASS = "MAKEUP CLASS";
@@ -74,14 +64,14 @@ chrome.storage.local.get('toggle_power', (result) => {
     }
 
     function getCourseCode(courseCode) {
-    const normalizedCode = String(courseCode || "").trim();
-    
-    const hyphenIndex = normalizedCode.indexOf('-');
-    if (hyphenIndex !== -1) {
-        return normalizedCode.slice(0, hyphenIndex);
-    }
-    
-    return normalizedCode.length >= 2 ? normalizedCode : "N/A";
+        const normalizedCode = String(courseCode || "").trim();
+        
+        const hyphenIndex = normalizedCode.indexOf('-');
+        if (hyphenIndex !== -1) {
+            return normalizedCode.slice(0, hyphenIndex);
+        }
+        
+        return normalizedCode.length >= 2 ? normalizedCode : "N/A";
     }
     
 
@@ -124,6 +114,14 @@ chrome.storage.local.get('toggle_power', (result) => {
         <div class="ucp-tt-widget-sub" id="ucp-tt-nextSub">Reading your schedule…</div>
       </div>
     </div>
+    <div class="ucp-tt-widget ucp-tt-widget-agenda">
+      <span class="material-icons ucp-tt-widget-icon">view_day</span>
+      <div class="ucp-tt-widget-main">
+        <div class="ucp-tt-widget-head" id="ucp-tt-agendaHead">Agenda</div>
+        <div class="ucp-tt-widget-title" id="ucp-tt-agendaTitle">Loading…</div>
+        <div class="ucp-tt-widget-sub" id="ucp-tt-agendaSub">Calculating agenda…</div>
+      </div>
+    </div>
     <div class="ucp-tt-widget ucp-tt-widget-progress">
       <span class="material-icons ucp-tt-widget-icon">timeline</span>
       <div class="ucp-tt-widget-main">
@@ -157,6 +155,7 @@ chrome.storage.local.get('toggle_power', (result) => {
             <div class="ucp-tt-dropdown-section-header">Timetable Data</div>
             <div class="ucp-tt-dropdown-option-item" id="ucp-tt-profileImport">📥 Import Timetable</div>
             <div class="ucp-tt-dropdown-option-item" id="ucp-tt-profileExport">📤 Export Timetable</div>
+            <div class="ucp-tt-dropdown-option-item" id="ucp-tt-profileExportIcal">📅 Export iCal (.ics)</div>
           </div>
         </div>
         <button class="ucp-tt-btn-action" id="ucp-tt-localCacheBtn">Local Cache</button>
@@ -218,9 +217,13 @@ chrome.storage.local.get('toggle_power', (result) => {
           <label class="ucp-tt-toggle-item"><input type="checkbox" id="ucp-tt-toggleSection" checked> Section</label>
           <label class="ucp-tt-toggle-item"><input type="checkbox" id="ucp-tt-toggleRoom" checked> Room</label>
           <label class="ucp-tt-toggle-item"><input type="checkbox" id="ucp-tt-toggleTeacher" checked> Teacher</label>
-          <label class="ucp-tt-toggle-item"><input type="checkbox" id="ucp-tt-toggleColorCoding"> Enable Color Coding</label>
+          <label class="ucp-tt-toggle-item"><input type="checkbox" id="ucp-tt-toggleColorCoding"> Color Coding</label>
+          <label class="ucp-tt-toggle-item" id="ucp-tt-toggleHighlightContainer" style="cursor: pointer; user-select: none;">
+            <input type="checkbox" id="ucp-tt-toggleHighlightCheckbox" checked> <span id="ucp-tt-toggleHighlightLabel">Class Highlight</span>
+          </label>
         </div>
         <div class="ucp-tt-footer-actions-right">
+          <button class="ucp-tt-btn-action" id="ucp-tt-notifBtn">🔔 Notifications</button>
           <button class="ucp-tt-btn-action" id="ucp-tt-printBtn">🖨️ Print</button>
           <button class="ucp-tt-btn-action" id="ucp-tt-editDataBtn">Edit Data</button>
         </div>
@@ -241,6 +244,33 @@ chrome.storage.local.get('toggle_power', (result) => {
   </div>
 
   <div class="ucp-tt-context-menu" id="ucp-tt-contextMenu"></div>
+
+  <div class="ucp-tt-modal-overlay" id="ucp-tt-notifModalOverlay">
+    <div class="ucp-tt-modal" style="width:450px;">
+      <h3>🔔 Class Notification Settings</h3>
+      <p style="font-size:0.8rem;color:var(--subtext-color);margin-bottom:12px;">Get reminders before your classes start on this browser.</p>
+
+      <div class="ucp-tt-form-group">
+        <label><input type="checkbox" id="ucp-tt-notifEnabledToggle"> Enable Browser Reminders</label>
+      </div>
+
+      <div class="ucp-tt-form-group">
+        <label for="ucp-tt-notifTimeSelect">Reminder Lead Time</label>
+        <select id="ucp-tt-notifTimeSelect">
+          <option value="5">5 minutes before</option>
+          <option value="10">10 minutes before</option>
+        </select>
+      </div>
+
+      <div class="ucp-tt-modal-actions">
+        <button class="ucp-tt-btn ucp-tt-btn-action" id="ucp-tt-notifTestBtn">Send Test Notification</button>
+        <div class="ucp-tt-right-btns">
+          <button class="ucp-tt-btn ucp-tt-btn-cancel" id="ucp-tt-notifCancel">Cancel</button>
+          <button class="ucp-tt-btn ucp-tt-btn-save" id="ucp-tt-notifSave">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="ucp-tt-modal-overlay" id="ucp-tt-profileModalOverlay">
     <div class="ucp-tt-modal">
@@ -369,26 +399,36 @@ chrome.storage.local.get('toggle_power', (result) => {
     // CONSTANTS & STATE 
     const days = 6;
     const timeSlots = 10;
-    const DEFAULT_PROFILE = '__UCP_LIVE__';
+    const DEFAULT_PROFILE = 'UCP_DefaultProfile';
     const dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const timeNames = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
     const LS_PROFILES = 'ucp_tt_profiles_v7';
     const LS_ACTIVE = 'ucp_tt_active_profile_v7';
+    const LS_HIGHLIGHT_MODE = 'ucp_tt_highlight_mode';
+    const LS_NOTIF_SETTINGS = 'ucp_tt_notif_settings';
+
     let activeCard = null;
     let contextTargetCard = null;
     let contextTargetCell = null;
     let targetCell = null;
     let draggedCard = null;
-    let gridLocked = false;          // true while rendering the locked live profile
-    let liveProfileLabel = '';       // detected logged-in account roll no / id 
+    let gridLocked = false;         
+    let liveProfileLabel = '';       
     let timetableZoom = 115;
+    
+    let highlightMode = 0; 
+    let notifiedSlots = new Set(); // track notified slots in current session
+
+    let notifSettings = {
+        enabled: false,
+        leadMinutes: 10
+    };
 
     let currentProfile = DEFAULT_PROFILE;
     let profilesData = {};
     let initialData = [];
     let currentProfileAction = '';
 
-    // ---- live / locked profile helpers ----
     function isLiveProfile(rollNo) { return rollNo === DEFAULT_PROFILE; }
     function profileLabel(rollNo) { return isLiveProfile(rollNo) ? (liveProfileLabel || 'My Schedule (Live)') : rollNo; }
 
@@ -403,9 +443,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         return (registration && registration !== '----') ? registration : '';
     }
 
-    // Use the exact signed-in registration text. If the user has not visited the
-    // profile page yet, fetch the dashboard and read it there instead of falling
-    // back to a placeholder label.
     function detectLiveProfileLabel() {
         return new Promise((resolve) => {
             const finish = (label) => {
@@ -519,15 +556,22 @@ chrome.storage.local.get('toggle_power', (result) => {
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
+
+    function abbreviateTitle(title, limit = 18) {
+        if (!title) return '';
+        if (title.length <= limit) return title;
+        const words = title.trim().split(/\s+/);
+        if (words.length > 1) {
+            return words.map(w => w[0]).join('').toUpperCase();
+        }
+        return title.slice(0, limit) + '…';
+    }
  
-    // INFO WIDGETS — "Next Class" (left) + "Term Progress" (right), shown above
-    // the timetable. Logic mirrors the dashboard's term-week / next-class math so
-    // the two stay consistent. Term Progress = week X/16 of the active term;
-    // Next Class = the soonest scheduled slot in the future (any day of the week). 
+    // INFO WIDGETS
     const TERM_TOTAL_WEEKS = 16;
     function lastMondayOf(year, monthIndex) {
-        const d = new Date(year, monthIndex + 1, 0); // last day of this month
-        while (d.getDay() !== 1) d.setDate(d.getDate() - 1); // 1 = Monday
+        const d = new Date(year, monthIndex + 1, 0);
+        while (d.getDay() !== 1) d.setDate(d.getDate() - 1);
         return d;
     }
     function getTermWeek(now = new Date()) {
@@ -545,11 +589,10 @@ chrome.storage.local.get('toggle_power', (result) => {
         if (!active) return null;
         const weekMs = 7 * 24 * 3600 * 1000;
         const ongoing = Math.floor((now - active.start) / weekMs) + 1;
-        if (ongoing > TERM_TOTAL_WEEKS) return null; // term has already ended
+        if (ongoing > TERM_TOTAL_WEEKS) return null;
         return { ongoing, total: TERM_TOTAL_WEEKS, label: active.label };
     }
-    // Next calendar occurrence of a weekday slot (dayIndex 0=Mon → getDay 1),
-    // strictly after `now`; null if not found within 7 days.
+
     function nextOccurrence(dayIndex, startTime, now) {
         const targetGetDay = (dayIndex + 1) % 7;
         let [h, m] = String(startTime || '0:0').split(':').map((n) => parseInt(n, 10));
@@ -561,6 +604,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
         return null;
     }
+
     function formatRelative(ms) {
         if (ms < 0) ms = 0;
         const mins = Math.round(ms / 60000);
@@ -575,7 +619,6 @@ chrome.storage.local.get('toggle_power', (result) => {
 
     function renderInfoWidgets() {
         const now = new Date();
-        // ---- Term Progress (right) ----
         const tw = getTermWeek(now);
         const fill = el('ucp-tt-progressFill');
         const pct = el('ucp-tt-progressPct');
@@ -592,29 +635,111 @@ chrome.storage.local.get('toggle_power', (result) => {
                 pSub.innerText = 'Term not in progress';
             }
         }
-        // ---- Next Class (left) ----
+        
         const nTitle = el('ucp-tt-nextTitle');
         const nSub = el('ucp-tt-nextSub');
-        if (!nTitle || !nSub) return;
-        const candidates = (initialData || [])
-            .filter((it) => it.day != null && it.time != null)
-            .map((it) => {
-                const d = nextOccurrence(it.day, timeNames[it.time], now);
-                return d ? { ...it, next: d } : null;
-            })
-            .filter(Boolean)
-            .sort((a, b) => a.next - b.next);
-        if (!candidates.length) {
-            nTitle.innerText = 'No classes scheduled';
-            nSub.innerText = 'Fetch from the portal to load your schedule';
+        if (nTitle && nSub) {
+            const candidates = (initialData || [])
+                .filter((it) => it.day != null && it.time != null)
+                .map((it) => {
+                    const d = nextOccurrence(it.day, timeNames[it.time], now);
+                    return d ? { ...it, next: d } : null;
+                })
+                .filter(Boolean)
+                .sort((a, b) => a.next - b.next);
+
+            if (!candidates.length) {
+                nTitle.innerText = 'No classes scheduled';
+                nSub.innerText = 'Fetch from the portal to load your schedule';
+            } else {
+                const nc = candidates[0];
+                const dayName = dayNames[nc.day] || '';
+                const time = timeNames[nc.time] || '';
+                nTitle.innerText = nc.title || nc.code || 'Class';
+                nSub.innerText = `${dayName}, ${time} • ${formatRelative(nc.next - now)}`
+                    + (nc.room && cleanRoomName(nc.room) ? ` • ${cleanRoomName(nc.room)}` : '');
+            }
+        }
+
+        renderAgendaWidget(now);
+    }
+
+    function renderAgendaWidget(now) {
+        const aHead = el('ucp-tt-agendaHead');
+        const aTitle = el('ucp-tt-agendaTitle');
+        const aSub = el('ucp-tt-agendaSub');
+        if (!aHead || !aTitle || !aSub) return;
+
+        const currentDayIdx = now.getDay() - 1; // 0 = Mon, 4 = Fri, 5 = Sat, -1 = Sun
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+
+        // Find remaining classes for today
+        const todaysClasses = (initialData || [])
+            .filter(item => item.day === currentDayIdx)
+            .sort((a, b) => a.time - b.time);
+
+        const remainingToday = todaysClasses.filter(item => {
+            const timeStr = timeNames[item.time];
+            if (!timeStr) return false;
+            const [h, m] = timeStr.split(':').map(Number);
+            const classEndMins = h * 60 + m + 55;
+            return classEndMins > currentMins;
+        });
+
+        if (remainingToday.length > 0) {
+            const firstSlot = remainingToday[0].time;
+            const lastSlot = remainingToday[remainingToday.length - 1].time;
+            const startTimeStr = timeNames[firstSlot] || '';
+            const endTimeRange = getTimeRangeString(lastSlot).split(' - ')[1] || '';
+
+            aHead.innerText = "TODAY'S AGENDA";
+            aTitle.innerText = `${startTimeStr} - ${endTimeRange}`;
+            aSub.innerText = `${remainingToday.length} class${remainingToday.length === 1 ? '' : 'es'} remaining today`;
             return;
         }
-        const nc = candidates[0];
-        const dayName = dayNames[nc.day] || '';
-        const time = timeNames[nc.time] || '';
-        nTitle.innerText = nc.title || nc.code || 'Class';
-        nSub.innerText = `${dayName}, ${time} • ${formatRelative(nc.next - now)}`
-            + (nc.room && cleanRoomName(nc.room) ? ` • ${cleanRoomName(nc.room)}` : '');
+
+        // Check tomorrow
+        const tomorrowDayIdx = (currentDayIdx + 1) % 6;
+        const tomorrowsClasses = (initialData || [])
+            .filter(item => item.day === tomorrowDayIdx)
+            .sort((a, b) => a.time - b.time);
+
+        if (tomorrowsClasses.length > 0) {
+            const firstSlot = tomorrowsClasses[0].time;
+            const lastSlot = tomorrowsClasses[tomorrowsClasses.length - 1].time;
+            const startTimeStr = timeNames[firstSlot] || '';
+            const endTimeRange = getTimeRangeString(lastSlot).split(' - ')[1] || '';
+
+            aHead.innerText = "TOMORROW'S AGENDA";
+            aTitle.innerText = `${startTimeStr} - ${endTimeRange}`;
+            aSub.innerText = `${tomorrowsClasses.length} class${tomorrowsClasses.length === 1 ? '' : 'es'} scheduled tomorrow`;
+            return;
+        }
+
+        // Search next days for upcoming schedule
+        for (let offset = 2; offset <= 6; offset++) {
+            const targetDayIdx = (currentDayIdx + offset) % 6;
+            const targetClasses = (initialData || [])
+                .filter(item => item.day === targetDayIdx)
+                .sort((a, b) => a.time - b.time);
+
+            if (targetClasses.length > 0) {
+                const firstSlot = targetClasses[0].time;
+                const lastSlot = targetClasses[targetClasses.length - 1].time;
+                const startTimeStr = timeNames[firstSlot] || '';
+                const endTimeRange = getTimeRangeString(lastSlot).split(' - ')[1] || '';
+                const targetDayName = dayNames[targetDayIdx] || 'UPCOMING';
+
+                aHead.innerText = `${targetDayName}'S AGENDA`;
+                aTitle.innerText = `${startTimeStr} - ${endTimeRange}`;
+                aSub.innerText = `${targetClasses.length} class${targetClasses.length === 1 ? '' : 'es'} scheduled`;
+                return;
+            }
+        }
+
+        aHead.innerText = "AGENDA";
+        aTitle.innerText = "No upcoming classes";
+        aSub.innerText = "Schedule is empty";
     }
  
     // PERSISTENCE 
@@ -639,9 +764,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         el('ucp-tt-headerTermText').innerText = calculateSemesterTerm(profile.createdAt);
     }
  
-    // NIGHT MODE — driven by the GLOBAL ucp_night_mode setting (the in-page
-    // Settings panel). The old per-timetable toggle was removed; the timetable
-    // now follows the universal night mode and reacts to live changes. 
+    // NIGHT MODE 
     function applyNightMode(enabled) {
         if (enabled) root.classList.add('ucp-tt-night');
         else root.classList.remove('ucp-tt-night');
@@ -673,8 +796,14 @@ chrome.storage.local.get('toggle_power', (result) => {
         const activeRollNo = localStorage.getItem(LS_ACTIVE);
         currentProfile = (activeRollNo && profilesData[activeRollNo]) ? activeRollNo : DEFAULT_PROFILE;
 
-        // Use the exact profile registration text from the signed-in header when
-        // available. This avoids false matches for students from other departments.
+        try {
+            const storedMode = localStorage.getItem(LS_HIGHLIGHT_MODE);
+            if (storedMode !== null) highlightMode = parseInt(storedMode, 10);
+            
+            const storedNotifs = localStorage.getItem(LS_NOTIF_SETTINGS);
+            if (storedNotifs) notifSettings = Object.assign(notifSettings, JSON.parse(storedNotifs));
+        } catch (e) {}
+
         liveProfileLabel = readCurrentPortalRegistration() || 'My Schedule (Live)';
         renderProfileDropdownList();
         detectLiveProfileLabel();
@@ -806,10 +935,8 @@ chrome.storage.local.get('toggle_power', (result) => {
         try { localStorage.setItem(LS_ACTIVE, rollNo); } catch (e) {}
     }
  
-    // FETCH FROM PORTAL (the live data source — "as it does currently") 
+    // FETCH FROM PORTAL 
     function fetchFromPortal() {
-        // Fetch live data and update ONLY the live (locked) profile. Other
-        // (user-created) profiles are left untouched so their edits persist.
         try {
             const mapped = mapFetchedToAppData(extractTimeTableInfo());
             if (!profilesData[DEFAULT_PROFILE]) {
@@ -824,7 +951,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         }
     }
 
-    // Explicit "Fetch from Portal" action: refresh live data and show it.
     function refetchLive() {
         fetchFromPortal();
         switchProfile(DEFAULT_PROFILE);
@@ -835,8 +961,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         const overlay = el('ucp-tt-emptyStateOverlay');
         if (initialData && initialData.length) { overlay.classList.remove('visible'); return; }
 
-        // Empty-state primary action is IMPORT (the header's "Fetch from Portal"
-        // stays available for live refreshes). Same label in both variants.
         const isLive = isLiveProfile(currentProfile);
         overlay.innerHTML = isLive
             ? `<div class="ucp-tt-empty-state-card">
@@ -935,7 +1059,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         toggleCardVisibility();
         toggleColorCoding();
         checkConflicts();
-        updateCurrentTimeHighlight();
+        updateHighlightUI();
         renderInfoWidgets();
         checkEmptyState();
     }
@@ -1003,11 +1127,44 @@ chrome.storage.local.get('toggle_power', (result) => {
         });
     }
 
+    // HIGHLIGHT MECHANIC & CYCLE LOGIC
+    function cycleHighlightMode(e) {
+        if (e) e.preventDefault();
+        highlightMode = (highlightMode + 1) % 3;
+        try {
+            localStorage.setItem(LS_HIGHLIGHT_MODE, highlightMode);
+        } catch (e) {}
+        updateHighlightUI();
+    }
+
+    function updateHighlightUI() {
+        const checkbox = el('ucp-tt-toggleHighlightCheckbox');
+        const labelText = el('ucp-tt-toggleHighlightLabel');
+        
+        if (checkbox && labelText) {
+            if (highlightMode === 0) {
+                checkbox.checked = true;
+                labelText.innerText = 'Class Highlight';
+            } else if (highlightMode === 1) {
+                checkbox.checked = true;
+                labelText.innerText = 'Time Highlight';
+            } else {
+                checkbox.checked = false;
+                labelText.innerText = 'Highlight Disabled';
+            }
+        }
+        updateCurrentTimeHighlight();
+    }
+
     function updateCurrentTimeHighlight() {
         qa('.ucp-tt-current-time-active').forEach(elm => elm.classList.remove('ucp-tt-current-time-active'));
 
+        checkUpcomingClassNotifications();
+
+        if (highlightMode === 2) return;
+
         const now = new Date();
-        let currentDayIdx = now.getDay() - 1;
+        let currentDayIdx = now.getDay() - 1; 
         if (currentDayIdx < 0 || currentDayIdx > 5) return;
 
         const totalMinutes = now.getHours() * 60 + now.getMinutes();
@@ -1020,15 +1177,199 @@ chrome.storage.local.get('toggle_power', (result) => {
         });
 
         if (activeTimeIdx !== -1) {
+            const activeCell = q(`.ucp-tt-cell[data-day="${currentDayIdx}"][data-time="${activeTimeIdx}"]`);
+            const hasClass = activeCell && activeCell.querySelector('.ucp-tt-card');
+
+            if (highlightMode === 0 && !hasClass) {
+                return;
+            }
+
             const dayLabel = q(`.ucp-tt-day-label[data-day="${currentDayIdx}"]`);
             if (dayLabel) dayLabel.classList.add('ucp-tt-current-time-active');
 
             const timeHeader = q(`.ucp-tt-time-slot[data-time="${activeTimeIdx}"]`);
             if (timeHeader) timeHeader.classList.add('ucp-tt-current-time-active');
 
-            const activeCell = q(`.ucp-tt-cell[data-day="${currentDayIdx}"][data-time="${activeTimeIdx}"]`);
             if (activeCell) activeCell.classList.add('ucp-tt-current-time-active');
         }
+    }
+
+    // NOTIFICATIONS SYSTEM
+    function openNotifModal() {
+        el('ucp-tt-notifEnabledToggle').checked = !!notifSettings.enabled;
+        el('ucp-tt-notifTimeSelect').value = String(notifSettings.leadMinutes || 10);
+        el('ucp-tt-notifModalOverlay').classList.add('active');
+    }
+
+    function closeNotifModal() {
+        el('ucp-tt-notifModalOverlay').classList.remove('active');
+    }
+
+    function saveNotifSettings() {
+        notifSettings.enabled = el('ucp-tt-notifEnabledToggle').checked;
+        notifSettings.leadMinutes = parseInt(el('ucp-tt-notifTimeSelect').value, 10);
+
+        if (notifSettings.enabled && 'Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+        try {
+            localStorage.setItem(LS_NOTIF_SETTINGS, JSON.stringify(notifSettings));
+        } catch (e) {}
+
+        alert('Notification settings saved!');
+        closeNotifModal();
+    }
+
+    function sendNotificationPayload(title, body) {
+        if (notifSettings.enabled && 'Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, { body, icon: 'https://horizon.ucp.edu.pk/favicon.ico' });
+        }
+    }
+
+    function sendTestNotification() {
+        if (notifSettings.enabled && 'Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+        sendNotificationPayload('🎓 Class Reminder (Test)', 'Test alert: Your upcoming class is starting soon!');
+        alert('Test browser notification sent!');
+    }
+
+    function checkUpcomingClassNotifications() {
+        if (!notifSettings.enabled) return;
+
+        const now = new Date();
+        let currentDayIdx = now.getDay() - 1;
+        if (currentDayIdx < 0 || currentDayIdx > 5) return;
+
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+        const lead = notifSettings.leadMinutes || 10;
+
+        (initialData || []).forEach(item => {
+            if (item.day !== currentDayIdx) return;
+
+            const timeStr = timeNames[item.time];
+            if (!timeStr) return;
+
+            const [h, m] = timeStr.split(':').map(Number);
+            const classStartMins = h * 60 + m;
+            const diff = classStartMins - currentMins;
+
+            if (diff > 0 && diff <= lead) {
+                const slotKey = `${now.toDateString()}_${item.day}_${item.time}_${item.code}`;
+                if (!notifiedSlots.has(slotKey)) {
+                    notifiedSlots.add(slotKey);
+                    
+                    const rawTitle = item.title || item.code || 'Class';
+                    const displayTitle = abbreviateTitle(rawTitle, 18);
+                    const sectionStr = item.section ? ` (${item.section})` : '';
+                    const timeRangeStr = getTimeRangeString(item.time);
+                    const roomStr = cleanRoomName(item.room) || 'Room Unspecified';
+
+                    const title = `Upcoming class: ${displayTitle}${sectionStr}`;
+                    const body = `${roomStr} | ${timeRangeStr}`;
+
+                    sendNotificationPayload(title, body);
+                }
+            }
+        });
+    }
+
+    // ICAL DAILY SUMMARY EXPORT (Aggregation per day)
+    function exportICalSummary() {
+        const termText = el('ucp-tt-headerTermText')?.innerText || 'Term Fall 2026';
+        const termTitle = termText.replace(/^TERM:\s*/i, 'Term ');
+
+        // Group initialData by day (0..5)
+        const dayGroups = {};
+        (initialData || []).forEach(item => {
+            if (item.day == null || item.time == null) return;
+            if (!dayGroups[item.day]) dayGroups[item.day] = [];
+            dayGroups[item.day].push(item);
+        });
+
+        const dayKeys = Object.keys(dayGroups);
+        if (!dayKeys.length) {
+            alert('No classes found in schedule to export!');
+            return;
+        }
+
+        // Identify next upcoming date for each day index
+        const now = new Date();
+        let icsEvents = [];
+
+        dayKeys.forEach(dayStr => {
+            const dayIdx = parseInt(dayStr, 10);
+            const items = dayGroups[dayIdx];
+            if (!items.length) return;
+
+            // Sort classes sequentially by time slot index
+            items.sort((a, b) => a.time - b.time);
+
+            // Compute first class start time & last class end time
+            const firstSlot = items[0].time;
+            const lastSlot = items[items.length - 1].time;
+
+            const firstTimeStr = timeNames[firstSlot] || '08:00';
+            const [startH, startM] = firstTimeStr.split(':').map(Number);
+
+            const lastTimeStr = timeNames[lastSlot] || '17:00';
+            const [endH, endM] = lastTimeStr.split(':').map(Number);
+            const endTotalMins = endH * 60 + endM + 55; // slot length 55 mins
+            const finalEndH = Math.floor(endTotalMins / 60);
+            const finalEndM = endTotalMins % 60;
+
+            const baseDate = nextOccurrence(dayIdx, firstTimeStr, now) || now;
+
+            const year = baseDate.getFullYear();
+            const month = String(baseDate.getMonth() + 1).padStart(2, '0');
+            const date = String(baseDate.getDate()).padStart(2, '0');
+
+            const dtStartStr = `${year}${month}${date}T${String(startH).padStart(2, '0')}${String(startM).padStart(2, '0')}00`;
+            const dtEndStr = `${year}${month}${date}T${String(finalEndH).padStart(2, '0')}${String(finalEndM).padStart(2, '0')}00`;
+
+            // Build detailed description block
+            let descLines = [];
+            items.forEach((item, index) => {
+                const roomStr = cleanRoomName(item.room) || 'Unspecified';
+                const secStr = item.section || 'N/A';
+                const courseTitle = item.title || item.code || 'Course';
+
+                // Format time slots (e.g. 11:00, 12:00)
+                const startTimeSlotStr = timeNames[item.time] || '';
+                descLines.push(`${index + 1}. ${startTimeSlotStr} | ${roomStr} | ${secStr}`);
+                descLines.push(`${courseTitle}:`);
+            });
+
+            const descriptionText = descLines.join('\\n');
+
+            // Recurring rule: Repeat weekly for 16 weeks (duration of semester)
+            icsEvents.push(`BEGIN:VEVENT
+SUMMARY:${termTitle}
+DTSTART:${dtStartStr}
+DTEND:${dtEndStr}
+RRULE:FREQ=WEEKLY;COUNT=16
+DESCRIPTION:${descriptionText}
+STATUS:CONFIRMED
+END:VEVENT`);
+        });
+
+        const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UCP Smart Timetable//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+${icsEvents.join('\n')}
+END:VCALENDAR`;
+
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.href = URL.createObjectURL(blob);
+        downloadAnchor.download = `Schedule_${currentProfile}.ics`;
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
     }
  
     // COLOR / VISIBILITY 
@@ -1519,6 +1860,8 @@ chrome.storage.local.get('toggle_power', (result) => {
             try {
                 localStorage.removeItem(LS_PROFILES);
                 localStorage.removeItem(LS_ACTIVE);
+                localStorage.removeItem(LS_HIGHLIGHT_MODE);
+                localStorage.removeItem(LS_NOTIF_SETTINGS);
             } catch (e) { /* ignore */ }
             profilesData = {};
             initProfiles();
@@ -1533,12 +1876,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         window.print();
     }
  
-    // ACADEMIC CALENDAR EXPANDER — below the timetable.
-    // Renders the SHARED cached calendar from window.__ucpAcadCal (owned by
-    // js/academic_calendar.js, loaded on every /student* page): same data and
-    // same chrome.storage.local cache as the Notification page's calendar tab,
-    // so a fresh page-load refresh there is reused here. Compact layout: one
-    // block per term, one row per dated item (name · date · countdown). 
+    // ACADEMIC CALENDAR EXPANDER
     let acadCalRendered = false;
 
     function acadCalRowHtml(r, nowMs) {
@@ -1567,8 +1905,7 @@ chrome.storage.local.get('toggle_power', (result) => {
         state.style.display = '';
         state.innerText = 'Loading…';
         terms.innerHTML = '';
-        // getSemesterNumber gates convocation rows (final-semester only), same
-        // rule as the Notification feed; a profile fetch failure just keeps them.
+
         Promise.all([ac.fetchCalendar(), ac.getSemesterNumber().catch(() => null)])
             .then(([model, semNum]) => {
                 const nowMs = Date.now();
@@ -1579,7 +1916,7 @@ chrome.storage.local.get('toggle_power', (result) => {
                     rows: (s.milestones || []).map((m) => ({ ...m, _src: 'milestone' }))
                         .concat((s.holidays || []).filter(keepHoliday).map((h) => ({ ...h, _src: 'holiday' }))),
                 });
-                // Fallback for a model predating per-term sections: one flat group.
+
                 let sections = (model.sections || []).length
                     ? (model.sections || []).map(sectionOf).filter((s) => s.rows.length)
                     : [{
@@ -1591,9 +1928,7 @@ chrome.storage.local.get('toggle_power', (result) => {
                     state.innerText = 'No academic calendar entries found.';
                     return;
                 }
-                // Term order: the cached render order (model._snapshot.termOrder)
-                // when present, else date-range rank (ongoing → upcoming → past),
-                // mirroring the Notification feed's ordering.
+
                 const snap = model._snapshot;
                 const termOrder = snap && Array.isArray(snap.termOrder) && snap.termOrder.length ? snap.termOrder : null;
                 const ranked = sections.map((s) => {
@@ -1601,10 +1936,10 @@ chrome.storage.local.get('toggle_power', (result) => {
                     const min = dates.length ? Math.min.apply(null, dates) : null;
                     const max = dates.length ? Math.max.apply(null, dates) : null;
                     let rank;
-                    if (min === null) rank = 3;        // no dated rows → last
-                    else if (nowMs < min) rank = 1;    // fully upcoming
-                    else if (nowMs > max) rank = 2;    // fully past
-                    else rank = 0;                     // ongoing
+                    if (min === null) rank = 3;
+                    else if (nowMs < min) rank = 1;
+                    else if (nowMs > max) rank = 2;
+                    else rank = 0;
                     return { s, rank, key: min };
                 });
                 if (termOrder) {
@@ -1626,7 +1961,7 @@ chrome.storage.local.get('toggle_power', (result) => {
                     const rows = s.rows.slice().sort((a, b) => {
                         const da = ts(a.dateISO), db = ts(b.dateISO);
                         if (da === db) return 0;
-                        if (da === Infinity) return 1;   // undated items sort last
+                        if (da === Infinity) return 1;
                         if (db === Infinity) return -1;
                         return da - db;
                     }).map((r) => acadCalRowHtml(r, nowMs)).join('');
@@ -1650,11 +1985,11 @@ chrome.storage.local.get('toggle_power', (result) => {
         body.hidden = open;
         if (!open && !acadCalRendered) {
             acadCalRendered = true;
-            renderAcadCalExpander();   // lazy: first open pulls the shared cache
+            renderAcadCalExpander();
         }
     }
  
-    // EVENT WIRING (content script world — no inline onclick) 
+    // EVENT WIRING
     function wireEvents() {
         el('ucp-tt-profileDropdownBtn').addEventListener('click', (e) => toggleProfileDropdown(e));
         el('ucp-tt-localCacheBtn').addEventListener('click', openLocalStorageModal);
@@ -1667,8 +2002,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         el('ucp-tt-profileDuplicate').addEventListener('click', () => openProfileModal('duplicate'));
         el('ucp-tt-profileDelete').addEventListener('click', () => openProfileModal('delete'));
 
-        // Profile-menu data actions: export the active profile as JSON, or open
-        // the (shared) file picker that importDataJSON() consumes.
         el('ucp-tt-profileExport').addEventListener('click', (e) => {
             e.stopPropagation();
             hideProfileDropdown();
@@ -1679,6 +2012,11 @@ chrome.storage.local.get('toggle_power', (result) => {
             hideProfileDropdown();
             triggerImportJSON();
         });
+        el('ucp-tt-profileExportIcal').addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideProfileDropdown();
+            exportICalSummary();
+        });
 
         el('ucp-tt-emptyImport').addEventListener('click', triggerImportJSON);
         el('ucp-tt-emptyEdit').addEventListener('click', openExcelModal);
@@ -1688,6 +2026,13 @@ chrome.storage.local.get('toggle_power', (result) => {
         ['Code', 'Title', 'Section', 'Room', 'Teacher'].forEach(f =>
             el('ucp-tt-toggle' + f).addEventListener('change', toggleCardVisibility));
         el('ucp-tt-toggleColorCoding').addEventListener('change', toggleColorCoding);
+        
+        el('ucp-tt-toggleHighlightContainer').addEventListener('click', cycleHighlightMode);
+
+        el('ucp-tt-notifBtn').addEventListener('click', openNotifModal);
+        el('ucp-tt-notifCancel').addEventListener('click', closeNotifModal);
+        el('ucp-tt-notifSave').addEventListener('click', saveNotifSettings);
+        el('ucp-tt-notifTestBtn').addEventListener('click', sendTestNotification);
 
         el('ucp-tt-printBtn').addEventListener('click', printTimetable);
         el('ucp-tt-editDataBtn').addEventListener('click', openExcelModal);
@@ -1713,7 +2058,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         el('ucp-tt-purgeBtn').addEventListener('click', clearAllLocalStorageData);
         el('ucp-tt-localStorageClose').addEventListener('click', closeLocalStorageModal);
 
-        // Delegated clicks for dynamically-built rows (excel delete + localStorage load/delete)
         el('ucp-tt-excelTableBody').addEventListener('click', (e) => {
             const btn = e.target.closest('button[data-action="delete-row"]');
             if (btn) btn.closest('tr').remove();
@@ -1738,11 +2082,11 @@ chrome.storage.local.get('toggle_power', (result) => {
  
     // INIT 
     function init() {
-        initProfiles();            // restore persisted profiles (custom ones survive refresh)
+        initProfiles();            
         wireEvents();
-        initNightMode();           // follow the universal night-mode setting
-        fetchFromPortal();         // auto-fetch: refresh the live profile from the portal
-        loadProfileData(currentProfile); // render the active profile (live on first run, else the cached one)
+        initNightMode();           
+        fetchFromPortal();         
+        loadProfileData(currentProfile); 
         applyTimetableZoom();
         setInterval(() => { updateCurrentTimeHighlight(); renderInfoWidgets(); }, 30000);
     }
