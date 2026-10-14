@@ -116,6 +116,26 @@ chrome.storage.local.get("toggle_power", (result) => {
         tooltipEl.style.display = "none";
       }
 
+      function updateTermProgressBar(termWeek) {
+  const resolved = termWeek || getSemesterWeek(currentSemester) || getTermWeek(new Date());
+  const termWeekValue = formatTermWeek(resolved);
+  
+  const weekBadge = document.getElementById("academic-term-progress-week");
+  if (weekBadge) {
+    weekBadge.textContent = termWeekValue;
+  }
+
+  const progressFill = document.querySelector(
+    "#academic-term-progress-stat .academic-term-progress-fill"
+  );
+  if (progressFill) {
+    const progress = resolved?.ongoing
+      ? Math.min(100, (resolved.ongoing / resolved.total) * 100)
+      : 0;
+    progressFill.style.width = `${progress}%`;
+  }
+}
+
       async function fetchSubmissionCount(courseCode) {
         try {
           const htmlText = await fetchSubmissionPage(courseCode);
@@ -964,8 +984,8 @@ chrome.storage.local.get("toggle_power", (result) => {
           .sort((a, b) => a.start - b.start)[0] || null;
       }
 
-      function getNextClassState(classes = [], semester = "", termWeek = null) {
-        const now = new Date();
+          function getNextClassState(classes = [], semester = "", termWeek = null, coursesInfo = []) {
+          const now = new Date();
 
         const upcomingClassesToday = classes
           .filter((item) => item && item.startTime)
@@ -982,18 +1002,29 @@ chrome.storage.local.get("toggle_power", (result) => {
           .filter((item) => item.start > now)
           .sort((a, b) => a.start - b.start);
 
-        if (upcomingClassesToday.length > 0) {
+       if (upcomingClassesToday.length > 0) {
           const nextClass = upcomingClassesToday[0];
           const diffMs = nextClass.start - now;
           const minutesLeft = Math.ceil(diffMs / (1000 * 60));
 
           const cleanCourseName = nextClass.courseName
             ? nextClass.courseName.replace(/:\s*$/, "").trim()
-            : "Class";
+            : "Course";
+
+          // Check if matching course is a Lab or Lecture
+          const matchingCourse = coursesInfo.find((c) => {
+            const name = c.courseName.toLowerCase();
+            const target = cleanCourseName.toLowerCase();
+            return name.includes(target) || target.includes(name);
+          });
+
+          const isLab = matchingCourse ? getCourseType(matchingCourse.courseCredits) === "Lab" : false;
+          const sessionType = isLab ? "Next Lab" : "Next class";
 
           return {
             title: "Next class",
-            value: `${cleanCourseName} in ${minutesLeft} min`,
+            // Formats as: "Next class in 5 minutes \n Programming Fundamentals"
+            value: `${sessionType} in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}<br><span style="font-size: 0.85em; opacity: 0.9;">${cleanCourseName}</span>`,
             commencement: null,
           };
         }
@@ -1009,7 +1040,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         if (hasClassesToday) {
           return {
             title: "Next class",
-            value: "No more classes found today",
+            value: "No more classes today",
             commencement: null,
           };
         }
@@ -1564,65 +1595,54 @@ chrome.storage.local.get("toggle_power", (result) => {
         `;
       }
 
-      function updateCourseOverview(
-        coursesArray,
-        courseList,
-        overviewTermWeek = null,
-      ) {
-        const resolvedTermWeek =
-          overviewTermWeek || getSemesterWeek(currentSemester) || getTermWeek(new Date());
+    function updateCourseOverview(
+  coursesArray,
+  courseList,
+  overviewTermWeek = null,
+) {
+  const resolvedTermWeek =
+    overviewTermWeek || getSemesterWeek(currentSemester) || getTermWeek(new Date());
 
-        const overview = document.getElementById("course-overview-card");
-        if (overview) {
-          overview.outerHTML = `<div id="course-overview-card">${renderCourseOverview(
-            courseList || coursesArray,
-            resolvedTermWeek,
-            currentSemester,
-            classesTodayList
-          )}</div>`;
-        }
+  const overview = document.getElementById("course-overview-card");
+  if (overview) {
+    overview.outerHTML = `<div id="course-overview-card">${renderCourseOverview(
+      courseList || coursesArray,
+      resolvedTermWeek,
+      currentSemester,
+      classesTodayList
+    )}</div>`;
+  }
 
-        const nextClassCard = document.getElementById("academic-next-class-stat");
-        if (nextClassCard) {
-          const state = getNextClassState(
-            classesTodayList,
-            currentSemester,
-            resolvedTermWeek
-          );
+  const nextClassCard = document.getElementById("academic-next-class-stat");
+  if (nextClassCard) {
+    const state = getNextClassState(
+      classesTodayList,
+      currentSemester,
+      resolvedTermWeek
+    );
 
-          const commencementTip = state.commencement
-            ? `<div class="next-class-tooltip" role="tooltip">
-                <div class="nct-label">Classes commence</div>
-                <div class="nct-date">${formatCommencementDate(state.commencement.start)}</div>
-              </div>`
-            : "";
+    const commencementTip = state.commencement
+      ? `<div class="next-class-tooltip" role="tooltip">
+          <div class="nct-label">Classes commence</div>
+          <div class="nct-date">${formatCommencementDate(state.commencement.start)}</div>
+        </div>`
+      : "";
 
-          nextClassCard.innerHTML = `
-            <div class="stat-heading"><span class="material-icons stat-icon">schedule</span><div class="ph">${state.title}</div></div>
-            <div class="value">${state.value}</div>${commencementTip}`;
-        }
+    nextClassCard.innerHTML = `
+      <div class="stat-heading"><span class="material-icons stat-icon">schedule</span><div class="ph">${state.title}</div></div>
+      <div class="value">${state.value}</div>${commencementTip}`;
+  }
 
-        const termWeekValue = formatTermWeek(resolvedTermWeek);
-        const weekBadge = document.getElementById("academic-term-progress-week");
-        if (weekBadge) {
-          weekBadge.textContent = termWeekValue;
-        }
+  // Render/update progress bar state
+  updateTermProgressBar(resolvedTermWeek);
+  updateAttendanceGlance();
+fetchInvoicesOverview();
 
-        const progressFill = document.querySelector(
-          "#academic-term-progress-stat .academic-term-progress-fill"
-        );
-        if (progressFill) {
-          const progress = resolvedTermWeek?.ongoing
-            ? Math.min(100, (resolvedTermWeek.ongoing / resolvedTermWeek.total) * 100)
-            : 0;
-          progressFill.style.width = `${progress}%`;
-        }
-
-        applyDashboardItemVisibility();
-        attachOverviewCardHoverHandlers();
-        attachRefreshHoverHandlers();
-        refreshStatusRestore();
-      }
+  applyDashboardItemVisibility();
+  attachOverviewCardHoverHandlers();
+  attachRefreshHoverHandlers();
+  refreshStatusRestore();
+}
 
       const cardParent =
         document.querySelector(".md-card .md-card-content") ||
