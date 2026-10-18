@@ -83,6 +83,10 @@ chrome.storage.local.get("toggle_power", (result) => {
 
       let activeOverviewPopup = null;
 
+      // Hover text for the Term Progress and Next class tiles. It is filled in by
+      // renderTermProgressOverlay() and updateCourseOverview() and shown by initStatTileHovers().
+      const statTipHtml = { term: "", next: "" };
+
       async function fetchSubmissionPage(courseCode) {
         if (submissionPageCache.has(courseCode)) {
           return submissionPageCache.get(courseCode);
@@ -869,6 +873,18 @@ chrome.storage.local.get("toggle_power", (result) => {
             }
           }
 
+          /* No sideways scrolling inside the Classes card. */
+          #classesCard .classes-card,
+          #classesCard .classes-card-scroll {
+            overflow-x: hidden !important;
+          }
+
+          #classesCard .classes-mini-list,
+          #classesCard .classes-mini-card {
+            box-sizing: border-box;
+            max-width: 100%;
+          }
+
           .classes-mini-card.is-ongoing {
             position: relative;
             border: 1px solid rgba(255,255,255,.24);
@@ -1005,14 +1021,21 @@ chrome.storage.local.get("toggle_power", (result) => {
         const dayIndex = dashboardDateDayIndex(date);
         if (dayIndex < 0 || dayIndex > 5) return [];
 
-        // Keep the portal's richer "today" data (including actual end times/rooms)
-        // when it is available. Timetable storage is used for adjacent days and
-        // as a fallback when the portal sidebar has no classes.
-        if (offset === 0 && Array.isArray(fallbackToday) && fallbackToday.length) {
+        const timetable = getDashboardTimetable();
+
+        // Nothing saved by the timetable module at all (for example it was never
+        // opened), so use the classes found on the portal page for today instead.
+        if (
+          offset === 0 &&
+          !timetable.length &&
+          Array.isArray(fallbackToday) &&
+          fallbackToday.length
+        ) {
           return fallbackToday.map((item) => ({ ...item }));
         }
 
-        return getDashboardTimetable()
+        // Every timetable slot is its own entry, so a double lecture shows up twice.
+        return timetable
           .filter((item) => item.day === dayIndex)
           .sort((a, b) => (dashboardMinutes(a.startTime) ?? 9999) - (dashboardMinutes(b.startTime) ?? 9999));
       }
@@ -1031,23 +1054,12 @@ chrome.storage.local.get("toggle_power", (result) => {
       }
 
       function buildClassesSummary(classes, offset = 0) {
-        const datePrefix =
-          offset === 0
-            ? ""
-            : `${dashboardOffsetDate(offset).toLocaleDateString("en-GB", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-              })} \u2022 `;
-
         if (!classes.length) {
-          return offset === 0
-            ? "No classes scheduled today"
-            : `${datePrefix}No classes scheduled`;
+          return offset === 0 ? "No classes scheduled today" : "No classes scheduled";
         }
 
         if (offset !== 0) {
-          return `${datePrefix}${classes.length} class${classes.length === 1 ? "" : "es"} scheduled`;
+          return `${classes.length} class${classes.length === 1 ? "" : "es"} scheduled`;
         }
 
         const now = new Date();
@@ -1078,7 +1090,8 @@ chrome.storage.local.get("toggle_power", (result) => {
         }
 
         const now = new Date();
-        const groupedClasses = groupClasses(classes);
+        // Back-to-back lectures of the same course stay separate entries.
+        const groupedClasses = classes;
         let classesHTML = `<div class="classes-mini-list">`;
 
         groupedClasses.forEach((cls) => {
@@ -1107,7 +1120,7 @@ chrome.storage.local.get("toggle_power", (result) => {
                   ${escapeHtml(cls.endTime || "N/A")}
                 </span>
                 <span class="classes-mini-time">
-                  <span class="material-icons classes-card-icon">place</span>
+                  <span class="material-icons classes-card-icon">share_location</span>
                   ${escapeHtml(cls.roomNo || "N/A")}
                 </span>
               </div>
@@ -1172,11 +1185,12 @@ chrome.storage.local.get("toggle_power", (result) => {
         return date;
       }
 
-      // Sundays have no timetable, so they are skipped.
+      // Sundays have no timetable, so they are skipped. Today is always kept in the
+      // list (even on a Sunday) so the buttons always know where the current day sits.
       function dashboardValidOffsets() {
         const offsets = [];
         for (let o = -CLASSES_DAYS_BACK; o <= CLASSES_DAYS_AHEAD; o++) {
-          if (dashboardOffsetDate(o).getDay() !== 0) offsets.push(o);
+          if (o === 0 || dashboardOffsetDate(o).getDay() !== 0) offsets.push(o);
         }
         return offsets;
       }
@@ -1191,19 +1205,11 @@ chrome.storage.local.get("toggle_power", (result) => {
       }
 
       function dashboardOffsetTitle(offset) {
-        const date = dashboardOffsetDate(offset);
-        const name = dashboardOffsetName(offset);
-
-        if (offset >= -1 && offset <= 1) {
-          const shortDay = date.toLocaleDateString("en-GB", { weekday: "short" });
-          return `Classes ${name} (${shortDay})`;
-        }
-
-        const dayMonth = date.toLocaleDateString("en-GB", {
+        const dayMonth = dashboardOffsetDate(offset).toLocaleDateString("en-GB", {
           day: "numeric",
           month: "short",
         });
-        return `Classes ${name} (${dayMonth})`;
+        return `Classes ${dashboardOffsetName(offset)} (${dayMonth})`;
       }
 
       function renderClassesDashboard(offset = 0) {
@@ -1226,9 +1232,11 @@ chrome.storage.local.get("toggle_power", (result) => {
 
         content.innerHTML = renderDashboardClasses(classes, offset);
 
-        const index = offsets.indexOf(offset);
-        const prevOffset = index > 0 ? offsets[index - 1] : null;
-        const nextOffset = index < offsets.length - 1 ? offsets[index + 1] : null;
+        // Left button: only earlier days. Right button: only later days.
+        const earlier = offsets.filter((o) => o < offset);
+        const later = offsets.filter((o) => o > offset);
+        const prevOffset = earlier.length ? earlier[earlier.length - 1] : null;
+        const nextOffset = later.length ? later[0] : null;
 
         if (prevBtn) {
           prevBtn.classList.toggle("is-hidden", prevOffset === null);
@@ -1274,6 +1282,44 @@ chrome.storage.local.get("toggle_power", (result) => {
         if (height > 0) {
           dst.style.setProperty("height", `${height}px`, "important");
         }
+      }
+
+      // Hover text for the Term Progress and Next class tiles. It uses the same
+      // tooltip box as the course badges, so it is not clipped by the tiles.
+      function initStatTileHovers() {
+        const TILE_SELECTOR = "#academic-term-progress-stat, #academic-next-class-stat";
+
+        const tileFrom = (e) =>
+          e.target && e.target.closest ? e.target.closest(TILE_SELECTOR) : null;
+
+        const show = (tile) => {
+          const html =
+            tile.id === "academic-term-progress-stat"
+              ? statTipHtml.term
+              : statTipHtml.next;
+          if (html) showTooltipAt(tile, html);
+        };
+
+        document.addEventListener("mouseover", (e) => {
+          const tile = tileFrom(e);
+          if (!tile || tile.contains(e.relatedTarget)) return;
+          show(tile);
+        });
+
+        document.addEventListener("mouseout", (e) => {
+          const tile = tileFrom(e);
+          if (!tile || tile.contains(e.relatedTarget)) return;
+          hideTooltip();
+        });
+
+        document.addEventListener("focusin", (e) => {
+          const tile = tileFrom(e);
+          if (tile) show(tile);
+        });
+
+        document.addEventListener("focusout", (e) => {
+          if (tileFrom(e)) hideTooltip();
+        });
       }
 
       function initClassesDayTabs() {
@@ -2063,6 +2109,14 @@ chrome.storage.local.get("toggle_power", (result) => {
             value: cleanCourseName,
 
             commencement: null,
+
+            nextClass: {
+              label: sessionLabel,
+              courseName: cleanCourseName,
+              startTime: nextClass.startTime,
+              endTime: nextClass.endTime,
+              roomNo: nextClass.roomNo,
+            },
           };
         }
 
@@ -2418,6 +2472,11 @@ chrome.storage.local.get("toggle_power", (result) => {
       const attendanceInfo = extractAttendanceInfo(coursesInfo);
 
       const classesTodayList = extractClassesToday();
+
+      // Today's classes as listed in the timetable (portal page only as a fallback).
+      function todayClasses() {
+        return getDashboardClassesForOffset(0, classesTodayList);
+      }
 
       const hasEnrolledCourses = coursesInfo.length > 0;
 
@@ -3028,7 +3087,7 @@ chrome.storage.local.get("toggle_power", (result) => {
 
         if (nextClassCard) {
           const state = getNextClassState(
-            classesTodayList,
+            todayClasses(),
 
             currentSemester,
 
@@ -3037,21 +3096,31 @@ chrome.storage.local.get("toggle_power", (result) => {
             coursesInfo,
           );
 
-          const commencementTip = state.commencement
-            ? `<div class="next-class-tooltip" role="tooltip">
+          if (state.nextClass) {
+            const nc = state.nextClass;
+            const times = [nc.startTime, nc.endTime]
+              .filter((t) => t && t !== "N/A")
+              .join(" \u2013 ");
+            const room = nc.roomNo && nc.roomNo !== "N/A" ? `Room ${nc.roomNo}` : "";
+            const detail = [times, room].filter(Boolean).join(" \u2022 ");
 
-                <div class="nct-label">Classes commence</div>
-
-                <div class="nct-date">${formatCommencementDate(state.commencement.start)}</div>
-
-              </div>`
-            : "";
+            statTipHtml.next = `
+              <div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">${escapeHtml(nc.label)}</div>
+              <div style="font-weight:600;">${escapeHtml(nc.courseName)}</div>
+              ${detail ? `<div style="opacity:.85;">${escapeHtml(detail)}</div>` : ""}`;
+          } else if (state.commencement) {
+            statTipHtml.next = `
+              <div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">Classes commence</div>
+              <div style="font-weight:600;">${escapeHtml(formatCommencementDate(state.commencement.start))}</div>`;
+          } else {
+            statTipHtml.next = "";
+          }
 
           nextClassCard.innerHTML = `
 
             <div class="stat-heading"><span class="material-icons stat-icon">schedule</span><div class="ph">${escapeHtml(state.title)}</div></div>
 
-            <div class="value">${escapeHtml(state.value)}</div>${commencementTip}`;
+            <div class="value">${escapeHtml(state.value)}</div>`;
         }
 
         const overview = document.getElementById("course-overview-card");
@@ -3064,7 +3133,7 @@ chrome.storage.local.get("toggle_power", (result) => {
 
             currentSemester,
 
-            classesTodayList,
+            todayClasses(),
           );
         }
 
@@ -3325,7 +3394,7 @@ chrome.storage.local.get("toggle_power", (result) => {
 
 <div class="gmc-container" id="gmc-courses-section">
 
-  <div id="course-overview-card">${renderCourseOverview(coursesInfo, null, currentSemester, classesTodayList)}</div>
+  <div id="course-overview-card">${renderCourseOverview(coursesInfo, null, currentSemester, todayClasses())}</div>
 
   ${renderCourses(coursesInfo)}
 
@@ -4149,6 +4218,8 @@ chrome.storage.local.get("toggle_power", (result) => {
 
       initClassesDayTabs();
 
+      initStatTileHovers();
+
       updateDashboardAttendanceSummary();
 
       const attendanceChart = document.querySelector("#attendance-chart");
@@ -4240,13 +4311,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         if (model) cachedAcadCalModel = model;
         const targetModel = model || cachedAcadCalModel;
 
-        const card = document.getElementById("academic-term-progress-stat");
-        if (!card || !targetModel) return;
-
-        const ac = window.__ucpAcadCal;
-        if (!ac || !targetModel.milestones) return;
-
-        card.querySelector(".term-progress-tooltip")?.remove();
+        if (!targetModel || !targetModel.milestones) return;
 
         const now = new Date();
         const pickers = [
@@ -4280,44 +4345,47 @@ chrome.storage.local.get("toggle_power", (result) => {
           }
         }
 
-        if (!candidates.length) return;
+        if (!candidates.length) {
+          statTipHtml.term = "";
+          return;
+        }
 
         candidates.sort((a, b) => a.dateISO - b.dateISO);
         const c = candidates[0];
 
-        const tip = document.createElement("div");
-        tip.className = "term-progress-tooltip";
-        tip.setAttribute("role", "tooltip");
-        tip.innerHTML = `
-          <div class="tpc-label">${escapeHtml(c.label)}</div>
-          <div class="tpc-date">${escapeHtml(ac.formatShortDate ? ac.formatShortDate(c.dateISO) : c.dateISO.toLocaleDateString())} • ${escapeHtml(ac.countdown ? ac.countdown(c.dateISO, now) : "")}</div>`;
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+        const eventDay = new Date(c.dateISO);
+        eventDay.setHours(0, 0, 0, 0);
+        const daysLeft = Math.round((eventDay - startOfToday) / 86400000);
+        const daysText =
+          daysLeft <= 0 ? "Today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`;
 
-        card.appendChild(tip);
+        const termMatch = String(currentSemester || "").match(/(fall|spring|summer)\s+20\d{2}/i);
+        const termName = termMatch
+          ? termMatch[0].replace(/^./, (ch) => ch.toUpperCase())
+          : String(targetModel.term || targetModel.semester || targetModel.termName || "").trim();
+
+        statTipHtml.term = `
+          ${termName ? `<div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">${escapeHtml(termName)}</div>` : ""}
+          <div style="font-weight:600;">${escapeHtml(c.label)}</div>
+          <div style="opacity:.85;">${escapeHtml(daysText)}</div>`;
       }
 
-      function initAcadCalOverlay() {
-        if (
-          window.__ucpAcadCal &&
-          typeof window.__ucpAcadCal.fetchCalendar === "function"
-        ) {
-          window.__ucpAcadCal
-            .fetchCalendar()
+      function initAcadCalOverlay(attempt = 0) {
+        const ac = window.__ucpAcadCal;
+
+        if (ac && typeof ac.fetchCalendar === "function") {
+          ac.fetchCalendar()
             .then(renderTermProgressOverlay)
             .catch(() => {});
-        } else {
-          // Retry in case academic calendar script finishes loading slightly later in Chrome
+          return;
+        }
 
-          setTimeout(() => {
-            if (
-              window.__ucpAcadCal &&
-              typeof window.__ucpAcadCal.fetchCalendar === "function"
-            ) {
-              window.__ucpAcadCal
-                .fetchCalendar()
-                .then(renderTermProgressOverlay)
-                .catch(() => {});
-            }
-          }, 500);
+        // The academic calendar script can finish loading later than this one,
+        // so keep checking for a while instead of trying only once.
+        if (attempt < 40) {
+          setTimeout(() => initAcadCalOverlay(attempt + 1), 500);
         }
       }
 
