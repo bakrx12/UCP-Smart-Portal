@@ -1,21 +1,4 @@
-/*
- * Settings PAGE — styles for the standalone Settings page
- * (js/settings_page.js). Loaded on demand via a <link> when the page renders
- * (it lives in the portal content area, like the other pages). The shared
- * .ucp-shell-card / page-frame rules stay in styles/shell.css.
- */
-
-/* ----- Wallpaper guarantee (self-sufficient layer) ------------------------
-   The wallpaper normally comes from styles/shell.css (body::before +
-   --ucp-bg-image), which the background service worker injects per tab via
-   chrome.scripting.insertCSS. In tabs where that injection never happened
-   (tab opened before the extension loaded, extension reloaded without a page
-   reload) the layer is absent — the saved background never paints, so the
-   Settings page shows no background and picking / uploading one appears to
-   do nothing. This sheet is always loaded when the Settings page renders, so
-   the layer rules are mirrored here (identical to shell.css / student.css —
-   harmless duplicates if the SW copy is also present) to guarantee the
-   wallpaper renders behind this page. */
+/*  Wallpaper  */
 body {
   background: none !important;
 }
@@ -45,13 +28,7 @@ body.ucp-night::before { filter: grayscale(0.75) brightness(0.3) contrast(1.05);
    --ucp-blur-px on <body); 10px is the old fixed default fallback. */
 body.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) saturate(0.9) brightness(0.88); }
 body.ucp-night.ucp-blur::before { filter: blur(var(--ucp-blur-px, 10px)) grayscale(0.75) brightness(0.26) contrast(1.05); }
-/* Night mode REMOVES the wallpaper (the user's choice — "gets rid of the
-   background"): the fixed layer paints a flat dark ground instead of the
-   image, and the body gets the same dark background as a guarantee when the
-   layer is missing (stale tab). The existing veil + white-text rules (below
-   and in shell.css) do the rest of the night look — no design changes. */
-/* Night Mode (deep) removes the wallpaper — see shell.css. Dark Mode keeps
-   it (dimmed + veiled). */
+/* Night mode REMOVES the wallpape */
 body.ucp-night-deep { background: #0a0f18 !important; }
 body.ucp-night-deep::before { background: #0a0f18 !important; }
 /* Night-mode dark veil (identical to the one in shell.css). */
@@ -63,7 +40,7 @@ body.ucp-night::after {
   pointer-events: none;
 }
 
-/* ----- Settings rows ---------------------------------------------------- */
+/*  Settings rows ---- */
 .ucp-shell-settings { display: flex; flex-direction: column; }
 .ucp-shell-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .ucp-shell-setting-block { display: block; }
@@ -72,9 +49,7 @@ body.ucp-night::after {
 .ucp-shell-setting-label { font-weight: 700; font-size: 1rem; }
 .ucp-shell-setting-desc { font-size: 0.82rem; color: rgba(255, 255, 255, 0.6); margin-top: 2px; }
 
-/* Switches use ONLY transparent / white (no accent colors): the OFF track
-   is transparent with a white border; ON = a brighter white track + solid
-   white border, the white thumb slides right. */
+/* Switches use ONLY transparent */
 .ucp-shell-switch {
   position: relative; flex: 0 0 auto;
   width: 56px; height: 31px; border-radius: 999px;
@@ -94,7 +69,7 @@ body.ucp-night::after {
 }
 .ucp-shell-switch.on .ucp-shell-switch-thumb { left: 28px; }
 
-/* ----- Background picker + upload --------------------------------------- */
+/*  Background picker + upload - */
 .ucp-shell-bg-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px; margin-top: 16px;
@@ -126,10 +101,7 @@ body.ucp-night::after {
 }
 .ucp-shell-card-head-start { justify-content: flex-start; }
 
-/* Upload trigger is a plain <div tabindex="0"> (the picker is opened
-   programmatically by its click handler). It must NOT carry role="button" —
-   the portal's aarsol bundle swallows clicks on [role="button"] markup before
-   any listener sees the event. */
+/* Upload trigger  */
 .ucp-shell-upload {
   display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
   padding: 9px 14px; border-radius: 10px; cursor: pointer;
@@ -155,9 +127,7 @@ body.ucp-night::after {
   color: #fde68a; font-size: 0.85rem;
 }
 
-/* ----- Background controls (merged into the Background card, below the
-   gallery): the manual blur slider and the accent-color toggle (ON by
-   default). */
+/*  Background controls. */
 .ucp-shell-bg-controls { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
 .ucp-shell-bg-blur-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .ucp-shell-bg-ctl-label {
@@ -171,12 +141,7 @@ body.ucp-night::after {
   border-radius: 8px; padding: 3px 9px;
 }
 .ucp-shell-bg-blur input[type="range"] {
-  /* position/z-index/pointer-events: defense against any portal layer that
-     might sit over the content column and swallow the control's pointer
-     events (the "slider won't move" report). touch-action: none keeps a
-     touch drag from scrolling the page. The filled track is a hard-stop
-     gradient up to --blur-fill (JS sets it to value/10*100%); the thumb is a
-     white circle ringed with the accent blue. */
+
   position: relative; z-index: 1; pointer-events: auto;
   -webkit-appearance: none; appearance: none;
   width: 100%; height: 18px; margin: 4px 0;
@@ -218,10 +183,7 @@ body.ucp-night::after {
 .ucp-shell-theme-row-info .ucp-shell-setting-label { font-size: 0.95rem; }
 .ucp-shell-theme-row-info .ucp-shell-setting-desc { font-size: 0.78rem; }
 
-/* ----- Credits ------------------------------------------------------------
-   The title is the extension name and links to the repo. Names link to their
-   socials where one exists in the extension's code (rendered by
-   renderCredits() in js/settings_page.js); the rest stay plain text. */
+/*  Credits */
 .ucp-shell-credits-card {
   text-align: center; padding: 16px 20px; margin-top: 2px;
   background: rgba(10, 14, 20, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
@@ -243,11 +205,7 @@ body.ucp-night::after {
   content: '·'; margin-left: 10px; color: rgba(255, 255, 255, 0.35); font-weight: 400;
 }
 
-/* ----- Pending changes ("Save changes" / "Discard") ----------------------
-   Each changeable setting has a hidden action pair, right-aligned next to it,
-   that appears only while that setting's preview is unsaved. A dirty row gets
-   a SUBTLE highlight: an accent-tinted border + a faint ring (no glow, no
-   background flood). */
+/*  Pending changes */
 .ucp-pending-actions {
   display: none; align-items: center; gap: 8px;
   margin-left: auto; /* pushes the pair right, ahead of the control */
@@ -275,7 +233,7 @@ body.ucp-night::after {
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.10);
 }
 
-/* ----- Storage & Cache ------------------------------------------------- */
+/*  Storage & Cache - */
 .ucp-shell-storage-block { margin-top: 14px; }
 .ucp-shell-storage-subhead {
   display: flex; align-items: center; gap: 7px;
@@ -349,7 +307,7 @@ body.ucp-night::after {
 .ucp-shell-storage-note { font-size: 0.76rem; color: rgba(255, 255, 255, 0.5); line-height: 1.4; }
 .ucp-shell-storage-status { margin-top: 8px; min-height: 1.1em; font-size: 0.8rem; color: #93c5fd; }
 
-/* ----- Dashboard items picker (per-card show/hide + reset) ------------- */
+/*  Dashboard items picker (per-card show/hide + reset) --- */
 .ucp-dash-items { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
 .ucp-dash-items-group-title {
   font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
@@ -396,9 +354,7 @@ body.ucp-night::after {
 }
 .ucp-notif-default-seg { flex-wrap: wrap; justify-content: flex-start; }
 
-/* Notification & push block card — two toggle rows + the other-devices info
-   row. Inner rows reuse .ucp-shell-setting-row's flex layout, with their own
-   padding + hairline dividers (the card carries no row padding). */
+/* Notification & push block card */
 .ucp-shell-push-inrow { padding: 12px 0; }
 .ucp-shell-push-inrow + .ucp-shell-push-inrow { border-top: 1px solid rgba(255, 255, 255, 0.08); }
 /* "Add other devices for push notification" — info row (NOT a control): the
@@ -540,3 +496,18 @@ body.ucp-bg-accent #ucp-shell-root .ucp-shell-bg-ctl-label { color: var(--ucp-ac
 body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .material-icons,
 body.ucp-bg-accent #sidebar_main .menu_section ul li:not(.current_section) a .menu_title,
 body.ucp-bg-accent #sidebar_main .sidebar_main_header * { color: var(--ucp-accent, #fff) !important; }
+
+/*  Keep every clickable control  */
+.ucp-shell-upload,
+.ucp-pending-btn,
+.ucp-dash-items-reset,
+.ucp-shell-devices-btn,
+.ucp-shell-clear-btn,
+.ucp-shell-refresh,
+.ucp-shell-open-folder,
+.ucp-shell-seg-opt,
+.ucp-dash-item,
+.ucp-shell-bg-tile {
+  position: relative;
+  z-index: 1;
+}
