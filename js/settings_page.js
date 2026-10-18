@@ -1,22 +1,53 @@
-  const __ucpFindGuardAction = (target) => {
+// ACTIVATION LAYER
+  const __ucpArmed = (target) => {
     let n = target;
     while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
     return (n && typeof n.__ucpAction === 'function') ? n : null;
   };
-  window.addEventListener('click', (e) => {
-    const n = __ucpFindGuardAction(e.target);
-    if (!n) return; // not one of ours → leave the event alone
-    let t = e.target;
-    while (t && t !== n && t.nodeType === 1) {
+  // A press on a real link/input/etc. inside an armed node keeps its native behaviour.
+  const __ucpOnNativeControl = (target, armed) => {
+    let t = target;
+    while (t && t !== armed && t.nodeType === 1) {
       const tag = t.tagName;
-      if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || t.isContentEditable) return;
+      if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || t.isContentEditable) return true;
       t = t.parentElement;
     }
-    e.stopPropagation(); // NO preventDefault — the native click default stays
-    try {
-      n.__ucpAction();
-      console.info('[UCP click guard] delivered ' + e.type + ' →', (n.id || (typeof n.className === 'string' ? n.className : '') || n.tagName).toString().slice(0, 48));
-    } catch (err) { console.warn('UCP settings click guard', err); }
+    return false;
+  };
+  const __ucpRun = (n) => {
+    try { n.__ucpAction(); } catch (err) { console.warn('UCP settings control', err); }
+  };
+  let __ucpPressed = null;   // armed control the current press started on
+  let __ucpHandled = false;  // pointerup already ran this press's action
+  window.addEventListener('pointerdown', (e) => {
+    __ucpHandled = false;
+    const n = e.button === 0 ? __ucpArmed(e.target) : null;
+    __ucpPressed = (n && !__ucpOnNativeControl(e.target, n)) ? n : null;
+    if (__ucpPressed) e.stopPropagation(); // keep the portal's handlers out of it
+  }, true);
+  window.addEventListener('mousedown', (e) => {
+    const n = __ucpArmed(e.target);
+    if (n && !__ucpOnNativeControl(e.target, n)) e.stopPropagation();
+  }, true);
+  window.addEventListener('pointerup', (e) => {
+    const pressed = __ucpPressed;
+    __ucpPressed = null;
+    if (!pressed || __ucpArmed(e.target) !== pressed) return; // released elsewhere: not a click
+    __ucpHandled = true;
+    __ucpRun(pressed);
+  }, true);
+  window.addEventListener('click', (e) => {
+    const n = __ucpArmed(e.target);
+    if (!n || __ucpOnNativeControl(e.target, n)) return;
+    e.stopPropagation(); // NO preventDefault - the native click default stays
+    if (__ucpHandled) { __ucpHandled = false; return; } // pointerup already ran it
+    __ucpRun(n);
+  }, true);
+  window.addEventListener('keydown', (e) => {
+    if ((e.key !== 'Enter' && e.key !== ' ') || e.repeat) return;
+    if (!e.target || typeof e.target.__ucpAction !== 'function') return; // the focused control itself
+    e.preventDefault();
+    __ucpRun(e.target);
   }, true);
 
 chrome.storage.local.get('toggle_power', (result) => {
@@ -29,7 +60,6 @@ chrome.storage.local.get('toggle_power', (result) => {
   ];
   const CURRENT_BG_KEY = 'background-wallpaper-path';
 
-  const powerOn = (v) => (v === undefined || v === null) ? true : !!v;
 
 
   // helpers
@@ -200,7 +230,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     return instant ? 'instant' : 'push';
   };
 
-  function syncNotifBehaviorUi(pushOn, instantOn) {
+  function syncNotifBehaviorUi(instantOn) {
     const mode = instantOn ? 'instant' : 'push';
     document.querySelectorAll('#ucp-shell-notifBehaviorSeg .ucp-shell-seg-opt').forEach((o) => {
       const on = o.dataset.notifMode === mode;
@@ -303,7 +333,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       // Instant Push (see notifModeFromKeys): a never-set pair reads as
       // 'instant', matching the service worker's onInstalled seed.
       const nm = notifModeFromKeys(r);
-      syncNotifBehaviorUi(nm === 'push' || nm === 'instant', nm === 'instant');
+      syncNotifBehaviorUi(nm === 'instant');
       // Notification master toggle — missing key reads as ON (the SW seeds
       // it on first run); OFF greys out the card body (setNotifEnabledUi).
       setNotifEnabledUi((r && r.ucp_notif_enabled === undefined) ? true : !!r.ucp_notif_enabled);
@@ -328,30 +358,13 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
-    // A setting with a pending (unsaved) preview is NOT re-painted from
-    // storage here — the local preview wins; the stored value only re-bases
-    // the pending entry's `previous` (so Discard still lands on the true
-    // stored value).
-    if (changes.toggle_stay) {
-      const e = pending.get('stay');
-      if (e) e.previous = !!changes.toggle_stay.newValue;
-      else syncSwitch('ucp-shell-stayToggle', !!changes.toggle_stay.newValue);
-    }
-    if (changes.ucp_night_mode) {
-      const e = pending.get('dark');
-      if (e) e.previous = !!changes.ucp_night_mode.newValue;
-      else syncSwitch('ucp-shell-nightToggle', !!changes.ucp_night_mode.newValue);
-    }
-    if (changes.ucp_night_mode_deep) {
-      const e = pending.get('night');
-      if (e) e.previous = !!changes.ucp_night_mode_deep.newValue;
-      else syncSwitch('ucp-shell-nightDeepToggle', !!changes.ucp_night_mode_deep.newValue);
-    }
-    if (changes.ucp_enrollment_ui_new) {
-      const e = pending.get('enroll');
-      if (e) e.previous = !!changes.ucp_enrollment_ui_new.newValue;
-      else syncSwitch('ucp-shell-enrollToggle', !!changes.ucp_enrollment_ui_new.newValue);
-    }
+    // Stay / Dark / Night / Enroll are INSTANT switches (no pending state), so
+    // storage is always the final value. Settings that still use Save/Discard
+    // (blur, bg, dash, ...) keep their local preview and only re-base `previous`.
+    if (changes.toggle_stay) syncSwitch('ucp-shell-stayToggle', !!changes.toggle_stay.newValue);
+    if (changes.ucp_night_mode) syncSwitch('ucp-shell-nightToggle', !!changes.ucp_night_mode.newValue);
+    if (changes.ucp_night_mode_deep) syncSwitch('ucp-shell-nightDeepToggle', !!changes.ucp_night_mode_deep.newValue);
+    if (changes.ucp_enrollment_ui_new) syncSwitch('ucp-shell-enrollToggle', !!changes.ucp_enrollment_ui_new.newValue);
     // Notification master toggle (instant — no pending entry exists for it;
     // a value written here is the final value). Also fires for this page's
     // own write — setNotifEnabledUi is idempotent, so that is harmless.
@@ -368,10 +381,9 @@ chrome.storage.local.get('toggle_power', (result) => {
       });
     }
     if (changes[ACCENT_KEY]) {
-      const e = pending.get('accent');
-      if (e) { e.previous = accentOn(changes[ACCENT_KEY].newValue); return; }
-      syncSwitch('ucp-shell-accentToggle', accentOn(changes[ACCENT_KEY].newValue));
-      if (accentOn(changes[ACCENT_KEY].newValue)) applyAccentNow();
+      const on = accentOn(changes[ACCENT_KEY].newValue);
+      syncSwitch('ucp-shell-accentToggle', on);
+      if (on) applyAccentNow();
       else clearAccent();
     }
     if (changes[CURRENT_BG_KEY]) {
@@ -414,13 +426,13 @@ chrome.storage.local.get('toggle_power', (result) => {
       const inp = byId('ucp-shell-discordInput');
       if (inp) inp.value = changes[DISCORD_KEY].newValue || '';
     }
-    // Notification mode (off / push / instant) changed from another surface
-    // (the scan-bar quick toggle on the notifications page).
+    // Notification mode changed from another surface (the scan-bar quick toggle).
     if (changes['ucp_push_notify'] || changes['ucp_instant_push']) {
-      if (pending.get('notifMode')) return; // local preview owns the write
-      chrome.storage.local.get(['ucp_push_notify', 'ucp_instant_push'], (r) => {
-        syncNotifBehaviorUi(!!(r && r.ucp_push_notify), !!(r && r.ucp_instant_push));
-      });
+      if (!pending.get('notifMode')) {
+        chrome.storage.local.get(['ucp_instant_push'], (r) => {
+          syncNotifBehaviorUi(!!(r && r.ucp_instant_push));
+        });
+      }
     }
     // Notification-widget tab prefs changed from another tab.
     if (changes['ucp_notif_tabs']) {
@@ -441,15 +453,6 @@ chrome.storage.local.get('toggle_power', (result) => {
         o.classList.toggle('is-on', on);
         o.setAttribute('aria-checked', String(on));
       });
-    }
-    // Notification behavior / push changed from another tab.
-    if (changes.ucp_push_notify || changes.ucp_instant_push) {
-      const e = pending.get('notifMode');
-      if (!e) {
-        chrome.storage.local.get(['ucp_push_notify', 'ucp_instant_push'], (r) => {
-          syncNotifBehaviorUi(!!(r && r.ucp_push_notify), !!(r && r.ucp_instant_push));
-        });
-      }
     }
   });
 
@@ -1128,7 +1131,6 @@ chrome.storage.local.get('toggle_power', (result) => {
             <span class="material-icons">school</span>
             <div><div class="ucp-shell-setting-label">New Enrollment UI</div><div class="ucp-shell-setting-desc">Cards page: new enrollment UI (off = old portal cards, the default)</div></div>
           </div>
-          <div class="ucp-pending-actions" data-pending="enroll"><div class="ucp-pending-btn ucp-pending-save" tabindex="0">Save changes</div><div class="ucp-pending-btn ucp-pending-discard" tabindex="0">Discard</div></div>
           <div class="ucp-shell-switch" id="ucp-shell-enrollToggle" role="switch" aria-checked="false" tabindex="0"><div class="ucp-shell-switch-thumb"></div></div>
         </div>
 
@@ -1293,67 +1295,16 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
 
-  // wireAction(el, action) — ROBUST ACTIVATION for every settings control
-  // (module scope so renderBgGrid's tiles can use it too). The portal's own
-  // scripts register a window-level click interceptor that swallows pointer
-  // events on some of the controls BEFORE later-registered listeners see
-  // them, so a control is only alive if its action is reachable without a
-  // normal event path. Three delivery layers, in order of preference:
-  //   * the in-file CLICK GUARD at the top of this file (document_start) — a
-  //     window-capture backstop registered BEFORE the portal's interceptor
-  //     even exists, so it runs first on a click of any __ucpAction control
-  //     and the portal never sees the event. THE primary path for mouse/touch.
-  //   * element-level pointerdown / capture-click / keydown listeners —
-  //     fires when the event does reach the control (switches' clicks pass
-  //     the portal's interceptor); keydown(Enter/Space) is the keyboard
-  //     path and is never intercepted.
-  //   * window- + document-level CAPTURE backstops (bottom of this file) —
-  //     a second net; registered after the portal's handlers, so they win
-  //     only when an event slips past the portal's interceptor.
-  // run() is double-fire guarded (400 ms): one press can fire several of
-  // these paths at once, and only the FIRST may execute.
+  // wireAction(el, action) - arms a settings control. It only stores the
+  // handler on the element; presses are picked up by the activation layer at
+  // the top of this file (pointer press + release, click fallback, Enter/Space).
 
-  const BUILD_TAG = '2026-09-08.7';
+  const BUILD_TAG = '2026-10-18.1';
   let wiredControls = 0;
-  // True when the press started INSIDE a native interactive descendant of el
-  // (a real <a>/<button>/<input>/<select>/<textarea> or a contenteditable):
-  // those own their native behaviour (link navigation, the file picker via
-  // input.click(), clipboard gestures) and must never be hijacked by the
-  // row/card's shared action.
-  const pressHitsInteractive = (e, el) => {
-    let t = e.target;
-    while (t && t !== el && t.nodeType === 1) {
-      const tag = t.tagName;
-      if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || t.isContentEditable) return true;
-      t = t.parentElement;
-    }
-    return false;
-  };
   function wireAction(el, action) {
     if (!el) return;
-    let lastRun = 0;
-    const run = () => {
-      const now = Date.now();
-      if (now - lastRun < 400) return;
-      lastRun = now;
-      try { action(); } catch (err) { console.warn('UCP settings control', err); }
-    };
-    el.__ucpAction = run;
+    el.__ucpAction = action;
     wiredControls++;
-    // pressHitsInteractive: a press that begins on a native control inside an
-    // armed row/card (e.g. the Discord input inside the Notifications card)
-    // is left to that control's own handlers — no hijack, no double-fire.
-    el.addEventListener('pointerdown', (e) => {
-      if (pressHitsInteractive(e, el)) return;
-      e.stopPropagation();
-      run();
-    });
-    el.addEventListener('click', (e) => {
-      if (pressHitsInteractive(e, el)) return;
-      e.stopPropagation();
-      run();
-    }, true);
-    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); } });
   }
 
 
@@ -1403,7 +1354,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       // the big Theme & Background card — its row is the accent sub-block,
       // NOT the card (the card holds the bg picker / blur slider, whose own
       // handlers must keep working); the theme rows are their own blocks.
-      const row = rowSelector ? el.closest(rowSelector) : el.closest('.ucp-shell-card');
+      const row = el.closest(rowSelector);
       if (row) row.__ucpAction = el.__ucpAction;
     };
     instantSwitch('ucp-shell-stayToggle', 'toggle_stay', null, '.ucp-shell-card');
@@ -1438,19 +1389,17 @@ chrome.storage.local.get('toggle_power', (result) => {
     notifSegOpts.forEach((opt) => {
       const mode = opt.dataset.notifMode;
       const pick = async () => {
-        let perm = 'granted';
-        if (mode !== 'off') {
-          if (typeof Notification === 'undefined') perm = 'unsupported';
-          else {
-            perm = Notification.permission;
-            if (perm === 'default') {
-              try { perm = await Notification.requestPermission(); } catch (e) { perm = Notification.permission; }
-            }
+        let perm;
+        if (typeof Notification === 'undefined') perm = 'unsupported';
+        else {
+          perm = Notification.permission;
+          if (perm === 'default') {
+            try { perm = await Notification.requestPermission(); } catch (e) { perm = Notification.permission; }
           }
         }
         getStoredNotifMode((storedMode) => {
-          if (mode !== 'off' && perm !== 'granted') {
-            syncNotifBehaviorUi(storedMode === 'push' || storedMode === 'instant', storedMode === 'instant');
+          if (perm !== 'granted') {
+            syncNotifBehaviorUi(storedMode === 'instant');
             clearDirty('notifMode');
             if (notifStatusEl) {
               notifStatusEl.textContent = perm === 'unsupported'
@@ -1463,7 +1412,7 @@ chrome.storage.local.get('toggle_power', (result) => {
             return;
           }
 
-          syncNotifBehaviorUi(mode === 'push' || mode === 'instant', mode === 'instant');
+          syncNotifBehaviorUi(mode === 'instant');
           if (mode === storedMode) {
             clearDirty('notifMode');
             return;
@@ -1473,16 +1422,15 @@ chrome.storage.local.get('toggle_power', (result) => {
             previous: storedMode,
             save: () => {
               try {
-                const next = {
-                  ucp_push_notify: mode === 'push' || mode === 'instant',
-                  ucp_instant_push: mode === 'instant'
-                };
-                if (mode !== 'off') next[NOTIF_LAST_MODE_KEY] = mode; // the scan-bar quick toggle re-enables this
-                chrome.storage.local.set(next);
+                chrome.storage.local.set({
+                  ucp_push_notify: true,
+                  ucp_instant_push: mode === 'instant',
+                  [NOTIF_LAST_MODE_KEY]: mode, // the scan-bar quick toggle re-enables this
+                });
               } catch (e) {}
             },
             discard: () => {
-              syncNotifBehaviorUi(storedMode === 'push' || storedMode === 'instant', storedMode === 'instant');
+              syncNotifBehaviorUi(storedMode === 'instant');
             }
           });
         });
@@ -1897,9 +1845,8 @@ chrome.storage.local.get('toggle_power', (result) => {
       wireAction(dashReset, doReset);
     }
 
-    // Storage & Cache — wire the Refresh button, the background-size segmented
-    // control and the Clear-cache button (all div-based; pointerdown-activated
-    // via wireAction so the portal can't swallow them).
+    // Storage & Cache - wire the Refresh buttons, the background-size
+    // segmented control and the Clear-cache button (all div-based).
     // Extension meter Refresh (re-query the usage after a reload / stale read)
     // + the notification-section Clear (drops ONLY that section's stored data).
     const extRefresh = byId('ucp-shell-extRefresh');
@@ -1956,7 +1903,6 @@ chrome.storage.local.get('toggle_power', (result) => {
     document.querySelectorAll('.ucp-pending-actions').forEach((box) => {
       const pIds = box.dataset.pending || '';
       const rowEl = pIds === 'blur' ? box.closest('.ucp-shell-bg-blur')
-        : pIds === 'accent' ? box.closest('.ucp-shell-bg-accent')
         : pIds === 'bgSize' ? box.closest('.ucp-shell-storage-opt')
         : box.closest('.ucp-shell-card');
       registerPendingRow(pIds, rowEl, box);
@@ -1982,7 +1928,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   function revertPending() {
     // (stay / dark / night / enroll / accent are INSTANT now — they write
     // storage in the gesture, so no pending entries exist for them.)
-    try { discardDirty('blur bg bgSize dash notif push instantPush notifMode courseCard discord'); } catch (e) {}
+    try { discardDirty('blur bg bgSize dash notif notifMode courseCard discord'); } catch (e) {}
     pending.clear();
     // Body-level previews (night modes / blur / wallpaper) — restore the
     // stored state directly (in case the page's own storage sync already ran
@@ -2001,58 +1947,6 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
   window.__ucpSettingsPage = { render, revertPending };
 
-  //----------
-  // Window- + document-level CAPTURE backstops for the settings controls.
-  //
-  // The portal's own scripts register capture handlers (on window AND/OR
-  // document, always BEFORE any content script of ours) that swallow
-  // pointerdown/mousedown — and on some clicks — for the deeper-nested
-  // controls. A handler registered EARLIER on the same node can
-  // stopImmediatePropagation() us out of existence, so a backstop on
-  // <document> alone can be starved by the portal's own document handler.
-  // <window> sits ABOVE <document>: its capture listeners run BEFORE every
-  // document-level handler — the portal's included — so the window backstop
-  // is the layer the portal cannot preempt. The document copies stay as a
-  // second net (if the portal somehow blocks window capture, document may
-  // still deliver). The 400 ms __ucpAction guard makes the double
-  // registration safe: one press executes at most ONE action.
-  //
-  // Each backstop walks up from the pressed element to the nearest one
-  // carrying a __ucpAction (set on every control during render(), incl. the
-  // bg tiles and whole-row toggles), EXECUTES it, and swallows the event so
-  // the portal never gets it. Targets without __ucpAction (all portal
-  // content, the blur slider) are ignored — the backstops only ever touch
-  // our own controls.
-  //----------
-  const __ucpFindAction = (target) => {
-    let n = target;
-    while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
-    return (n && typeof n.__ucpAction === 'function') ? n : null;
-  };
-  const ucpBackstop = (type) => (e) => {
-    const n = __ucpFindAction(e.target);
-    if (!n) return;
-    // A press that started on a native interactive control inside the armed
-    // node keeps its own behaviour (links, inputs, file pickers) — same rule
-    // as wireAction, so the backstop never hijacks those either.
-    let t = e.target;
-    while (t && t !== n && t.nodeType === 1) {
-      const tag = t.tagName;
-      if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || t.isContentEditable) return;
-      t = t.parentElement;
-    }
-    e.stopPropagation();
-    // Do not call e.preventDefault() so user activation, clicks, and native file dialogues are not blocked
-    try { n.__ucpAction(); } catch (err) { console.warn('UCP settings control', err); }
-  };
-  // pointerdown / mousedown: the portal eats these for the nested controls,
-  // so these usually lose — but they win whenever a delivery path opens up,
-  // and the click backstop below is the guaranteed one (clicks demonstrably
-  // reach these layers — that is how the switches have always worked).
-  ['pointerdown', 'mousedown', 'click'].forEach((type) => {
-    window.addEventListener(type, ucpBackstop(type), true);
-    document.addEventListener(type, ucpBackstop(type), true);
-  });
 
 
   // BACKGROUND — picker + custom upload (moved in from shell.js)
@@ -2095,9 +1989,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       img.src = extUrl(p); img.alt = 'Background preset';
       img.onerror = () => showTileFallback(tile, String(p).split('/').pop().replace(/\.jpg$/i, ''));
       tile.appendChild(img);
-      // wireAction (not a plain click listener): the tile is deep inside the
-      // Background card, where the portal's handlers swallow plain clicks —
-      // only the __ucpAction backstop path reliably reaches it.
+      // wireAction arms the tile; the activation layer at the top handles the press.
       wireAction(tile, () => setBackground(p));
       grid.appendChild(tile);
     });
