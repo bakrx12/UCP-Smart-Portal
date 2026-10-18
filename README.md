@@ -35,14 +35,14 @@
 <br/>
 
 > [!WARNING]
-> [**v3.5** BETA] Extension is still experimental. <br>
-> Read [Known issues](#%EF%B8%8F-known-issues) first before installing.
+> [**v3.6**] Device Notifications for course updates are still work-in-progress <br>
+> Read [Known issues](#%EF%B8%8F-known-issues) first before installing the extension.
 
 <br/>
 
 ## 📰 News
 
-- **[v3.6.0](../../releases/tag/v3.6.0)** · **Dashboard widgets, Notifications, & Customization**<br/>
+- **[v3.6.0](../../releases/tag/v3.6.0)** · **Improved Dashboard, widgets, & Settings Customization**<br/>
   At a glance attendance, next class, credit info, along with course updates regarding left assignments/assessments.
 
 - **[v3.5.0](../../releases/tag/v3.5.0)** · **Night/Dark Mode, New Timetable, & UI Improvements**<br/>
@@ -61,8 +61,8 @@
 
 #### 📊 Academic Dashboard
 - At-a-glance **CGPA, credit hours, term progress, next class, and attendance** information.
-- Course overview with **submissions, upcoming assessments, and make-up classes**.
-- Quick-access buttons for gradebooks, announcements, course materials, assessments, and outlines.
+- Shows Active course **submissions, upcoming assessments,** and upcoming **make-up classes**.
+- **Quick-access right-click menu** for gradebook, announcement, material, assessments, and outline.
 
 #### 🔔 Notifications & Updates
 - Centralized **Notifications & Updates** hub for academic calendar, portal news, course updates, and UCP feeds.
@@ -83,22 +83,14 @@
     <td> <img width="1658" height="986" alt="BEFORE (dashboard" src="https://github.com/user-attachments/assets/29274e07-cd50-474d-a965-4f61aa51c70c" />
     Default UCP Portal's Student Dashboard
  </td>
-    <td> <img width="1640" height="998" alt="image" src="https://github.com/user-attachments/assets/4279fded-39ec-4c00-ad1a-1d4c59f6bbbd" />
+    <td> <img width="1653" height="991" alt="image" src="https://github.com/user-attachments/assets/b574fa7c-45bb-49e0-895e-477a0ad2c2a2" />
     UCP Smart Portal's Student Dashboard </td>
-  </tr>
-   <tr>
-    <td> <img width="1462" height="857" alt="image" src="https://github.com/user-attachments/assets/0114e362-f0a1-4ab6-a88b-ffc3c74fbc8c" />
-    Right click menu for all course links 
- </td>
-    <td> <img width="1182" height="670" alt="image" src="https://github.com/user-attachments/assets/d34cb48b-8adf-4be9-8138-2db756f656cb" />
-      Tracker for Submission Left, Assessments, and Make-Up Class 
- </td>
   </tr>
   <tr>
     <td> <img width="1750" height="943" alt="image" src="https://github.com/user-attachments/assets/683f06f8-e2c0-4208-9262-ac23263a8c79" />
     Default UCP Portal's Student Timetable
    </td>
-    <td> <img width="1637" height="1003" alt="image" src="https://github.com/user-attachments/assets/8266d68b-ebd9-4177-ac61-97247ce44d87" />
+    <td> <img width="1647" height="992" alt="image" src="https://github.com/user-attachments/assets/a5011585-e87e-47fc-900a-562a9524b895" />
     Redesigned Student Timetable w/ additional features  </td>
 </tr>
    
@@ -211,19 +203,17 @@ Runs locally, does not collect or share data. Fetches info from UCP Portal.
 
 
 ## 🗺️ Roadmap
-- Lightweight dark mode optimization 
-- More Background options to complement design 
+- Mobile Phone Support (PWA / Responsive Design)
 - Accessibility pass (contrast, keyboard nav)
 - Performance profiling on low-end machines
 
 
 ## ⚠️ Known issues
 
-This is a `3.5` beta, so expect some rough edges. The extension otherwise works as expected.
+This is a `3.6`, The extension otherwise works as expected.
+Any kind of contribution will be appreciated!
 
-- **Settings page buttons** are currently broken, clicking them does nothing. The **toggles still work normally**, and the settings page can still be navigated using the keyboard.
 - **Notifications** are currently a **work in progress** and may not function reliably yet.
-- No other known issues at the moment, above issues will be fixed in v3.6.2.
 
 <br/>
 
