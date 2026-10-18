@@ -1,4 +1,4 @@
-// ACTIVATION LAYER
+// ACTIVATION LAYER 
   const __ucpArmed = (target) => {
     let n = target;
     while (n && n.nodeType === 1 && typeof n.__ucpAction !== 'function') n = n.parentElement;
@@ -110,12 +110,7 @@ chrome.storage.local.get('toggle_power', (result) => {
   }
 
 
-  // WALLPAPER SYNC — make the saved background actually paint on this page.
-  // --ucp-bg-image is normally set by student.js at page load; in tabs where
-  // that did not run (opened before the extension loaded, extension reloaded
-  // without a page reload) the variable is missing and nothing paints. This
-  // mirrors student.js's resolve + probe + default-fallback logic and runs on
-  // every render, so the background is guaranteed to show behind the page.
+  // WALLPAPER SYNC
 
   const DEFAULT_BG = 'assets/bgs/bg.jpg'; // bundled — always exists
   // Cap for uploaded background size (max width/height it's stored at). The
@@ -158,15 +153,6 @@ chrome.storage.local.get('toggle_power', (result) => {
     probe.src = url;
   }
 
-  // (Setting toggles no longer write storage on change — they run the
-  // pending Save/Discard model wired in render(); onChanged below syncs the
-  // UI from storage changes made by THIS page's Save button or other tabs.)
-
-  // --- Blur amount (slider, 0–10 px)
-  // Replaces the old on/off `ucp_blur_bg` boolean. The amount is applied as
-  // body.ucp-blur + a --ucp-blur-px variable (the CSS blur filter reads the
-  // variable). The legacy boolean still works when no amount is saved yet:
-  // a stored true maps to the old fixed 10px.
   const BLUR_KEY = 'ucp_blur_amount';
   const BLUR_MAX = 10;
   // True while the user is pressing the slider — a storage read-back must
@@ -185,8 +171,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     if (range) range.style.setProperty('--blur-fill', (amount / BLUR_MAX * 100) + '%');
     if (label) label.textContent = amount > 0 ? amount + ' px' : '0 px (off)';
   }
-  // Apply the blur class + px variable on THIS page directly (don't rely on
-  // shell.js's listener being present, e.g. a standalone page load).
+  // Apply the blur 
   function applyBlurClass(amount) {
     try {
       const on = amount > 0;
@@ -204,7 +189,7 @@ chrome.storage.local.get('toggle_power', (result) => {
       try { chrome.storage.local.set({ [BLUR_KEY]: v, ucp_blur_bg: v > 0 }); } catch (e) {}
     }
   }
-  // --- Accent-color toggle (ON by default; off = plain white) 
+  // Accent-color toggle (ON by default; off = plain white) 
   const ACCENT_KEY = 'ucp_bg_accent';
   const ACCENT_COLOR_KEY = 'ucp_bg_accent_color'; // cached "r,g,b" of last sample
   // ON unless the user explicitly turned it off (missing value = on).
@@ -271,7 +256,7 @@ chrome.storage.local.get('toggle_power', (result) => {
     });
   }
 
-  // --- ntfy (phone push)--
+  // ntfy (phone push)
   // A private topic the phone subscribes to: 'ucp-' + 24 hex chars (192
   // random bits). ntfy.sh topics are 1–64 URL-safe chars — ours fits by
   // construction. The QR encodes https://ntfy.sh/<topic>; if the QR image
@@ -1217,7 +1202,9 @@ chrome.storage.local.get('toggle_power', (result) => {
 
         <div class="ucp-shell-credits-card" id="ucp-shell-credits">
           <a class="ucp-shell-credits-title ucp-shell-credits-link" href="https://github.com/bakrx12/UCP-Smart-Portal" target="_blank" rel="noopener">UCP Smart Portal</a>
+          <div class="ucp-shell-credits-version" id="ucp-shell-creditsVersion" hidden></div>
           <div class="ucp-shell-credits-names" id="ucp-shell-creditsNames"></div>
+          <div class="ucp-shell-credits-links" id="ucp-shell-creditsLinks"></div>
         </div>
       </div>
     </div>`;
@@ -1285,6 +1272,11 @@ chrome.storage.local.get('toggle_power', (result) => {
     'Abdullah Zafar': null,
     'AbuBakr Aslam': 'https://github.com/bakrx12', // hehe
   };
+  const CREDITS_LINKS = [
+    ['GitHub', 'https://github.com/bakrx12/UCP-Smart-Portal'],
+    ['Firefox Add-on', 'https://addons.mozilla.org/en-US/firefox/addon/ucp-smart-portal/'],
+    ['Chrome Extension (old version)', 'https://chromewebstore.google.com/detail/ucp-smart-odoo-portal/ebmcimlgnnbkomlabkhijkblmchjifid?hl=en&pli=1'],
+  ];
   function renderCredits() {
     const box = byId('ucp-shell-creditsNames');
     if (!box) return;
@@ -1292,6 +1284,21 @@ chrome.storage.local.get('toggle_power', (result) => {
       ? `<a class="ucp-credits-name" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>`
       : `<span class="ucp-credits-name">${esc(name)}</span>`
     )).join('');
+
+    // Running version, read from the extension's own manifest.
+    const verEl = byId('ucp-shell-creditsVersion');
+    if (verEl) {
+      let v = '';
+      try { v = chrome.runtime.getManifest().version || ''; } catch (e) {}
+      if (v) { verEl.textContent = 'Version ' + v; verEl.hidden = false; }
+    }
+
+    const linksEl = byId('ucp-shell-creditsLinks');
+    if (linksEl) {
+      linksEl.innerHTML = CREDITS_LINKS.map(([label, url]) =>
+        `<a class="ucp-credits-name" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`
+      ).join('');
+    }
   }
 
 
