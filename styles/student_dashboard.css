@@ -18,9 +18,6 @@
   --card-h: 450px;
 }
 
-
-
-
 /*  DASHBOARD CARDS  */
 .md-card {
   background: var(--light-glass) !important;
@@ -2474,4 +2471,60 @@ body.ucp-bg-accent #academic-flexbox #stats .stat-icon {
 .submission-actions button[disabled] {
   opacity: 0.4;
   cursor: not-allowed !important;
+}
+
+/* Term Progress / Next class: hover text shown INSIDE the tile ---
+   Same inset-overlay look as the In-progress credits tile: it fills the
+   card and fades in, so nothing floats below and the layout never moves.
+   JS (initStatTileHovers) adds the .stat-hover-tip element and .is-visible. */
+#academics-module #academic-flexbox #stats .academic-term-progress-stat,
+#academics-module #academic-flexbox #stats .academic-next-class-stat {
+  position: relative;
+}
+#academics-module #academic-flexbox #stats .stat-hover-tip {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: rgba(10, 14, 20, 0.97);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+#academics-module #academic-flexbox #stats .stat-hover-tip.is-visible {
+  opacity: 1;
+}
+.stat-hover-tip .sht-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.stat-hover-tip .sht-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+}
+.stat-hover-tip .sht-detail {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.25;
+}
+.stat-hover-tip .sht-label,
+.stat-hover-tip .sht-value,
+.stat-hover-tip .sht-detail {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
