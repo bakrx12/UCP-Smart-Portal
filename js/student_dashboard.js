@@ -1284,8 +1284,9 @@ chrome.storage.local.get("toggle_power", (result) => {
         }
       }
 
-      // Hover text for the Term Progress and Next class tiles. It uses the same
-      // tooltip box as the course badges, so it is not clipped by the tiles.
+      // Hover text for the Term Progress and Next class tiles. Like the
+      // In-progress credits tile, the text fades in INSIDE the tile (an overlay
+      // that fills it) instead of a floating box below it.
       function initStatTileHovers() {
         const TILE_SELECTOR = "#academic-term-progress-stat, #academic-next-class-stat";
 
@@ -1297,7 +1298,25 @@ chrome.storage.local.get("toggle_power", (result) => {
             tile.id === "academic-term-progress-stat"
               ? statTipHtml.term
               : statTipHtml.next;
-          if (html) showTooltipAt(tile, html);
+          if (!html) return;
+
+          // The tiles get re-rendered, so build the overlay when needed and
+          // refresh its text each time in case the data changed.
+          let tip = tile.querySelector(":scope > .stat-hover-tip");
+          if (!tip) {
+            tip = document.createElement("div");
+            tip.className = "stat-hover-tip";
+            tip.setAttribute("role", "tooltip");
+            tile.appendChild(tip);
+          }
+          tip.innerHTML = html;
+          void tip.offsetWidth; // so the fade-in runs
+          tip.classList.add("is-visible");
+        };
+
+        const hide = (tile) => {
+          const tip = tile.querySelector(":scope > .stat-hover-tip");
+          if (tip) tip.classList.remove("is-visible");
         };
 
         document.addEventListener("mouseover", (e) => {
@@ -1309,7 +1328,7 @@ chrome.storage.local.get("toggle_power", (result) => {
         document.addEventListener("mouseout", (e) => {
           const tile = tileFrom(e);
           if (!tile || tile.contains(e.relatedTarget)) return;
-          hideTooltip();
+          hide(tile);
         });
 
         document.addEventListener("focusin", (e) => {
@@ -1318,7 +1337,8 @@ chrome.storage.local.get("toggle_power", (result) => {
         });
 
         document.addEventListener("focusout", (e) => {
-          if (tileFrom(e)) hideTooltip();
+          const tile = tileFrom(e);
+          if (tile) hide(tile);
         });
       }
 
@@ -3105,13 +3125,13 @@ chrome.storage.local.get("toggle_power", (result) => {
             const detail = [times, room].filter(Boolean).join(" \u2022 ");
 
             statTipHtml.next = `
-              <div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">${escapeHtml(nc.label)}</div>
-              <div style="font-weight:600;">${escapeHtml(nc.courseName)}</div>
-              ${detail ? `<div style="opacity:.85;">${escapeHtml(detail)}</div>` : ""}`;
+              <div class="sht-label">${escapeHtml(nc.label)}</div>
+              <div class="sht-value">${escapeHtml(nc.courseName)}</div>
+              ${detail ? `<div class="sht-detail">${escapeHtml(detail)}</div>` : ""}`;
           } else if (state.commencement) {
             statTipHtml.next = `
-              <div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">Classes commence</div>
-              <div style="font-weight:600;">${escapeHtml(formatCommencementDate(state.commencement.start))}</div>`;
+              <div class="sht-label">Classes commence</div>
+              <div class="sht-value">${escapeHtml(formatCommencementDate(state.commencement.start))}</div>`;
           } else {
             statTipHtml.next = "";
           }
@@ -4367,9 +4387,8 @@ chrome.storage.local.get("toggle_power", (result) => {
           : String(targetModel.term || targetModel.semester || targetModel.termName || "").trim();
 
         statTipHtml.term = `
-          ${termName ? `<div style="font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;">${escapeHtml(termName)}</div>` : ""}
-          <div style="font-weight:600;">${escapeHtml(c.label)}</div>
-          <div style="opacity:.85;">${escapeHtml(daysText)}</div>`;
+          <div class="sht-label">${escapeHtml(c.label)}</div>
+          <div class="sht-value">${escapeHtml(daysText)}</div>`;
       }
 
       function initAcadCalOverlay(attempt = 0) {
